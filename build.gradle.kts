@@ -39,7 +39,6 @@ dependencies {
     implementation(libs.vaadin.boot)
 
     // logging
-    // currently we are logging through the SLF4J API to SLF4J-Simple. See src/main/resources/simplelogger.properties file for the logger configuration
     implementation(libs.slf4j.simple)
 
     implementation(kotlin("stdlib-jdk8"))
@@ -48,7 +47,6 @@ dependencies {
     implementation(libs.hikaricp)
     implementation(libs.flyway)
     implementation(libs.flywaydb)
-//    implementation(libs.h2)
     implementation(libs.postgresql)
 
     // test support

@@ -48,8 +48,6 @@ class MainLayout : KComposite(), RouterLayout {
             content {
                 contentPane = div {
                     setSizeFull(); classNames.add("app-content")
-//                    style.set("background-color", "yellow")
-//                    text("SSSSSSSS")
                 }
             }
         }

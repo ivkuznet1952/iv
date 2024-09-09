@@ -11,7 +11,6 @@ vaadin-boot = "com.github.mvysny.vaadin-boot:vaadin-boot:13.0"
 vaadin-core = { module = "com.vaadin:vaadin-core", version.ref = "vaadin" }
 karibu-testing = "com.github.mvysny.kaributesting:karibu-testing-v24:2.1.8"
 flyway = "org.flywaydb:flyway-core:10.15.2"
-#h2 = "com.h2database:h2:2.2.224"
 flywaydb = "org.flywaydb:flyway-database-postgresql:10.15.2"
 postgresql = { module = "org.postgresql:postgresql", version = "42.7.3" }
 hikaricp = "com.zaxxer:HikariCP:5.1.0"

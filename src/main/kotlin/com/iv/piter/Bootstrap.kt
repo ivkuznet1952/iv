@@ -31,16 +31,6 @@ class Bootstrap: ServletContextListener {
     override fun contextInitialized(sce: ServletContextEvent?) = try {
         log.info("Starting up")
 
-//       val cfg = HikariConfig().apply {
-//            driverClassName = Driver::class.java.name
-//            jdbcUrl = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"
-//            username = "sa"
-//            password = ""
-//        }
-//
-//
-//        VaadinOnKotlin.dataSource = HikariDataSource(cfg)
-
         log.info("Starting up")
         var jdbc_url = System.getenv("JDBC_URL")
         var jdbc_username = System.getenv("JDBC_USERNAME")
@@ -54,7 +44,7 @@ class Bootstrap: ServletContextListener {
             jdbc_password = "iv";
         }
         log.info("jdbc_Url: " + jdbc_url)
-        println("###################### jdbc_Username: " + jdbc_url)
+       // println("###################### jdbc_Username: " + jdbc_url)
         //println("###################### jdbc_Username: " + jdbc_Username + " pwd: " + jdbc_Password)
         //  Initialize the database.
         val cfg = HikariConfig().apply {
@@ -63,15 +53,7 @@ class Bootstrap: ServletContextListener {
             password = jdbc_password
             minimumIdle = 0
         }
-        // wait at most 60 seconds for the connection to become available. This is important for
-        // docker-compose since both the app and the database are starting at the same time,
-        // and we have to wait until the database becomes ready.
-        // This should also give enough time for Kubernetes/docker-compose to pull all necessary images.
-        // wait at most 60 seconds for the connection to become available. This is important for
-        // docker-compose since both the app and the database are starting at the same time,
-        // and we have to wait until the database becomes ready.
-        // This should also give enough time for Kubernetes/docker-compose to pull all necessary images.
-        cfg.initializationFailTimeout = 60000
+        cfg.initializationFailTimeout = 60000 // need devops
 
         //JdbiOrm.setDataSource(HikariDataSource(hikariConfig))
         // Done! The database layer is now ready to be used.

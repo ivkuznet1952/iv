@@ -1,0 +1,12 @@
+.idea
+build
+.gradle
+classes
+local.properties
+*.iml
+out
+target
+src/main/frontend/generated
+*.log
+dev.bundle
+bundles

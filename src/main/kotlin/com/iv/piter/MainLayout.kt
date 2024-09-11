@@ -47,7 +47,8 @@ class MainLayout : KComposite(), RouterLayout {
             } */
             content {
                 contentPane = div {
-                    setSizeFull(); classNames.add("app-content")
+                    setSizeFull()
+                    classNames.add("app-content")
                 }
             }
         }

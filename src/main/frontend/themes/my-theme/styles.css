@@ -15,6 +15,7 @@ body {
     min-height: 100vh;
     max-width: 960px;
     margin: 0 auto;
+    background-color: var(--lumo-base-color);
 }
 
 .main-layout__title {

@@ -106,6 +106,6 @@ class Bootstrap: ServletContextListener {
 @BodySize(width = "100vw", height = "100vh")
 //@Theme("my-theme")
 @CssImport("./themes/my-theme/styles.css")
-//@Theme(variant = Lumo.DARK)
+@Theme(variant = Lumo.DARK)
 @Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 class AppShell: AppShellConfigurator

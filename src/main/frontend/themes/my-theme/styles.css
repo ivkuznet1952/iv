@@ -5,6 +5,7 @@ html {
 
 body {
     background-color: var(--lumo-contrast-5pct);
+    /*background-color: var(--lumo-shade-70pct);*/
 }
 
 .main-layout {
@@ -15,7 +16,8 @@ body {
     min-height: 100vh;
     max-width: 960px;
     margin: 0 auto;
-    background-color: var(--lumo-base-color);
+    /*background-color: var(--lumo-base-color);*/
+    background-color: var(--lumo-shade-70pct);
 }
 
 .main-layout__title {
@@ -30,6 +32,12 @@ body {
 
 .main-layout > * {
     flex: auto;
+    /*color: #181828;*/
+    /*background-color: var(--lumo-shade-70pct);*/
+}
+
+.main-trip-background {
+    background-color: var(--lumo-base-color);
 }
 
 .main-layout__header {
@@ -39,6 +47,7 @@ body {
     height: var(--main-layout-header-height);
     margin: 0 calc(-50vw + 50%);
     padding: 16px calc(50vw - 50% + 16px);
-    background-color: var(--lumo-base-color);
+    /*background-color: var(--lumo-base-color);*/
+    background-color: var(--lumo-shade-70pct);
     box-shadow: 0 1px 0 0 var(--lumo-contrast-5pct);
 }

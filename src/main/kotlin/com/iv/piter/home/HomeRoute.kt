@@ -9,7 +9,6 @@ import com.vaadin.flow.server.auth.AnonymousAllowed
 import com.iv.piter.MainLayout
 import com.iv.piter.entity.Trip
 import com.iv.piter.Constant
-import com.vaadin.flow.component.html.Image
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.virtuallist.VirtualList
 import com.vaadin.flow.data.provider.ListDataProvider
@@ -27,10 +26,6 @@ class HomeRoute : KComposite() {
 
     private val root = ui {
 
-//        val titleimage = image(Constant.title_image, "..") {
-//            width = "25px"
-//            height = "25px"
-//        }
 
         verticalLayout(padding = true, spacing = false) {
             setSizeFull()
@@ -38,7 +33,7 @@ class HomeRoute : KComposite() {
 
             horizontalLayout(spacing = true, padding = true) {
                 setAlignItems(FlexComponent.Alignment.CENTER)
-                image(Constant.title_image, "..") {
+                image(Constant.titleImage, ".") {
                     width = "25px"
                     height = "25px"
                 }
@@ -46,6 +41,7 @@ class HomeRoute : KComposite() {
             }
 
             grid = virtualList {
+
                 setRenderer(ComponentRenderer { row ->
                     val item = TripListItem(row)
                     item
@@ -63,11 +59,38 @@ class HomeRoute : KComposite() {
 
 class TripListItem(private val row: Trip) : KComposite() {
 
-    val trip: Trip get() = row
     private val root = ui {
 
-        verticalLayout(false) {
-            text(row.name)
+        horizontalLayout(spacing = true, padding = true, classNames = "main-trip-background") {
+            setSizeFull()
+            alignItems = FlexComponent.Alignment.START
+            style.set("border-bottom", "gray solid 0.005em")
+            style.set("border-radius", "5px")
+
+                image("images/" + row.photo, ".") {
+                    height = "75px"
+                }
+
+            verticalLayout(false, false){
+                span {
+                    text(row.name)
+                }
+            }
+
+            verticalLayout(false) {
+                alignItems = FlexComponent.Alignment.END
+                width = "20%"
+                button("Заказать") {
+                    style.set("background-color", "white")
+                    style.set("color", "black")
+                }
+                span {
+                    style.set("font-size","13px")
+                    text("1900")
+                    html("&#x20bd")
+                }
+
+            }
         }
     }
 }

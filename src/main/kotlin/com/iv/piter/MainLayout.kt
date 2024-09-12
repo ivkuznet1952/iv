@@ -49,7 +49,12 @@ class MainLayout : KComposite(), RouterLayout {
                 contentPane = div {
                     setSizeFull()
                     classNames.add("app-content")
+//                    horizontalLayout(spacing = true, padding = true) {
+//                        style.set("background-color", "yellow")
+//                        height = "40px"
+//                    }
                 }
+
             }
         }
     }

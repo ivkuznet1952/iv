@@ -5,7 +5,14 @@ html {
 
 body {
     background-color: var(--lumo-contrast-5pct);
+    -webkit-font-smoothing: antialiased;
     /*background-color: var(--lumo-shade-70pct);*/
+}
+
+@media (max-width: 767px) {
+html {
+    font-size: 12px;
+}
 }
 
 .main-layout {
@@ -20,34 +27,16 @@ body {
     background-color: var(--lumo-shade-70pct);
 }
 
-.main-layout__title {
-    font-size: 1em;
-    margin: 0;
-    /* Allow the nav-items to take all the space so they are centered */
-    width: 0;
-    line-height: 1;
-    letter-spacing: -0.02em;
-    font-weight: 500;
+.b-font {
+    font-size: var(--lumo-font-size-xs);
 }
+
 
 .main-layout > * {
     flex: auto;
-    /*color: #181828;*/
-    /*background-color: var(--lumo-shade-70pct);*/
 }
 
 .main-trip-background {
     background-color: var(--lumo-base-color);
 }
 
-.main-layout__header {
-    display: flex;
-    flex: none;
-    align-items: center;
-    height: var(--main-layout-header-height);
-    margin: 0 calc(-50vw + 50%);
-    padding: 16px calc(50vw - 50% + 16px);
-    /*background-color: var(--lumo-base-color);*/
-    background-color: var(--lumo-shade-70pct);
-    box-shadow: 0 1px 0 0 var(--lumo-contrast-5pct);
-}

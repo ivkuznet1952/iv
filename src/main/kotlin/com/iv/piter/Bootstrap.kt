@@ -9,6 +9,7 @@ import com.vaadin.flow.component.page.Viewport
 import com.vaadin.flow.theme.Theme
 import com.vaadin.flow.theme.lumo.Lumo
 import com.iv.piter.security.User
+import com.vaadin.flow.server.PWA
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import eu.vaadinonkotlin.VaadinOnKotlin
@@ -107,5 +108,6 @@ class Bootstrap: ServletContextListener {
 //@Theme("my-theme")
 @CssImport("./themes/my-theme/styles.css")
 @Theme(variant = Lumo.DARK)
+
 @Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 class AppShell: AppShellConfigurator

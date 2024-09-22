@@ -12,13 +12,11 @@ data class User(override var id: Long? = null,
                 var username: String = "",
                 private var hashedPassword: String = "",
                 var roles: String = "",
+                var active: Boolean = true,
                 var created: LocalDateTime = LocalDateTime.now(),
                 var updated: LocalDateTime = LocalDateTime.now()
                 ) : KEntity<Long>, HasPassword {
     companion object : Dao<User, Long>(User::class.java) {
-        /**
-         * Finds user by his [username]. If there is no such user, returns `null`.
-         */
         fun findByUsername(username: String): User? = findSingleBy { User::username eq username }
     }
 

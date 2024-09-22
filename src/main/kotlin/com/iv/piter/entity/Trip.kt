@@ -14,7 +14,8 @@ data class Trip(
     var description: String = "",
     var photo: String = "",
     var duration: Int = 0,
-    var comment: String? = ""
+    var comment: String? = "",
+    var active: Boolean? = true,
 ) : KEntity<Long> {
     companion object : Dao<Trip, Long>(Trip::class.java) {
     }

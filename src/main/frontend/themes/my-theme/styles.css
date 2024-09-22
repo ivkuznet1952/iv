@@ -1,18 +1,28 @@
+.blue-test {
+   background-color: #1d3469;
+   background-color: #0a0a1a;
+}
+
 html {
-    /*--main-layout-header-height: 44px;*/
     background-color: transparent !important;
 }
 
 body {
     background-color: var(--lumo-contrast-5pct);
+    /*background-color: var(--lumo-base-color);*/
     -webkit-font-smoothing: antialiased;
-    /*background-color: var(--lumo-shade-70pct);*/
 }
 
 @media (max-width: 767px) {
-html {
-    font-size: 12px;
+    html {
+        font-size: 12px;
+    }
 }
+
+@media (min-width: 767px) {
+    .trip-detail-width {
+        width: 600px
+    }
 }
 
 .main-layout {
@@ -27,8 +37,21 @@ html {
     background-color: var(--lumo-shade-70pct);
 }
 
+.admin-layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    max-width: 960px;
+    margin: 0 auto;
+    /*background-color: var(--lumo-base-color);*/
+    background-color: var(--lumo-shade-70pct);
+}
+
 .b-font {
     font-size: var(--lumo-font-size-xs);
+    /*background-color: #0a0a1a*/
 }
 
 
@@ -36,7 +59,17 @@ html {
     flex: auto;
 }
 
-.main-trip-background {
-    background-color: var(--lumo-base-color);
-}
+/*vaadin-dialog-overlay::part(content){*/
+/*    background-color: #405e96;*/
+/*}*/
+/*.admin-layout__nav {*/
+/*    display: flex;*/
+/*    flex: 1;*/
+/*    justify-content: center;*/
+/*}*/
 
+/*.linemenu-layout__nav {*/
+/*    display: flex;*/
+/*    flex: auto;*/
+/*    justify-content: center;*/
+/*}*/

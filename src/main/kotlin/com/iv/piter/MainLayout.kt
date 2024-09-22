@@ -1,18 +1,10 @@
 package com.iv.piter
 
 import com.github.mvysny.karibudsl.v10.*
-import com.github.mvysny.karibudsl.v23.route
-import com.github.mvysny.karibudsl.v23.sideNav
 import com.vaadin.flow.component.HasElement
-import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.html.Div
-import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.router.RouterLayout
-import com.iv.piter.admin.AdminRoute
-import com.iv.piter.security.loginService
-import com.iv.piter.user.UserRoute
 //import com.vaadin.securitydemo.welcome.WelcomeRoute
-import eu.vaadinonkotlin.vaadin.Session
 
 /**
  * The main layout. It uses the app-layout component which makes the app look like an Android Material app.
@@ -49,13 +41,9 @@ class MainLayout : KComposite(), RouterLayout {
                 contentPane = div {
                     setSizeFull()
                     classNames.add("app-content")
-//                    horizontalLayout(spacing = true, padding = true) {
-//                        style.set("background-color", "yellow")
-//                        height = "40px"
-//                    }
                 }
-
             }
+
         }
     }
 

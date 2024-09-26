@@ -5,11 +5,9 @@ import com.vaadin.flow.component.dependency.CssImport
 import com.vaadin.flow.component.page.AppShellConfigurator
 import com.vaadin.flow.component.page.BodySize
 import com.vaadin.flow.component.page.Viewport
-//import com.vaadin.flow.server.PWA
 import com.vaadin.flow.theme.Theme
 import com.vaadin.flow.theme.lumo.Lumo
 import com.iv.piter.security.User
-import com.vaadin.flow.server.PWA
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import eu.vaadinonkotlin.VaadinOnKotlin
@@ -18,9 +16,8 @@ import jakarta.servlet.ServletContextEvent
 import jakarta.servlet.ServletContextListener
 import jakarta.servlet.annotation.WebListener
 import org.flywaydb.core.Flyway
-//import org.h2.Driver
 import org.slf4j.LoggerFactory
-import java.lang.Thread.sleep
+
 
 /**
  * Called by the Servlet Container to bootstrap your app. We need to bootstrap the Vaadin-on-Kotlin framework,

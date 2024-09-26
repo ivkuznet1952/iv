@@ -9,13 +9,41 @@ html {
 
 body {
     background-color: var(--lumo-contrast-5pct);
-    /*background-color: var(--lumo-base-color);*/
     -webkit-font-smoothing: antialiased;
+}
+/*.app-content{*/
+/*    background-color: green;*/
+/*}*/
+
+.view-toolbar {
+    display: flex;
+    /*background-color: var(--lumo-base-color);*/
+    /*box-shadow: 0 1px 0 0 var(--lumo-contrast-10pct);*/
+    margin: 0 calc(-50vw + 50%);
+    padding: 8px calc(50vw - 50% + 16px);
+    position: relative;
+    z-index: 1;
+    flex: none;
+    /*max-width: 960px;*/
+}
+
+.view-toolbar-background {
+    background-color: var(--lumo-base-color);
+    box-shadow: 0 1px 0 0 var(--lumo-contrast-10pct);
+}
+
+.view-toolbar__search-field {
+    flex: auto;
+    min-width: 0;
+    margin-right: 16px;
 }
 
 @media (max-width: 767px) {
     html {
         font-size: 12px;
+    }
+    .hide-admin-menu {
+        display: none;
     }
 }
 
@@ -23,6 +51,19 @@ body {
     .trip-detail-width {
         width: 600px
     }
+    .hide-admin-drawer {
+        display: none;
+    }
+}
+
+vaadin-app-layout::part(navbar){
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    max-width: 960px;
+    margin: 0 auto;
+    background-image:linear-gradient(var(--lumo-contrast-5pct), var(--lumo-base-color)) !important;
 }
 
 .main-layout {
@@ -58,6 +99,50 @@ body {
 .main-layout > * {
     flex: auto;
 }
+
+.admin-layout__nav-item {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: 0.3s color, 0.3s transform;
+    will-change: transform;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: var(--lumo-font-size-m);
+    color: var(--lumo-secondary-text-color);
+    /*color: white;*/
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.admin-layout__nav-item:hover {
+    text-decoration: none;
+}
+
+.admin-layout__nav-item:not([highlight]):hover {
+    color: inherit;
+    /*color: red;*/
+}
+
+.admin-layout__nav-item[highlight] {
+    color: var(--lumo-primary-text-color);
+    /*color: green;*/
+    cursor: default;
+}
+
+.admin-layout__nav-item iron-icon {
+    /* Vaadin icons are using a 16x16 grid */
+    padding: 4px;
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
+
+
 
 /*vaadin-dialog-overlay::part(content){*/
 /*    background-color: #405e96;*/

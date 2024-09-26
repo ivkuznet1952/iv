@@ -9,6 +9,7 @@ import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.auth.AnonymousAllowed
 import com.iv.piter.admin.AdminLayout
+import com.iv.piter.admin.UserRoute
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.shared.Tooltip
 import eu.vaadinonkotlin.vaadin.Session
@@ -55,7 +56,8 @@ class LoginRoute : KComposite() {
         loginForm.addLoginListener { e ->
             try {
                 Session.loginService.login(e.username, e.password)
-                navigateTo<AdminLayout>()
+                navigateTo<UserRoute>()
+//                navigateTo("user")
             } catch (e: LoginException) {
                 log.warn("Login failed", e)
                // loginForm.setErrorMessage("Login failed", e.message)

@@ -1,9 +1,18 @@
 package com.iv.piter
 
 import com.github.mvysny.karibudsl.v10.*
+import com.github.mvysny.karibudsl.v23.route
+import com.github.mvysny.karibudsl.v23.sideNav
+import com.iv.piter.admin.UserRoute
+import com.iv.piter.security.LoginRoute
+import com.iv.piter.security.loginService
 import com.vaadin.flow.component.HasElement
+import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.html.Div
+import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.router.RouterLayout
+import eu.vaadinonkotlin.vaadin.Session
+
 //import com.vaadin.securitydemo.welcome.WelcomeRoute
 
 /**
@@ -11,21 +20,21 @@ import com.vaadin.flow.router.RouterLayout
  */
 class MainLayout : KComposite(), RouterLayout {
 
-    private lateinit var contentPane: Div
+  //  private lateinit var contentPane: Div
     private val root = ui {
         appLayout {
             className="main-layout"
 
-            //navbar {
-               // drawerToggle()
-               // h3("Vaadin Kotlin Security Demo")
-            //}
+//            navbar {
+//                drawerToggle()
+//                h3("Vaadin Kotlin Security Demo")
+//            }
 
-           /* drawer {
+      /*      drawer {
                 sideNav {
-                    route(WelcomeRoute::class, VaadinIcon.NEWSPAPER)
+                    //route(WelcomeRoute::class, VaadinIcon.NEWSPAPER)
                     route(UserRoute::class, VaadinIcon.LIST)
-                    route(AdminRoute::class, VaadinIcon.COG)
+                    route(LoginRoute::class, VaadinIcon.COG)
                 }
                 // logout menu item
                 horizontalLayout(padding = true) {
@@ -37,17 +46,17 @@ class MainLayout : KComposite(), RouterLayout {
                     }
                 }
             } */
-            content {
-                contentPane = div {
-                    setSizeFull()
-                    classNames.add("app-content")
-                }
-            }
+//            content {
+//                contentPane = div {
+//                    setSizeFull()
+//                    classNames.add("app-content")
+//                }
+//            }
 
         }
     }
 
-    override fun showRouterLayoutContent(content: HasElement) {
-        contentPane.element.appendChild(content.element)
-    }
+//    override fun showRouterLayoutContent(content: HasElement) {
+//        contentPane.element.appendChild(content.element)
+//    }
 }

@@ -15,7 +15,8 @@ import eu.vaadinonkotlin.vaadin.Session
 class AppServiceInitListener : VaadinServiceInitListener {
     private val accessControl = SimpleNavigationAccessControl.usingService { Session.loginService }
     init {
-        accessControl.setLoginView(LoginRoute::class.java)
+       // accessControl.setLoginView(LoginRoute::class.java)
+          accessControl.setLoginView(HomeRoute::class.java)
 //        navigateTo<HomeRoute>()
     }
 

@@ -1,12 +1,13 @@
 package com.iv.piter.admin
 
-//import com.apple.laf.AquaButtonBorder
 import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.karibudsl.v23.virtualList
 import com.github.mvysny.kaributools.fetchAll
 import com.iv.piter.ConfirmationDialog
 import com.iv.piter.Constant
 import com.iv.piter.Toolbar
+import com.iv.piter.entity.Guide
+import com.iv.piter.entity.setFilterText
 import com.iv.piter.security.User
 import com.iv.piter.security.setFilterText
 import com.iv.piter.toolbarView
@@ -27,16 +28,15 @@ import com.vaadin.flow.router.Route
 import eu.vaadinonkotlin.vaadin.vokdb.dataProvider
 import jakarta.annotation.security.RolesAllowed
 
-
-@Route("user", layout = AdminLayout::class)
-@PageTitle("Пользователи")
+@Route("guide", layout = AdminLayout::class)
+@PageTitle("Гиды")
 @RolesAllowed("ROLE_ADMIN")
-class UserRoute : KComposite() {
+class GuideRoute : KComposite() {
 
     private lateinit var header: H5
     private lateinit var toolbar: Toolbar
-    private lateinit var grid: VirtualList<User>
-    private val dataProvider = User.dataProvider
+    private lateinit var grid: VirtualList<Guide>
+    private val dataProvider = Guide.dataProvider
 
     private val root = ui {
         verticalLayout(false, spacing = false) {
@@ -51,11 +51,11 @@ class UserRoute : KComposite() {
                 onSearch = { updateView() }
                 onCreate = { createNew() }
             }
-            br{}
+           br{}
             grid = virtualList {
                 var ind = 0
-                setRenderer(ComponentRenderer<UserItem, User> { row ->
-                    val item = UserItem(row, ind)
+                setRenderer(ComponentRenderer<GuideItem, Guide> { row ->
+                    val item = GuideItem(row, ind)
                     item.onDelete = {
                         var isDelete = false
                         if (row.id != null) isDelete = maybeDelete(row)
@@ -65,7 +65,7 @@ class UserRoute : KComposite() {
                             n.addThemeVariants(NotificationVariant.LUMO_SUCCESS)
                         }
                     }
-                    item.onSave = {pwd: String, confirm_pwd: String ->
+                    item.onSave = {
 
                     }
                     ind++
@@ -76,15 +76,15 @@ class UserRoute : KComposite() {
     }
 
     init {
-        setId("User")
+        setId("Guide")
         updateView()
     }
 
     private fun createNew() {
-        val dp: ListDataProvider<User> = ListDataProvider(User.dataProvider.fetchAll())
-        val user: User = User()
-        user.username = ""
-        dp.items.add(user)
+        val dp: ListDataProvider<Guide> = ListDataProvider(Guide.dataProvider.fetchAll())
+        val guide: Guide = Guide()
+        guide.firstname = ""
+        dp.items.add(guide)
         grid.dataProvider = dp
     }
 
@@ -93,19 +93,19 @@ class UserRoute : KComposite() {
         if (toolbar.searchText.isNotBlank()) {
             header.text = "Поиск “${toolbar.searchText}”"
         } else {
-            header.text = "Данные пользователей"
+            header.text = "Данные гида"
         }
         grid.dataProvider = dataProvider
     }
 
-    private fun maybeDelete(item: User): Boolean {
+    private fun maybeDelete(item: Guide): Boolean {
 //        val turCount = Tur.findAllBy { Tur::direction_id eq item.id }.count()
 //        if (turCount == 0) {
 //            item.delete()
 //        } else {
         ConfirmationDialog().open(
-            "Удалить данные “${item.username} ”?",
-            "С данным пользователем ассоцированы несколько заказов. Удаление невозможно!",
+            "Удалить данные “${item.lastname} ${item.firstname} ”?",
+            "С данным гидом ассоцированы несколько заказов. Удаление невозможно!",
             "",
             "",
             true,
@@ -119,20 +119,20 @@ class UserRoute : KComposite() {
 
 
 /**
- * Shows a single row stripe with information about a single [User].
+ * Shows a single row stripe with information about a single [Guide].
  */
-class UserItem(val row: User, ind: Int) : KComposite() {
-    val user: User get() = row
+class GuideItem(val row: Guide, ind: Int) : KComposite() {
+    val user: Guide get() = row
     var onDelete: () -> Unit = {}
-    var onSave: (pwd: String, confirm_pwd: String) -> Unit = { s: String, s1: String -> }
-    val binder: Binder<User> = beanValidationBinder()
-    private var pwd: TextField = TextField()
-    private var confirmpwd: TextField = TextField()
+    var onSave: () -> Unit = {}
+    val binder: Binder<Guide> = beanValidationBinder()
+//    private var pwd: TextField = TextField()
+//    private var confirmpwd: TextField = TextField()
 
-        private val root = ui {
+    private val root = ui {
 
-        formLayout( classNames = "") {
-            style.set("padding", "13px")
+        formLayout(classNames = "") {
+            //style.set("padding", "13px")
             style.set("border-bottom", "gray solid 0.005em")
             if (ind == 0) style.set("border-top", "gray solid 0.005em")
             style.set("border-radius", "2px")
@@ -143,19 +143,17 @@ class UserItem(val row: User, ind: Int) : KComposite() {
             }
             setWidthFull()
 
-            checkBox ("Активен") {
-                bind(binder).bind(User::active)
-            }
-
-            textField("Имя пользователя") {
-                bind(binder)
-                    .trimmingConverter().asRequired("Значение не задано").bind(User::username)
-            }
-            textField("Роль") {
-                bind(binder)
-                    .trimmingConverter().asRequired("Значение не задано").bind(User::roles)
-            }
-
+//            textField("Имя пользователя") {
+//                bind(binder)
+//                    .trimmingConverter().asRequired("Значение не задано").bind(User::username)
+//            }
+//            textField("Роль") {
+//                bind(binder)
+//                    .trimmingConverter().asRequired("Значение не задано").bind(User::roles)
+//            }
+//            checkBox ("Активен") {
+//                bind(binder).bind(User::active)
+//            }
 
             // svg icon
             horizontalLayout(padding = false, spacing = false) {
@@ -165,7 +163,7 @@ class UserItem(val row: User, ind: Int) : KComposite() {
                 val save = iconButton(img) {
                     addThemeVariants(ButtonVariant.LUMO_TERTIARY)
                     style.set("margin-left","auto")
-                    onClick { onSave(pwd.value, confirmpwd.value) }
+                   // onClick { onSave(pwd.value, confirmpwd.value) }
                 }
                 Tooltip.forComponent(save)
                     .withText("Сохранить")
@@ -175,7 +173,7 @@ class UserItem(val row: User, ind: Int) : KComposite() {
                     icon = VaadinIcon.TRASH.create()
                     addThemeVariants(ButtonVariant.LUMO_TERTIARY)
                     style.set("color", "white")
-                    style.set("margin-right","10px")
+                    style.set("margin-left","10px")
                     onClick { onDelete() }
                 }
                 Tooltip.forComponent(deleteButton)
@@ -183,27 +181,14 @@ class UserItem(val row: User, ind: Int) : KComposite() {
                     .withPosition(Tooltip.TooltipPosition.TOP_START)
             }
 
-            checkBox ("Изменить пароль") {
-                onClick {
-                    pwd.isEnabled = value
-                    confirmpwd.isEnabled = value
-                }
-            }
-            pwd =  textField("Пароль(не менее 5 симв.)") {
-                isEnabled = false
-            }
-            confirmpwd = textField("Подтверждение пароля") {
-                isEnabled = false
-            }
 
-
+        }
     }
-}
 
-init {
-    binder.readBean(row)
-    binder.validate()
-}
+    init {
+        binder.readBean(row)
+        binder.validate()
+    }
 
-override fun toString(): String = "UserItem($user)"
+    override fun toString(): String = "UserItem($user)"
 }

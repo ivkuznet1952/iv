@@ -8,10 +8,7 @@ import com.vaadin.flow.component.login.LoginI18n
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.auth.AnonymousAllowed
-import com.iv.piter.admin.AdminLayout
 import com.iv.piter.admin.UserRoute
-import com.vaadin.flow.component.icon.VaadinIcon
-import com.vaadin.flow.component.shared.Tooltip
 import eu.vaadinonkotlin.vaadin.Session
 import org.slf4j.LoggerFactory
 import javax.security.auth.login.LoginException

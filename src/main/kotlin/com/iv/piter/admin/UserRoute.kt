@@ -1,6 +1,5 @@
 package com.iv.piter.admin
 
-//import com.apple.laf.AquaButtonBorder
 import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.karibudsl.v23.virtualList
 import com.github.mvysny.kaributools.fetchAll
@@ -10,6 +9,7 @@ import com.iv.piter.Toolbar
 import com.iv.piter.security.User
 import com.iv.piter.security.setFilterText
 import com.iv.piter.toolbarView
+import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.html.H5
 import com.vaadin.flow.component.html.Image
@@ -17,15 +17,17 @@ import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.notification.NotificationVariant
 import com.vaadin.flow.component.shared.Tooltip
-import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.component.textfield.PasswordField
 import com.vaadin.flow.component.virtuallist.VirtualList
 import com.vaadin.flow.data.binder.Binder
+import com.vaadin.flow.data.binder.ValidationException
 import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import eu.vaadinonkotlin.vaadin.vokdb.dataProvider
 import jakarta.annotation.security.RolesAllowed
+import java.time.LocalDateTime
 
 
 @Route("user", layout = AdminLayout::class)
@@ -54,8 +56,8 @@ class UserRoute : KComposite() {
             br{}
             grid = virtualList {
                 var ind = 0
-                setRenderer(ComponentRenderer<UserItem, User> { row ->
-                    val item = UserItem(row, ind)
+                setRenderer(ComponentRenderer { row ->
+                    val item = UserItem(row,  ind)
                     item.onDelete = {
                         var isDelete = false
                         if (row.id != null) isDelete = maybeDelete(row)
@@ -65,8 +67,25 @@ class UserRoute : KComposite() {
                             n.addThemeVariants(NotificationVariant.LUMO_SUCCESS)
                         }
                     }
-                    item.onSave = {pwd: String, confirm_pwd: String ->
-
+                    item.onSave = {isPwdEdit ->
+                       try {
+                           item.binder.writeBean(row)
+                           row.updated = LocalDateTime.now()
+                           if (row.id == null) {
+                               row.created = LocalDateTime.now()
+                               //row.setPassword(row.hashedPassword)
+                           } else {
+                               if (!isPwdEdit) {
+                                   row.hashedPassword = User.getById(row.id!!)!!.hashedPassword
+                               }
+                           }
+                           row.save()
+                           val n = Notification.show("Данные успешно сохранены.", 3000, Notification.Position.TOP_END)
+                           n.addThemeVariants(NotificationVariant.LUMO_SUCCESS)
+                       } catch (ve: ValidationException){
+                           val n = Notification.show("Данные имеют ошибки и не сохранены.", 3000, Notification.Position.TOP_END)
+                           n.addThemeVariants(NotificationVariant.LUMO_ERROR)
+                       }
                     }
                     ind++
                     item
@@ -82,8 +101,10 @@ class UserRoute : KComposite() {
 
     private fun createNew() {
         val dp: ListDataProvider<User> = ListDataProvider(User.dataProvider.fetchAll())
-        val user: User = User()
+        val user = User()
         user.username = ""
+        user.role = "ROLE_MANAGER"
+        user.hashedPassword = ""
         dp.items.add(user)
         grid.dataProvider = dp
     }
@@ -99,21 +120,24 @@ class UserRoute : KComposite() {
     }
 
     private fun maybeDelete(item: User): Boolean {
-//        val turCount = Tur.findAllBy { Tur::direction_id eq item.id }.count()
-//        if (turCount == 0) {
-//            item.delete()
-//        } else {
-        ConfirmationDialog().open(
-            "Удалить данные “${item.username} ”?",
-            "С данным пользователем ассоцированы несколько заказов. Удаление невозможно!",
-            "",
-            "",
-            true,
-            true,
-            false
-        ) {}
-        //      }
-        return false
+        val userOrderCount = 0
+        if (userOrderCount == 0) {
+            item.delete()
+        } else {
+            ConfirmationDialog().open(
+                "Удалить данные “${item.username} ”?",
+                "С данным пользователем ассоцированы несколько заказов. Удаление невозможно!",
+                "",
+                "",
+                true,
+                true,
+                false
+            ) {
+
+            }
+            return false
+        }
+        return true
     }
 }
 
@@ -122,80 +146,100 @@ class UserRoute : KComposite() {
  * Shows a single row stripe with information about a single [User].
  */
 class UserItem(val row: User, ind: Int) : KComposite() {
-    val user: User get() = row
+    val user: User? get() = row
     var onDelete: () -> Unit = {}
-    var onSave: (pwd: String, confirm_pwd: String) -> Unit = { s: String, s1: String -> }
+    var onSave: (isPwdEdit: Boolean) -> Unit = {isPwdEdit: Boolean ->}
     val binder: Binder<User> = beanValidationBinder()
-    private var pwd: TextField = TextField()
-    private var confirmpwd: TextField = TextField()
+    var pwd: PasswordField = PasswordField()
 
-        private val root = ui {
+    private val root = ui {
 
         formLayout( classNames = "") {
-            style.set("padding", "13px")
+            this.
+            style.set("padding", "5px")
             style.set("border-bottom", "gray solid 0.005em")
             if (ind == 0) style.set("border-top", "gray solid 0.005em")
             style.set("border-radius", "2px")
 
             responsiveSteps {
                 "0"(1); "320px"(1); "480px"(2)
-                "780px"(4)
+                "780px"(8)
             }
             setWidthFull()
 
             checkBox ("Активен") {
+                //colspan = 2
                 bind(binder).bind(User::active)
             }
 
             textField("Имя пользователя") {
-                bind(binder)
-                    .trimmingConverter().asRequired("Значение не задано").bind(User::username)
+                colspan = 2
+                bind(binder).trimmingConverter().withValidator(
+                    { isNameUnique(value)}, "данное имя уже существует"
+                ).asRequired().bind(User::username)
             }
-            textField("Роль") {
+           //
+            comboBox<String>("Роль") {
+                colspan = 2
+                isAllowCustomValue = false
+                setItems(Constant.ROLES)
+
                 bind(binder)
-                    .trimmingConverter().asRequired("Значение не задано").bind(User::roles)
+                    .trimmingConverter().asRequired()
+                    .bind(User::role)
             }
 
+            horizontalLayout(padding = false, spacing = false) {
+                colspan = 2
 
-            // svg icon
+                pwd = passwordField("Пароль") {
+                    isVisible = false
+                    bind(binder)
+                    .withValidator(
+                        { it.length >= 5},
+                        "не менее 5 символов"
+                    ).bind(User::getHashedPassword, User::setPassword)
+                }
+
+                button {
+                    style.set("margin-left", "auto")
+                    style.set("background-color", "transparent")
+
+                    setPwdField(row.id == null, this, pwd)
+                    onClick {
+                        setPwdField(!pwd.isVisible, this, pwd)
+                    }
+                }
+
+
+            }
+            // buttons
             horizontalLayout(padding = false, spacing = false) {
 
+                colspan = 1
                 val img = Image(Constant.SAVE_ICON, "save")
                 img.width = "16px"
                 val save = iconButton(img) {
                     addThemeVariants(ButtonVariant.LUMO_TERTIARY)
                     style.set("margin-left","auto")
-                    onClick { onSave(pwd.value, confirmpwd.value) }
+                    onClick { onSave(pwd.isVisible) }
                 }
+
                 Tooltip.forComponent(save)
                     .withText("Сохранить")
                     .withPosition(Tooltip.TooltipPosition.TOP_START)
 
-                val deleteButton = button {
-                    icon = VaadinIcon.TRASH.create()
+                val imgDel = Image(Constant.DELETE_ICON, "delete")
+                imgDel.width = "16px"
+                val deleteButton = iconButton(imgDel) {
                     addThemeVariants(ButtonVariant.LUMO_TERTIARY)
-                    style.set("color", "white")
-                    style.set("margin-right","10px")
                     onClick { onDelete() }
                 }
+
                 Tooltip.forComponent(deleteButton)
                     .withText("Удалить")
                     .withPosition(Tooltip.TooltipPosition.TOP_START)
             }
-
-            checkBox ("Изменить пароль") {
-                onClick {
-                    pwd.isEnabled = value
-                    confirmpwd.isEnabled = value
-                }
-            }
-            pwd =  textField("Пароль(не менее 5 симв.)") {
-                isEnabled = false
-            }
-            confirmpwd = textField("Подтверждение пароля") {
-                isEnabled = false
-            }
-
 
     }
 }
@@ -204,6 +248,27 @@ init {
     binder.readBean(row)
     binder.validate()
 }
+    private fun isNameUnique(name: String?): Boolean {
+        if (name.isNullOrBlank()) return true
+        if (user?.username ?: "" == name) return true
+        return !User.existsWithName(name)
+    }
+
+
+    fun setPwdField(isEdit: Boolean, button: Button, field: PasswordField){
+        if (isEdit) {
+            field.value = ""
+            button.icon = VaadinIcon.CLOSE.create()
+            button.text = ""
+            field.isVisible = true
+            field.isExpand = true
+        } else {
+            button.text = "изменить пароль"
+            field.isVisible = false
+            button.icon = VaadinIcon.PENCIL.create()
+            field.isExpand = false
+        }
+    }
 
 override fun toString(): String = "UserItem($user)"
 }

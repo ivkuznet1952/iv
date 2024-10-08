@@ -76,10 +76,10 @@ class Bootstrap: ServletContextListener {
         // setup security
         // security interceptor is configured in AppServiceInitListener
 //        User(username = "admin", roles = "ROLE_ADMIN,ROLE_USER").apply { setPassword("admin"); save() }
-        if (User.findByUsername("admin") == null) User(username = "admin", roles = "ROLE_ADMIN", active = true).apply { setPassword("admin"); save() }
+        if (User.findByUsername("admin") == null) User(username = "admin", role = "ROLE_ADMIN", active = true).apply { setPassword("admin"); save() }
 
-//        User(username = "user", roles = "ROLE_USER").apply { setPassword("user"); save() }
-
+//        User(username = "user", role = "ROLE_MANAGER").apply { setPassword("user"); save() }
+        //User(username = "test", role = "ROLE_ADMIN").apply { setPassword("test"); save() }
         log.info("Initialization complete")
     } catch (t: Throwable) {
         log.error("Bootstrap failed!", t)

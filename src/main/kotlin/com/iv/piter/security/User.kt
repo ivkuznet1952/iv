@@ -3,25 +3,33 @@ package com.iv.piter.security
 import com.github.mvysny.vaadinsimplesecurity.HasPassword
 import com.github.vokorm.KEntity
 import com.github.vokorm.buildCondition
+import com.github.vokorm.existsBy
 import com.github.vokorm.findSingleBy
 import com.gitlab.mvysny.jdbiorm.Dao
 import com.gitlab.mvysny.jdbiorm.Table
 import com.gitlab.mvysny.jdbiorm.vaadin.EntityDataProvider
 import java.time.LocalDateTime
 import com.gitlab.mvysny.jdbiorm.condition.Condition
+import jakarta.validation.constraints.NotBlank
+import org.jdbi.v3.core.mapper.Nested
+import java.io.Serializable
 
 @Table("users")
 data class User(
                 override var id: Long? = null,
+                @field: NotBlank
                 var username: String = "",
+                @field: NotBlank
                 private var hashedPassword: String = "",
-                var roles: String = "",
+                @field: NotBlank
+                var role: String = "",
                 var active: Boolean = true,
                 var created: LocalDateTime = LocalDateTime.now(),
                 var updated: LocalDateTime = LocalDateTime.now()
                 ) : KEntity<Long>, HasPassword {
     companion object : Dao<User, Long>(User::class.java) {
         fun findByUsername(username: String): User? = findSingleBy { User::username eq username }
+        fun existsWithName(name: String): Boolean = existsBy{ User::username eq name }
     }
 
     override fun getHashedPassword(): String = hashedPassword
@@ -30,8 +38,15 @@ data class User(
         this.hashedPassword = hashedPassword
     }
 
-    val roleSet: Set<String> get() = roles.split(",").toSet()
+    val roleSet: Set<String> get() = role.split(",").toSet() // ??
 }
+
+
+//data class UserDTO(
+//    @field:Nested
+//    var user: User? = null,
+//    var pwd: String? = "",
+//)
 
 fun EntityDataProvider<User>.setFilterText(filter: String?) {
 

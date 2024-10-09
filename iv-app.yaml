@@ -1,0 +1,129 @@
+#
+
+# We'll place everything into one namespace: jdbi-orm-vaadin-crud-demo
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: iv #
+---
+
+# First, we'll configure the app itself
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+  namespace: iv
+spec:
+  selector:
+    matchLabels:
+      app: pod
+  template:
+    metadata:
+      labels:
+        app: pod
+    spec:
+      containers:
+        - name: main
+          image: localhost:32000/test/iv #
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: "256Mi"  # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+              cpu: "1"
+          env:
+            - name: JDBC_URL
+              value: "jdbc:postgresql://postgres:5432/postgres"
+            - name: JDBC_USERNAME
+              value: postgres
+            - name: JDBC_PASSWORD
+              value: mysecretpassword
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service
+  namespace: iv #
+spec:
+  selector:
+    app: pod
+  ports:
+    - port: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-main
+  namespace: iv #
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: service
+                port:
+                  number: 8080
+
+#
+# Next, we'll configure the database.
+#
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: iv
+spec:
+  accessModes: [ReadWriteOnce]
+  resources: { requests: { storage: 512Mi } }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresql-deployment
+  namespace: iv #
+spec:
+  selector:
+    matchLabels:
+      app: postgres-pod
+  template:
+    metadata:
+      labels:
+        app: postgres-pod
+    spec:
+      volumes:
+        - name: postgres-vol
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+      containers:
+        - name: postgresql
+          image: postgres:16.3
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_PASSWORD
+              value: mysecretpassword
+          resources:
+            requests:
+              memory: "2Mi"
+              cpu: "0"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: postgres-vol
+              mountPath: /var/lib/postgresql/data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres  # this will also be the DNS name of the VM running this service.
+  namespace: vok-login #jdbi-orm-vaadin-crud-demo
+spec:
+  selector:
+    app: postgres-pod
+  ports:
+    - port: 5432

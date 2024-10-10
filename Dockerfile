@@ -21,5 +21,5 @@ RUN tar xvf app.tar
 FROM openjdk:21-bookworm
 COPY --from=BUILD /app/build/distributions/app /app/
 WORKDIR /app/bin
-EXPOSE 8080
+EXPOSE 8088
 ENTRYPOINT ./app

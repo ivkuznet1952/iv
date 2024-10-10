@@ -1,4 +1,4 @@
-#
+# from mac
 
 # We'll place everything into one namespace: jdbi-orm-vaadin-crud-demo
 apiVersion: v1
@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: main
-          image: localhost:32000/test/iv #
+          image: <<IMAGE_AND_HASH>>
           ports:
             - containerPort: 8080
           resources:

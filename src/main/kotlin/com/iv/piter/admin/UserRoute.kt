@@ -48,16 +48,16 @@ class UserRoute : KComposite() {
             header = h5 {
                 setId("header")
             }
-            br{}
+            br {}
             toolbar = toolbarView("Добавить") {
                 onSearch = { updateView() }
                 onCreate = { createNew() }
             }
-            br{}
+            br {}
             grid = virtualList {
                 var ind = 0
                 setRenderer(ComponentRenderer { row ->
-                    val item = UserItem(row,  ind)
+                    val item = UserItem(row, ind)
                     item.onDelete = {
                         var isDelete = false
                         if (row.id != null) isDelete = maybeDelete(row)
@@ -67,25 +67,29 @@ class UserRoute : KComposite() {
                             n.addThemeVariants(NotificationVariant.LUMO_SUCCESS)
                         }
                     }
-                    item.onSave = {isPwdEdit ->
-                       try {
-                           item.binder.writeBean(row)
-                           row.updated = LocalDateTime.now()
-                           if (row.id == null) {
-                               row.created = LocalDateTime.now()
-                               //row.setPassword(row.hashedPassword)
-                           } else {
-                               if (!isPwdEdit) {
-                                   row.hashedPassword = User.getById(row.id!!)!!.hashedPassword
-                               }
-                           }
-                           row.save()
-                           val n = Notification.show("Данные успешно сохранены.", 3000, Notification.Position.TOP_END)
-                           n.addThemeVariants(NotificationVariant.LUMO_SUCCESS)
-                       } catch (ve: ValidationException){
-                           val n = Notification.show("Данные имеют ошибки и не сохранены.", 3000, Notification.Position.TOP_END)
-                           n.addThemeVariants(NotificationVariant.LUMO_ERROR)
-                       }
+                    item.onSave = { isPwdEdit ->
+                        try {
+                            item.binder.writeBean(row)
+                            row.updated = LocalDateTime.now()
+                            if (row.id == null) {
+                                row.created = LocalDateTime.now()
+                                //row.setPassword(row.hashedPassword)
+                            } else {
+                                if (!isPwdEdit) {
+                                    row.hashedPassword = User.getById(row.id!!)!!.hashedPassword
+                                }
+                            }
+                            row.save()
+                            val n = Notification.show("Данные успешно сохранены.", 3000, Notification.Position.TOP_END)
+                            n.addThemeVariants(NotificationVariant.LUMO_SUCCESS)
+                        } catch (ve: ValidationException) {
+                            val n = Notification.show(
+                                "Данные имеют ошибки и не сохранены.",
+                                3000,
+                                Notification.Position.TOP_END
+                            )
+                            n.addThemeVariants(NotificationVariant.LUMO_ERROR)
+                        }
                     }
                     ind++
                     item
@@ -148,15 +152,14 @@ class UserRoute : KComposite() {
 class UserItem(val row: User, ind: Int) : KComposite() {
     val user: User? get() = row
     var onDelete: () -> Unit = {}
-    var onSave: (isPwdEdit: Boolean) -> Unit = {isPwdEdit: Boolean ->}
+    var onSave: (isPwdEdit: Boolean) -> Unit = { isPwdEdit: Boolean -> }
     val binder: Binder<User> = beanValidationBinder()
     var pwd: PasswordField = PasswordField()
 
     private val root = ui {
 
-        formLayout( classNames = "") {
-            this.
-            style.set("padding", "5px")
+        formLayout(classNames = "") {
+            this.style.set("padding", "5px")
             style.set("border-bottom", "gray solid 0.005em")
             if (ind == 0) style.set("border-top", "gray solid 0.005em")
             style.set("border-radius", "2px")
@@ -167,7 +170,7 @@ class UserItem(val row: User, ind: Int) : KComposite() {
             }
             setWidthFull()
 
-            checkBox ("Активен") {
+            checkBox("Активен") {
                 //colspan = 2
                 bind(binder).bind(User::active)
             }
@@ -175,10 +178,10 @@ class UserItem(val row: User, ind: Int) : KComposite() {
             textField("Имя пользователя") {
                 colspan = 2
                 bind(binder).trimmingConverter().withValidator(
-                    { isNameUnique(value)}, "данное имя уже существует"
+                    { isNameUnique(value) }, "данное имя уже существует"
                 ).asRequired().bind(User::username)
             }
-           //
+            //
             comboBox<String>("Роль") {
                 colspan = 2
                 isAllowCustomValue = false
@@ -195,10 +198,10 @@ class UserItem(val row: User, ind: Int) : KComposite() {
                 pwd = passwordField("Пароль") {
                     isVisible = false
                     bind(binder)
-                    .withValidator(
-                        { it.length >= 5},
-                        "не менее 5 символов"
-                    ).bind(User::getHashedPassword, User::setPassword)
+                        .withValidator(
+                            { it.length >= 5 },
+                            "не менее 5 символов"
+                        ).bind(User::getHashedPassword, User::setPassword)
                 }
 
                 button {
@@ -221,7 +224,7 @@ class UserItem(val row: User, ind: Int) : KComposite() {
                 img.width = "16px"
                 val save = iconButton(img) {
                     addThemeVariants(ButtonVariant.LUMO_TERTIARY)
-                    style.set("margin-left","auto")
+                    style.set("margin-left", "auto")
                     onClick { onSave(pwd.isVisible) }
                 }
 
@@ -241,13 +244,15 @@ class UserItem(val row: User, ind: Int) : KComposite() {
                     .withPosition(Tooltip.TooltipPosition.TOP_START)
             }
 
+        }
     }
-}
 
-init {
-    binder.readBean(row)
-    binder.validate()
-}
+// init
+    init {
+        binder.readBean(row)
+        binder.validate()
+    }
+
     private fun isNameUnique(name: String?): Boolean {
         if (name.isNullOrBlank()) return true
         if (user?.username ?: "" == name) return true
@@ -255,7 +260,7 @@ init {
     }
 
 
-    fun setPwdField(isEdit: Boolean, button: Button, field: PasswordField){
+    fun setPwdField(isEdit: Boolean, button: Button, field: PasswordField) {
         if (isEdit) {
             field.value = ""
             button.icon = VaadinIcon.CLOSE.create()
@@ -270,5 +275,5 @@ init {
         }
     }
 
-override fun toString(): String = "UserItem($user)"
+    override fun toString(): String = "UserItem($user)"
 }

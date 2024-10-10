@@ -1,10 +1,20 @@
 #
+# Kubernetes configuration file for deploying this app along with a
+# persistent PostgreSQL database on MicroK8s.
+# Please see https://mvysny.github.io/kubernetes-vaadin-app-postgresql/ for an explanation how this works.
+#
+# To use this:
+# 1. Enable necessary microk8s plugins: microk8s enable dns hostpath-storage registry
+# 2. Build this app as a docker image and push it to microk8s internal registry:
+#    1. docker build --no-cache -t localhost:32000/test/jdbi-orm-vaadin-crud-demo:latest .
+#    2. docker push localhost:32000/test/jdbi-orm-vaadin-crud-demo
+# 3. Apply this file: mkctl apply -f kubernetes-app.yaml
 
 # We'll place everything into one namespace: jdbi-orm-vaadin-crud-demo
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: iv #
+  name: vok-login #jdbi-orm-vaadin-crud-demo
 ---
 
 # First, we'll configure the app itself
@@ -12,7 +22,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: deployment
-  namespace: iv
+  namespace: vok-login # jdbi-orm-vaadin-crud-demo
 spec:
   selector:
     matchLabels:
@@ -24,13 +34,13 @@ spec:
     spec:
       containers:
         - name: main
-          image: localhost:32000/test/iv #
+          image: localhost:32000/test/vok-login # localhost:32000/test/jdbi-orm-vaadin-crud-demo
           ports:
             - containerPort: 8080
           resources:
             limits:
               memory: "256Mi"  # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-              cpu: "1"
+              cpu: 1
           env:
             - name: JDBC_URL
               value: "jdbc:postgresql://postgres:5432/postgres"
@@ -43,7 +53,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: service
-  namespace: iv #
+  namespace: vok-login #
 spec:
   selector:
     app: pod
@@ -54,7 +64,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-main
-  namespace: iv #
+  namespace: vok-login #
 spec:
   rules:
     - http:
@@ -75,7 +85,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-pvc
-  namespace: iv
+  namespace: vok-login #jdbi-orm-vaadin-crud-demo
 spec:
   accessModes: [ReadWriteOnce]
   resources: { requests: { storage: 512Mi } }
@@ -84,7 +94,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgresql-deployment
-  namespace: iv #
+  namespace: vok-login #
 spec:
   selector:
     matchLabels:
@@ -109,7 +119,7 @@ spec:
           resources:
             requests:
               memory: "2Mi"
-              cpu: "0"
+              cpu: 0
             limits:
               memory: "128Mi"
               cpu: "500m"
@@ -121,7 +131,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: postgres  # this will also be the DNS name of the VM running this service.
-  namespace: iv #
+  namespace: vok-login #jdbi-orm-vaadin-crud-demo
 spec:
   selector:
     app: postgres-pod

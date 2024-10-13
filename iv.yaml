@@ -1,6 +1,7 @@
 # from mac
 
 # We'll place everything into one namespace: jdbi-orm-vaadin-crud-demo
+##### sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx.key -out /etc/ssl/certs/nginx.crt
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -24,7 +25,7 @@ spec:
     spec:
       containers:
         - name: main
-          image: <<IMAGE_AND_HASH>>
+          image: localhost:32000/test/iv
           ports:
             - containerPort: 8080
           resources:

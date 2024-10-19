@@ -9,6 +9,7 @@ import com.github.mvysny.kaributools.navigateTo
 import com.iv.piter.Constant
 import com.iv.piter.MainLayout
 import com.iv.piter.entity.Trip
+import com.iv.piter.security.LoginRoute
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.dialog.Dialog
@@ -53,7 +54,10 @@ class HomeRoute : KComposite() {
                     style.set("background-color", "transparent")
                     style.set("color", "white")
                     style.set("margin-left", "auto")
-                    onClick { navigateTo("/login") }
+                    onClick {
+                        //navigateTo("/login") // error???
+                        navigateTo<LoginRoute>()
+                    }
                 }
                 Tooltip.forComponent(room).withText("Личный кабинет")
             }

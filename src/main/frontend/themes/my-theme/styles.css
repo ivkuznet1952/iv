@@ -54,6 +54,9 @@ body {
     .hide-admin-drawer {
         display: none;
     }
+    .hide-admin-menu {
+        //background-color: canvas;
+    }
 }
 
 vaadin-app-layout::part(navbar){
@@ -63,7 +66,7 @@ vaadin-app-layout::part(navbar){
     justify-content: center;
     max-width: 960px;
     margin: 0 auto;
-    background-image:linear-gradient(var(--lumo-contrast-5pct), var(--lumo-base-color)) !important;
+    background-image: linear-gradient(var(--lumo-contrast-5pct), var(--lumo-base-color)) !important;
 }
 
 .main-layout {

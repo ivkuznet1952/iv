@@ -46,14 +46,13 @@ class UserRoute : KComposite() {
             setWidthFull()
             setHeightFull()
             header = h5 {
+                style.set("margin-left","10px")
                 setId("header")
             }
-            br {}
             toolbar = toolbarView("Добавить") {
                 onSearch = { updateView() }
                 onCreate = { createNew() }
             }
-            br {}
             grid = virtualList {
                 var ind = 0
                 setRenderer(ComponentRenderer { row ->
@@ -73,15 +72,15 @@ class UserRoute : KComposite() {
                             row.updated = LocalDateTime.now()
                             if (row.id == null) {
                                 row.created = LocalDateTime.now()
-                                //row.setPassword(row.hashedPassword)
                             } else {
                                 if (!isPwdEdit) {
-                                    row.hashedPassword = User.getById(row.id!!)!!.hashedPassword
+                                    row.hashedPassword = User.getById(row.id!!).hashedPassword
                                 }
                             }
                             row.save()
                             val n = Notification.show("Данные успешно сохранены.", 3000, Notification.Position.TOP_END)
                             n.addThemeVariants(NotificationVariant.LUMO_SUCCESS)
+                            updateView()
                         } catch (ve: ValidationException) {
                             val n = Notification.show(
                                 "Данные имеют ошибки и не сохранены.",
@@ -124,7 +123,7 @@ class UserRoute : KComposite() {
     }
 
     private fun maybeDelete(item: User): Boolean {
-        val userOrderCount = 0
+        val userOrderCount = 1 // TODO
         if (userOrderCount == 0) {
             item.delete()
         } else {
@@ -150,9 +149,9 @@ class UserRoute : KComposite() {
  * Shows a single row stripe with information about a single [User].
  */
 class UserItem(val row: User, ind: Int) : KComposite() {
-    val user: User? get() = row
+    val user: User get() = row
     var onDelete: () -> Unit = {}
-    var onSave: (isPwdEdit: Boolean) -> Unit = { isPwdEdit: Boolean -> }
+    var onSave: (isPwdEdit: Boolean) -> Unit = { }
     val binder: Binder<User> = beanValidationBinder()
     var pwd: PasswordField = PasswordField()
 
@@ -171,7 +170,6 @@ class UserItem(val row: User, ind: Int) : KComposite() {
             setWidthFull()
 
             checkBox("Активен") {
-                //colspan = 2
                 bind(binder).bind(User::active)
             }
 

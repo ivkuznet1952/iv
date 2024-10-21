@@ -63,6 +63,7 @@ class AdminLayout : KComposite(), RouterLayout {
             content {
                 contentPane = div("admin-layout") {
                     verticalLayout(spacing = false, padding = true, classNames = "hide-admin-menu") {
+                       // style.set("background-color", "red")
                         text("MENU")
                     }
                 }

@@ -42,12 +42,6 @@ data class User(
 }
 
 
-//data class UserDTO(
-//    @field:Nested
-//    var user: User? = null,
-//    var pwd: String? = "",
-//)
-
 fun EntityDataProvider<User>.setFilterText(filter: String?) {
 
     if (filter.isNullOrBlank()) {
@@ -55,8 +49,8 @@ fun EntityDataProvider<User>.setFilterText(filter: String?) {
     } else {
         val normalizedFilter: String = "%" + filter.trim().lowercase() + "%"
         this.filter = buildCondition<User> {
-            """LOWER(username) LIKE :filter or LOWER(roles) LIKE :filter
-                    or COALESCE(username, '') LIKE :filter or COALESCE(roles, '') LIKE :filter
+            """LOWER(username) LIKE :filter or LOWER(role) LIKE :filter
+                    or COALESCE(username, '') LIKE :filter or COALESCE(role, '') LIKE :filter
                     """.trimMargin()("filter" to normalizedFilter)
         }
     }

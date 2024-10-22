@@ -6,7 +6,6 @@ import com.github.mvysny.karibudsl.v23.sideNav
 import com.iv.piter.MainLayout
 import com.iv.piter.security.loginService
 import com.vaadin.flow.component.HasElement
-import com.vaadin.flow.component.applayout.AppLayout
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -44,8 +43,9 @@ class AdminLayout : KComposite(), RouterLayout {
 
             drawer {
                 sideNav {
-                    route(UserRoute::class, VaadinIcon.LIST)
+                    route(TransportRoute::class, VaadinIcon.CAR)
                     route(GuideRoute::class, VaadinIcon.COG)
+                    route(UserRoute::class, VaadinIcon.LIST)
                 }
 
                 // logout menu item
@@ -62,10 +62,29 @@ class AdminLayout : KComposite(), RouterLayout {
 
             content {
                 contentPane = div("admin-layout") {
-                    verticalLayout(spacing = false, padding = true, classNames = "hide-admin-menu") {
-                       // style.set("background-color", "red")
-                        text("MENU")
+                    horizontalLayout (spacing = false, padding = true, classNames = "hide-admin-menu") {
+                        routerLink(null, "Транспорт", TransportRoute::class) {
+                            addClassName("admin-layout__nav-item")
+                            highlightCondition = HighlightConditions.sameLocation()
+                        }
+                        routerLink(null, "Гиды", GuideRoute::class) {
+                            addClassName("admin-layout__nav-item")
+                            highlightCondition = HighlightConditions.sameLocation()
+                        }
+                        routerLink(null,"Пользователи", UserRoute::class) {
+                            addClassName("admin-layout__nav-item")
+                            highlightCondition = HighlightConditions.sameLocation()
+                        }
+                        button("Logout", VaadinIcon.SIGN_OUT.create()) {
+                            addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE)
+                            style.set("color", "white")
+                            style.set("margin-left", "auto")
+                            onClick {
+                                Session.loginService.logout()
+                            }
+                        }
                     }
+
                 }
             }
         }

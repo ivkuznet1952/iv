@@ -212,7 +212,6 @@ class UserItem(val row: User, ind: Int) : KComposite() {
                     }
                 }
 
-
             }
             // buttons
             horizontalLayout(padding = false, spacing = false) {

@@ -1,11 +1,9 @@
 package com.iv.piter
 
-import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.vaadinsimplesecurity.SimpleNavigationAccessControl
 import com.vaadin.flow.server.ServiceInitEvent
 import com.vaadin.flow.server.VaadinServiceInitListener
 import com.iv.piter.home.HomeRoute
-import com.iv.piter.security.LoginRoute
 import com.iv.piter.security.loginService
 import eu.vaadinonkotlin.vaadin.Session
 

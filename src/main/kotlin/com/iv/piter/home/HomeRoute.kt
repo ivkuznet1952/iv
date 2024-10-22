@@ -55,7 +55,6 @@ class HomeRoute : KComposite() {
                     style.set("color", "white")
                     style.set("margin-left", "auto")
                     onClick {
-                        //navigateTo("/login") // error???
                         navigateTo<LoginRoute>()
                     }
                 }

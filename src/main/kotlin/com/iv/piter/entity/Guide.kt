@@ -15,7 +15,7 @@ data class Guide(override var id: Long? = null,
                      var firstname: String = "",
                      @field: NotBlank
                      var lastname: String = "",
-                     var email: String? = "",
+                     //var email: String? = "",
                      var phone: String? = "",
                      var active: Boolean = true,
                      var comment: String? = "",
@@ -25,11 +25,6 @@ data class Guide(override var id: Long? = null,
 
     override fun delete() {
         db {
-        //    if (id != null) {
-        //        handle.createUpdate("update TOrder set guide_id = NULL where guide_id=:id")
-        //            .bind("id", id!!)
-        //            .execute()
-        //    }
             super.delete()
         }
     }
@@ -43,13 +38,10 @@ fun EntityDataProvider<Guide>.setFilterText(filter: String?) {
     } else {
         val normalizedFilter: String = "%" + filter.trim().lowercase() + "%"
         val c: Condition = buildCondition<Guide>{
-            """firstname LIKE :filter
-                    or COALESCE(firstname, 'Undefined') LIKE :filter
-                    or COALESCE(lastname, 'Undefined') LIKE :filter
-                    or COALESCE(phone, 'Undefined') LIKE :filter
-                    or COALESCE(email, 'Undefined') LIKE :filter
-                    """.trimMargin()("filter" to normalizedFilter)
+            """LOWER(firstname) LIKE :filter LIKE :filter or LOWER(lastname) LIKE :filter or phone LIKE :filter
+                     """.trimMargin()("filter" to normalizedFilter)
         }
         this.filter = c
     }
 }
+//or COALESCE(firstname, 'Undefined') LIKE :filter

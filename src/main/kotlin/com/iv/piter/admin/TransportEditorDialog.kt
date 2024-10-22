@@ -5,16 +5,13 @@ import com.iv.piter.ConfirmationDialog
 import com.iv.piter.EditorDialogFrame
 import com.iv.piter.EditorForm
 import com.iv.piter.entity.Transport
-//import com.iv.tur.ConfirmationDialog
+
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.notification.NotificationVariant
 import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.validator.StringLengthValidator
-//import com.iv.tur.EditorDialogFrame
-//import com.iv.tur.EditorForm
-//import com.iv.tur.entity.GOrder
-//import com.iv.tur.entity.Transport
+
 
 /**
  * A form for editing [Transport] objects.

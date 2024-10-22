@@ -4,6 +4,8 @@ import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.ModifierKey
 import com.github.mvysny.kaributools.addShortcut
 import com.github.mvysny.kaributools.isSingleSelect
+import com.github.mvysny.kaributools.sortProperty
+import com.github.vokorm.exp
 import com.iv.piter.Toolbar
 import com.iv.piter.entity.Transport
 import com.iv.piter.entity.setFilterText
@@ -28,6 +30,7 @@ import com.vaadin.flow.router.Route
 import jakarta.annotation.security.RolesAllowed
 //import com.iv.tur.toolbarView
 import com.vaadin.flow.component.html.H5
+import eu.vaadinonkotlin.vaadin.setSortProperty
 import eu.vaadinonkotlin.vaadin.vokdb.dataProvider
 
 @Route("transport", layout = AdminLayout::class)
@@ -57,19 +60,28 @@ class TransportRoute : KComposite() {
             grid = grid(dataProvider) {
                 isExpand = true
                 columnFor(Transport::name) {
-                    setHeader("Имя")
+                    //eu.vaadinonkotlin.vaadin.
+                    //setSortProperty(Transport::name.exp)
+                        setHeader("Имя")
+                      //  setSortable(true)
+                       // isSortable = false
+                        //sortProperty = Transport::name
+                        //key = Transport::name.exp.toString()
+                       // setKey(Transport::name.toString());
+                   //
                 }
                 addColumn(ComponentRenderer<Button, Transport> { tr -> createEditButton(tr) }).apply {
                     flexGrow = 0; key = ""
                 }
                 element.themeList.add("row-dividers")
 
-                gridContextMenu = gridContextMenu {
-                    item("New", { _ -> editorDialog.createNew() })
-                    item("Edit (Alt+E)", { tr -> if (tr != null) edit(tr) })
-                    item("Delete", { tr -> if (tr != null) deleteTransport(tr) })
-                }
+//                gridContextMenu = gridContextMenu {
+//                    item("New", { _ -> editorDialog.createNew() })
+//                    item("Edit (Alt+E)", { tr -> if (tr != null) edit(tr) })
+//                    item("Delete", { tr -> if (tr != null) deleteTransport(tr) })
+//                }
             }
+
 
             addShortcut(ModifierKey.Alt + Key.KEY_E) {
                 val transport = grid.asSingleSelect().value
@@ -89,6 +101,7 @@ class TransportRoute : KComposite() {
             icon = Icon(VaadinIcon.EDIT)
             addClassName("transport__edit")
             addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+            height = "22px"
             onClick { edit(transport) }
         }
 
@@ -97,12 +110,15 @@ class TransportRoute : KComposite() {
     }
 
     private fun updateView() {
+        //println("//////////// updateView()")
         dataProvider.setFilterText(toolbar.searchText)
         if (toolbar.searchText.isNotBlank()) {
             header.text = "Поиск “${toolbar.searchText}”"
         } else {
             header.text = "Транспорт"
         }
+      //  grid.dataProvider = dataProvider
+      //  grid.select(grid.dataCommunicator.getItem(0))
     }
 
     private fun deleteTransport(transport: Transport) {

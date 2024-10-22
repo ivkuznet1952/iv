@@ -3,6 +3,7 @@ package com.iv.piter.admin
 import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.ModifierKey
 import com.github.mvysny.kaributools.addShortcut
+import com.github.mvysny.kaributools.isSingleSelect
 import com.iv.piter.Toolbar
 import com.iv.piter.entity.Transport
 import com.iv.piter.entity.setFilterText
@@ -46,7 +47,7 @@ class TransportRoute : KComposite() {
 
     private val root = ui {
 
-        verticalLayout(false) {
+        verticalLayout(true) {
             content { align(stretch, top) }
             toolbar = toolbarView("Новый транспорт") {
                 onSearch = { updateView() }
@@ -58,7 +59,7 @@ class TransportRoute : KComposite() {
                 columnFor(Transport::name) {
                     setHeader("Имя")
                 }
-                addColumn(ComponentRenderer<Button, Transport>({ tr -> createEditButton(tr) })).apply {
+                addColumn(ComponentRenderer<Button, Transport> { tr -> createEditButton(tr) }).apply {
                     flexGrow = 0; key = ""
                 }
                 element.themeList.add("row-dividers")

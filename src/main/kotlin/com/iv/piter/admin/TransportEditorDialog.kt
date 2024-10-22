@@ -87,6 +87,7 @@ class TransportEditorForm(val transport: Transport) : FormLayout(), EditorForm<T
                 n.addThemeVariants(NotificationVariant.LUMO_SUCCESS)
                 onTransportChanged(transport)
                 frame.closeDialog()
+               // frame.updateView()
             }
             frame.onDeleteItem = { item -> maybeDelete(frame, item) }
             frame.open(transport, transport.id == null)

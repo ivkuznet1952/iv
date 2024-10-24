@@ -38,7 +38,7 @@ fun EntityDataProvider<Guide>.setFilterText(filter: String?) {
     } else {
         val normalizedFilter: String = "%" + filter.trim().lowercase() + "%"
         val c: Condition = buildCondition<Guide>{
-            """LOWER(firstname) LIKE :filter LIKE :filter or LOWER(lastname) LIKE :filter or phone LIKE :filter
+            """LOWER(firstname) LIKE :filter or LOWER(lastname) LIKE :filter or phone LIKE :filter
                      """.trimMargin()("filter" to normalizedFilter)
         }
         this.filter = c

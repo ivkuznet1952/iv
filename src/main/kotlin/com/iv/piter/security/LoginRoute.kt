@@ -54,8 +54,7 @@ class LoginRoute : KComposite() {
         loginForm.addLoginListener { e ->
             try {
                 Session.loginService.login(e.username, e.password)
-                navigateTo<TransportRoute>()
-//                navigateTo("user")
+                navigateTo<GuideRoute>()
             } catch (e: LoginException) {
                 log.warn("Login failed", e)
                // loginForm.setErrorMessage("Login failed", e.message)

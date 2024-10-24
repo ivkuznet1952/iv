@@ -1,37 +1,37 @@
 package com.iv.piter.admin
 
-import com.github.mvysny.karibudsl.v10.*
-import com.github.mvysny.kaributools.ModifierKey
-import com.github.mvysny.kaributools.addShortcut
-import com.github.mvysny.kaributools.isSingleSelect
-import com.github.mvysny.kaributools.sortProperty
-import com.github.vokorm.exp
-import com.iv.piter.Toolbar
-import com.iv.piter.entity.Transport
-import com.iv.piter.entity.setFilterText
-import com.iv.piter.toolbarView
 //import com.iv.tur.Constants
 //import com.iv.tur.MainLayout
 //import com.iv.tur.Toolbar
 //import com.iv.tur.entity.Transport
 //import com.iv.tur.entity.setFilterText
 //
-import com.vaadin.flow.component.Key
+//import com.iv.tur.toolbarView
+import com.github.mvysny.karibudsl.v10.*
+import com.github.mvysny.kaributools.fetchAll
+import com.github.mvysny.kaributools.sortProperty
+import com.github.vokorm.asc
+import com.github.vokorm.exp
+import com.github.vokorm.toProperty
+import com.iv.piter.Toolbar
+import com.iv.piter.entity.Transport
+import com.iv.piter.entity.setFilterText
+import com.iv.piter.toolbarView
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu
+import com.vaadin.flow.component.html.H5
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
-import jakarta.annotation.security.RolesAllowed
-//import com.iv.tur.toolbarView
-import com.vaadin.flow.component.html.H5
-import eu.vaadinonkotlin.vaadin.setSortProperty
 import eu.vaadinonkotlin.vaadin.vokdb.dataProvider
+//import eu.vaadinonkotlin.vaadin.setSortProperty
+import jakarta.annotation.security.RolesAllowed
+
 
 @Route("transport", layout = AdminLayout::class)
 @PageTitle("Транспорт")
@@ -59,41 +59,23 @@ class TransportRoute : KComposite() {
             header = h5()
             grid = grid(dataProvider) {
                 isExpand = true
-                columnFor(Transport::name) {
-                    //eu.vaadinonkotlin.vaadin.
-                    //setSortProperty(Transport::name.exp)
-                        setHeader("Имя")
-                      //  setSortable(true)
-                       // isSortable = false
-                        //sortProperty = Transport::name
-                        //key = Transport::name.exp.toString()
-                       // setKey(Transport::name.toString());
-                   //
+               columnFor(Transport::name) {
+                     setHeader("Наименование")
+                    isSortable = false
+                   //setSortProperty(Transport::name.exp)
                 }
+
                 addColumn(ComponentRenderer<Button, Transport> { tr -> createEditButton(tr) }).apply {
                     flexGrow = 0; key = ""
                 }
                 element.themeList.add("row-dividers")
-
-//                gridContextMenu = gridContextMenu {
-//                    item("New", { _ -> editorDialog.createNew() })
-//                    item("Edit (Alt+E)", { tr -> if (tr != null) edit(tr) })
-//                    item("Delete", { tr -> if (tr != null) deleteTransport(tr) })
-//                }
-            }
-
-
-            addShortcut(ModifierKey.Alt + Key.KEY_E) {
-                val transport = grid.asSingleSelect().value
-                if (transport != null) {
-                    edit(transport)
-                }
             }
         }
     }
 
     init {
         updateView()
+        //grid.select(dataProvider.fetchAll()[0])
     }
 
     private fun createEditButton(transport: Transport): Button =
@@ -117,8 +99,9 @@ class TransportRoute : KComposite() {
         } else {
             header.text = "Транспорт"
         }
-      //  grid.dataProvider = dataProvider
-      //  grid.select(grid.dataCommunicator.getItem(0))
+        dataProvider.setSortFields(Transport::name.asc)
+        grid.dataProvider = dataProvider
+        //grid.select(grid.dataCommunicator.getItem(0))
     }
 
     private fun deleteTransport(transport: Transport) {

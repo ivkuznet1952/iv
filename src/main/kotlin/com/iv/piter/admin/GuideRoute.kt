@@ -16,10 +16,13 @@ import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.notification.NotificationVariant
 import com.vaadin.flow.component.shared.Tooltip
+import com.vaadin.flow.component.textfield.TextAreaVariant
 import com.vaadin.flow.component.virtuallist.VirtualList
 import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.data.renderer.ComponentRenderer
+import com.vaadin.flow.dom.Element
+import com.vaadin.flow.dom.ElementFactory
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import eu.vaadinonkotlin.vaadin.vokdb.dataProvider
@@ -34,6 +37,7 @@ class GuideRoute : KComposite() {
     private lateinit var toolbar: Toolbar
     private lateinit var grid: VirtualList<Guide>
     private val dataProvider = Guide.dataProvider
+    private var ind = 0
 
     private val root = ui {
         verticalLayout(false, spacing = false) {
@@ -51,7 +55,6 @@ class GuideRoute : KComposite() {
             }
            br{}
             grid = virtualList {
-                var ind = 0
                 setRenderer(ComponentRenderer<GuideItem, Guide> { row ->
                     val item = GuideItem(row, ind)
                     item.onDelete = {
@@ -64,7 +67,10 @@ class GuideRoute : KComposite() {
                         }
                     }
                     item.onSave = {
-
+                        item.binder.writeBean(row)
+                        row.save()
+                        val n = Notification.show("Данные успешно сохранены.", 3000, Notification.Position.TOP_END)
+                        n.addThemeVariants(NotificationVariant.LUMO_SUCCESS)
                     }
                     ind++
                     item
@@ -89,6 +95,7 @@ class GuideRoute : KComposite() {
     }
 
     private fun updateView() {
+        ind = 0
         dataProvider.setFilterText(toolbar.searchText)
         if (toolbar.searchText.isNotBlank()) {
             header.text = "Поиск “${toolbar.searchText}”"
@@ -128,86 +135,24 @@ class GuideItem(val row: Guide, ind: Int) : KComposite() {
     val binder: Binder<Guide> = beanValidationBinder()
 
     private val root = ui {
-
-        formLayout(classNames = "") {
-            //style.set("padding", "13px")
+        verticalLayout(spacing = false, padding = false) {
+            style.set("padding-left", "10px")
+            style.set("padding-right", "10px")
             style.set("border-bottom", "gray solid 0.005em")
             if (ind == 0) style.set("border-top", "gray solid 0.005em")
             style.set("border-radius", "2px")
 
-            responsiveSteps {
-                "0"(1); "320px"(1); "480px"(2)
-                "780px"(9)
-            }
-            setWidthFull()
-            checkBox("Активен") {
-                bind(binder).bind(Guide::active)
-            }
-            textField("Имя") {
-                colspan = 2
-                bind(binder)
-                    .trimmingConverter().asRequired("Значение не задано").bind(Guide::firstname)
-            }
-            textField("Фамилия") {
-                colspan = 2
-                bind(binder)
-                    .trimmingConverter().asRequired("Значение не задано").bind(Guide::lastname)
-            }
-            textField("Телефон") {
-                colspan = 2
-                bind(binder)
-                    .trimmingConverter().asRequired("Значение не задано").bind(Guide::phone)
-            }
-//            textField("Комментарий") {
-//                colspan = 2
-//                bind(binder).bind(Guide::comment)
-//            }
-         /*   horizontalLayout(padding = false, spacing = false) {
-                colspan = 2
-
-               val pwd = textField("Пароль") {
-                    isVisible = false
-                    bind(binder)
-                        .withValidator(
-                            { it.length >= 5 },
-                            "не менее 5 символов"
-                        ).bind(Guide::comment)
+            horizontalLayout(padding = false, spacing = true) {
+                minWidth = "100%"
+                checkBox("Активен") {
+                    bind(binder).bind(Guide::active)
                 }
-
-                button {
-                    style.set("margin-left", "auto")
-                    style.set("background-color", "transparent")
-
-                   // setPwdField(row.id == null, this, pwd)
-                    text = row.comment
-                    icon = VaadinIcon.PENCIL.create()
-                    onClick {
-                       // setPwdField(!pwd.isVisible, this, pwd)
-                    }
-                }
-
-            } */
-            // svg icon
-            horizontalLayout(padding = false, spacing = false) {
-                colspan = 2
-                val editButton = button {
-                    icon = VaadinIcon.PENCIL.create()
-                    addThemeVariants(ButtonVariant.LUMO_TERTIARY)
-                    style.set("color", "white")
-                    //style.set("margin-left","10px")
-                    style.set("margin-left","auto")
-                   // onClick { onDelete() }
-                }
-                Tooltip.forComponent(editButton)
-                    .withText("Редактировать")
-                    .withPosition(Tooltip.TooltipPosition.TOP_START)
-
                 val img = Image(Constant.SAVE_ICON, "save")
                 img.width = "16px"
                 val save = iconButton(img) {
+                    style.set("margin-left", "auto")
                     addThemeVariants(ButtonVariant.LUMO_TERTIARY)
-                  //  style.set("margin-left","auto")
-                   // onClick { onSave(pwd.value, confirmpwd.value) }
+                    onClick { onSave() }
                 }
                 Tooltip.forComponent(save)
                     .withText("Сохранить")
@@ -217,7 +162,6 @@ class GuideItem(val row: Guide, ind: Int) : KComposite() {
                     icon = VaadinIcon.TRASH.create()
                     addThemeVariants(ButtonVariant.LUMO_TERTIARY)
                     style.set("color", "white")
-                    style.set("margin-left","10px")
                     onClick { onDelete() }
                 }
                 Tooltip.forComponent(deleteButton)
@@ -225,8 +169,41 @@ class GuideItem(val row: Guide, ind: Int) : KComposite() {
                     .withPosition(Tooltip.TooltipPosition.TOP_START)
             }
 
+            formLayout(classNames = "") {
+
+                responsiveSteps {
+                    "0"(1); "320px"(1); "480px"(2)
+                    "780px"(6)
+                }
+                setWidthFull()
+
+                textField("Имя") {
+                    colspan = 2
+                    bind(binder)
+                        .trimmingConverter().asRequired("Значение не задано").bind(Guide::firstname)
+                }
+                textField("Фамилия") {
+                    colspan = 2
+                    bind(binder)
+                        .trimmingConverter().asRequired("Значение не задано").bind(Guide::lastname)
+                }
+                textField("Телефон") {
+                    colspan = 2
+                    bind(binder)
+                        .trimmingConverter().asRequired("Значение не задано").bind(Guide::phone)
+                }
+
+                horizontalLayout(padding = false, spacing = true) {
+                    minWidth = "100%"
+                    textArea("Комментарий") {
+                        width = "100%"
+                        bind(binder).bind(Guide::comment)
+                    }
+                }
+            }
 
         }
+
     }
 
     init {

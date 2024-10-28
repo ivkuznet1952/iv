@@ -17,12 +17,19 @@ import com.vaadin.flow.data.validator.StringLengthValidator
  * A form for editing [Transport] objects.
  */
 class TransportEditorForm(val transport: Transport) : FormLayout(), EditorForm<Transport> {
-    private val isEditing get() = transport.id != null
+    //private val isEditing get() = transport.id != null
+    override var isEdit:Boolean = true
     override val itemType: String get() = "транспорт"
     override val binder: Binder<Transport> = beanValidationBinder()
 
     init {
+        responsiveSteps {
+            "0"(1); "320px"(1); "480px"(1)
+            "580px"(1)
+        }
+
         textField("Наименование") {
+            minWidth = "250px"
             bind(binder)
                 .trimmingConverter()
                 .withValidator(
@@ -40,7 +47,7 @@ class TransportEditorForm(val transport: Transport) : FormLayout(), EditorForm<T
      * @property onTransportChanged called when a user has been created/edited/deleted.
      */
     class TransportEditorDialog(private val onTransportChanged: (Transport) -> Unit) {
-        private fun maybeDelete(frame: EditorDialogFrame<Transport>, item: Transport) {
+        private fun maybeDelete(frame: EditorDialogFrame<Transport>, item: Transport) { // TODO
 
             val orderCount = 0L
                 //item.id?.let { TOrder.getTotalCountForTOrdersInTransport(it) }

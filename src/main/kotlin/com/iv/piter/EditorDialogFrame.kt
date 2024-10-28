@@ -27,6 +27,8 @@ interface EditorForm<T : Serializable> {
      * The displayable name of the item type [T].
      */
     val itemType: String
+
+    var isEdit: Boolean
     /**
      * All form fields are registered to this binder.
      */
@@ -41,7 +43,7 @@ interface EditorForm<T : Serializable> {
 /**
  * A dialog frame for dialogs adding, editing or deleting items.
  *
- * Users are expected to:
+ * Objs are expected to:
  *  * Set [form] with a proper implementation.
  *  * Set [onSaveItem] and [onDeleteItem]
  *  * Call [open] to show the dialog.
@@ -55,6 +57,7 @@ class EditorDialogFrame<T : Serializable>(private val form: EditorForm<T>) : Dia
     private lateinit var cancelButton: Button
     lateinit var deleteButton: Button
 
+    var editorForm: EditorForm<T> = form
     /**
      * The item currently being edited.
      */

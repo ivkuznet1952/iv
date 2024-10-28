@@ -4,7 +4,6 @@ import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.kaributools.setErrorMessage
 import com.iv.piter.admin.GuideRoute
-import com.iv.piter.admin.TransportRoute
 import com.vaadin.flow.component.login.LoginForm
 import com.vaadin.flow.component.login.LoginI18n
 import com.vaadin.flow.router.PageTitle
@@ -57,11 +56,9 @@ class LoginRoute : KComposite() {
                 navigateTo<GuideRoute>()
             } catch (e: LoginException) {
                 log.warn("Login failed", e)
-               // loginForm.setErrorMessage("Login failed", e.message)
                 loginForm.setErrorMessage("Ошибка входа", "Неправильный логин или пароль")
             } catch (e: Exception) {
                 log.error("Internal error", e)
-               // loginForm.setErrorMessage("Internal error", e.message)
                 loginForm.setErrorMessage("Ошибка", "Обратитесь к администратору")
             }
         }

@@ -13,10 +13,11 @@ import jakarta.validation.constraints.NotBlank
 @Table("transport")
 data class Transport(override var id: Long? = null,
                 @field: NotBlank
-                var name: String = ""
+                var name: String = "",
+                var active: Boolean = true,
                 ) : KEntity<Long> {
     companion object : Dao<Transport, Long>(Transport::class.java) {
-       fun findByName(name: String): Transport? = findSingleBy { Transport::name eq name }
+      // fun findByName(name: String): Transport? = findSingleBy { Transport::name eq name }
     }
 
     override fun delete() {

@@ -20,7 +20,7 @@ import jakarta.annotation.security.RolesAllowed
  */
 @Route("admin", layout = MainLayout::class)
 @PageTitle("Администратор")
-@RolesAllowed("ROLE_ADMIN")
+@RolesAllowed("Администратор")
 class AdminLayout : KComposite(), RouterLayout {
 
     private lateinit var contentPane: Div
@@ -46,6 +46,7 @@ class AdminLayout : KComposite(), RouterLayout {
                     route(TransportRoute::class, VaadinIcon.CAR)
                     route(GuideRoute::class, VaadinIcon.COG)
                     route(UserRoute::class, VaadinIcon.LIST)
+                   // route(UserRoute::class, VaadinIcon.LIST)
                 }
 
                 // logout menu item
@@ -77,7 +78,7 @@ class AdminLayout : KComposite(), RouterLayout {
                         }
                         button("Logout", VaadinIcon.SIGN_OUT.create()) {
                             addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE)
-                            style.set("color", "white")
+                            style.set("color", "gray")
                             style.set("margin-left", "auto")
                             onClick {
                                 Session.loginService.logout()

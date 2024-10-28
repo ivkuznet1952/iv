@@ -45,6 +45,9 @@ body {
     .hide-admin-menu {
         display: none;
     }
+    .hide-admin-grid {
+        display: none;
+    }
 }
 
 @media (min-width: 767px) {
@@ -56,6 +59,9 @@ body {
     }
     .hide-admin-menu {
         //background-color: canvas;
+    }
+    .hide-admin-panel {
+        display: none;
     }
 }
 

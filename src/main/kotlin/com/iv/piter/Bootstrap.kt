@@ -17,7 +17,6 @@ import jakarta.servlet.ServletContextListener
 import jakarta.servlet.annotation.WebListener
 import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
-import java.lang.Thread.sleep
 
 
 /**
@@ -63,25 +62,22 @@ class Bootstrap: ServletContextListener {
         // Initializes the VoK framework
         // Makes sure the database is up-to-date. See src/main/resources/db/migration for db init scripts.
         log.info("Running DB migrations")
-         val flyway = Flyway.configure().cleanDisabled(false)
-            .dataSource(JdbiOrm.getDataSource())
-            .load()
-        flyway.clean()
-        sleep(5000)
-
-
-//        val flyway: Flyway = Flyway.configure()
-//            .dataSource(VaadinOnKotlin.dataSource)
+        // val flyway = Flyway.configure().cleanDisabled(false)
+//            .dataSource(JdbiOrm.getDataSource())
 //            .load()
+//        flyway.clean()
+//        sleep(5000)
+
+
+        val flyway: Flyway = Flyway.configure()
+            .dataSource(VaadinOnKotlin.dataSource)
+            .load()
         flyway.migrate()
 //        flyway.repair()
         // setup security
         // security interceptor is configured in AppServiceInitListener
-//        User(username = "admin", roles = "ROLE_ADMIN,ROLE_USER").apply { setPassword("admin"); save() }
-        if (User.findByUsername("admin") == null) User(username = "admin", role = "ROLE_ADMIN", active = true).apply { setPassword("admin"); save() }
-
-//        User(username = "user", role = "ROLE_MANAGER").apply { setPassword("user"); save() }
-        //User(username = "test", role = "ROLE_ADMIN").apply { setPassword("test"); save() }
+//        User(username = "admin", roles = "").apply { setPassword("admin"); save() }
+        if (User.findByUsername("admin") == null) User(username = "admin", role = "Администратор", active = true).apply { setPassword("admin"); save() }
         log.info("Initialization complete")
     } catch (t: Throwable) {
         log.error("Bootstrap failed!", t)

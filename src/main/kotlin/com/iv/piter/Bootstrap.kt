@@ -17,7 +17,6 @@ import jakarta.servlet.ServletContextListener
 import jakarta.servlet.annotation.WebListener
 import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
-import java.lang.Thread.sleep
 
 
 /**
@@ -54,7 +53,6 @@ class Bootstrap: ServletContextListener {
         }
         cfg.initializationFailTimeout = 60000 // need devops
 
-        //JdbiOrm.setDataSource(HikariDataSource(hikariConfig))
         // Done! The database layer is now ready to be used.
         VaadinOnKotlin.dataSource = HikariDataSource(cfg)
         log.info("Initializing VaadinOnKotlin")
@@ -63,16 +61,16 @@ class Bootstrap: ServletContextListener {
         // Initializes the VoK framework
         // Makes sure the database is up-to-date. See src/main/resources/db/migration for db init scripts.
         log.info("Running DB migrations")
-         val flyway = Flyway.configure().cleanDisabled(false)
-            .dataSource(JdbiOrm.getDataSource())
-            .load()
-        flyway.clean()
-        sleep(5000)
-
-
-//        val flyway: Flyway = Flyway.configure()
-//            .dataSource(VaadinOnKotlin.dataSource)
+        // val flyway = Flyway.configure().cleanDisabled(false)
+//            .dataSource(JdbiOrm.getDataSource())
 //            .load()
+//        flyway.clean()
+//        sleep(5000)
+
+
+        val flyway: Flyway = Flyway.configure()
+            .dataSource(VaadinOnKotlin.dataSource)
+            .load()
         flyway.migrate()
 //        flyway.repair()
         // setup security

@@ -15,7 +15,7 @@ import com.vaadin.flow.data.binder.Binder
  * A form for editing [Guide] objects.
  */
 class GuideEditorForm(val guide: Guide) : FormLayout(), EditorForm<Guide> {
-   // private val isEditing get() = guide.id != null
+
     override val itemType: String get() = "гид"
     override val binder: Binder<Guide> = beanValidationBinder()
     override var isEdit:Boolean = true

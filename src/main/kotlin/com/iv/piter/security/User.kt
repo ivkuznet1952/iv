@@ -11,8 +11,7 @@ import com.gitlab.mvysny.jdbiorm.vaadin.EntityDataProvider
 import java.time.LocalDateTime
 import com.gitlab.mvysny.jdbiorm.condition.Condition
 import jakarta.validation.constraints.NotBlank
-import org.jdbi.v3.core.mapper.Nested
-import java.io.Serializable
+
 
 @Table("users")
 data class User(

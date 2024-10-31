@@ -1,6 +1,7 @@
 create table IF NOT EXISTS customer
 (
     id             bigserial primary key,
+    username       varchar(100) not null,
     comment        varchar(500) null,
     email          varchar(255) null,
     hashedPassword varchar(255) null,
@@ -8,5 +9,6 @@ create table IF NOT EXISTS customer
     lastname       varchar(255) not null,
     phone          varchar(255) null,
     created        timestamp    null,
-    updated        timestamp    null
+    updated        timestamp    null,
+    active         boolean      not null
 )

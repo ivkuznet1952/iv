@@ -77,7 +77,7 @@ class TransportRoute : KComposite() {
             mgrid = virtualList {
                 className = "hide-admin-panel"
                 setRenderer(ComponentRenderer { row ->
-                    val item = MTransportItem(row)
+                    val item = TransportItem(row)
                     item.onSave = { edit(row) }
                     item
                 })
@@ -130,7 +130,7 @@ class TransportRoute : KComposite() {
 
 }
 
-class MTransportItem(val row: Transport) : KComposite() {
+class TransportItem(val row: Transport) : KComposite() {
     val guide: Transport get() = row
     var onSave: () -> Unit = {}
     val binder: Binder<Transport> = beanValidationBinder()

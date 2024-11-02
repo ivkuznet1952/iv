@@ -164,7 +164,7 @@ internal class ShowDetailModal(trip: Trip) : Dialog() {
                     setSizeFull()
                 }
                 horizontalLayout {
-                    text(trip.description)
+                    trip.description?.let { text(it) }
                 }
                 horizontalLayout {
                     span {

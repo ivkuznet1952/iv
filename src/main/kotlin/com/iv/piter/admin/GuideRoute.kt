@@ -101,7 +101,7 @@ class GuideRoute : KComposite() {
             mgrid = virtualList {
                 className = "hide-admin-panel"
                 setRenderer(ComponentRenderer { row ->
-                    val item = MGuideItem(row)
+                    val item = GuideItem(row)
                     item.onSave = {
                         edit(row)
                     }
@@ -156,7 +156,7 @@ class GuideRoute : KComposite() {
 
 }
 
-class MGuideItem(val row: Guide) : KComposite() {
+class GuideItem(val row: Guide) : KComposite() {
     val guide: Guide get() = row
     var onSave: () -> Unit = {}
     val binder: Binder<Guide> = beanValidationBinder()

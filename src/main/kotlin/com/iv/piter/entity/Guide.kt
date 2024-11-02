@@ -15,7 +15,6 @@ data class Guide(override var id: Long? = null,
                      var firstname: String = "",
                      @field: NotBlank
                      var lastname: String = "",
-                     //var email: String? = "",
                      var phone: String? = "",
                      var active: Boolean = true,
                      var comment: String? = "",

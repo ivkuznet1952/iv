@@ -40,9 +40,7 @@ fun EntityDataProvider<Transport>.setFilterText(filter: String?) {
     } else {
         val normalizedFilter: String = "%" + filter.trim().lowercase() + "%"
         val c: Condition = buildCondition<Transport>{
-            """name LIKE :filter
-                    or COALESCE(name, 'Undefined') LIKE :filter
-                    """.trimMargin()("filter" to normalizedFilter)
+            """LOWER(name) LIKE :filter""".trimMargin()("filter" to normalizedFilter)
         }
         this.filter = c
     }

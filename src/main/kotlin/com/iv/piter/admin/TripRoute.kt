@@ -5,14 +5,15 @@ import com.github.mvysny.karibudsl.v23.virtualList
 import com.github.vokorm.asc
 import com.github.vokorm.exp
 import com.iv.piter.Toolbar
-import com.iv.piter.security.User
-import com.iv.piter.security.setFilterText
+import com.iv.piter.entity.Trip
+import com.iv.piter.entity.setFilterText
 import com.iv.piter.toolbarView
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.checkbox.Checkbox
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.H5
+import com.vaadin.flow.component.html.Image
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
@@ -26,25 +27,25 @@ import eu.vaadinonkotlin.vaadin.setSortProperty
 import eu.vaadinonkotlin.vaadin.vokdb.dataProvider
 import jakarta.annotation.security.RolesAllowed
 
-@Route("user", layout = AdminLayout::class)
-@PageTitle("Пользователи")
+@Route("trip", layout = AdminLayout::class)
+@PageTitle("Экскурсии")
 @RolesAllowed("Администратор")
-class UserRoute : KComposite() {
+class TripRoute : KComposite() {
 
     private lateinit var header: H5
     private lateinit var toolbar: Toolbar
-    private lateinit var grid: Grid<User>
-    private lateinit var mgrid: VirtualList<User>
+    private lateinit var grid: Grid<Trip>
+    private lateinit var mgrid: VirtualList<Trip>
 
-    private val editorDialog = UserEditorForm.UserEditorDialog { updateView() }
+    private val editorDialog = TripEditorForm.TripEditorDialog { updateView() }
 
-    private val dataProvider = User.dataProvider
+    private val dataProvider = Trip.dataProvider
 
     private val root = ui {
 
         verticalLayout(true) {
             content { align(stretch, top) }
-            toolbar = toolbarView("Новый пользователь") {
+            toolbar = toolbarView("Новыя экскурсия") {
                 onSearch = { updateView() }
                 onCreate = { editorDialog.createNew() }
             }
@@ -54,24 +55,24 @@ class UserRoute : KComposite() {
                 isExpand = true
                 width = "100%"
 
-                columnFor(User::active, createUserActiveCheckboxRenderer()) {
+                columnFor(Trip::active, createTripActiveCheckboxRenderer()) {
                     isExpand = false
                     setHeader("Активен")
                     width = "10%"
                     isSortable = false
                 }
-                columnFor(User::username) {
-                    setHeader("Имя пользователя")
-                    width = "40%"
-                    setSortProperty(User::username.exp)
+
+                addColumn(ComponentRenderer<Image, Trip> { tr -> createImage(tr) }).apply {
+                    flexGrow = 0; key = "image"
+                    isExpand = false
                 }
 
-                columnFor(User::role) {
-                    setHeader("Роль")
-                    setSortProperty(User::role.exp)
+                columnFor(Trip::name) {
+                    setHeader("Наименование")
+                    setSortProperty(Trip::name.exp)
                 }
 
-                addColumn(ComponentRenderer<Button, User> { tr -> createEditButton(tr) }).apply {
+                addColumn(ComponentRenderer<Button, Trip> { tr -> createEditButton(tr) }).apply {
                     flexGrow = 0; key = ""
                     isExpand = false
                 }
@@ -82,10 +83,8 @@ class UserRoute : KComposite() {
             mgrid = virtualList {
                 className = "hide-admin-panel"
                 setRenderer(ComponentRenderer { row ->
-                    val item = UserItem(row)
-                    item.onSave = {
-                        edit(row)
-                    }
+                    val item = TripItem(row)
+                    item.onSave = { edit(row) }
                     item
                 })
             }
@@ -97,29 +96,34 @@ class UserRoute : KComposite() {
         updateView()
     }
 
-    private fun createUserActiveCheckboxRenderer(): ComponentRenderer<Checkbox, User> =
-        ComponentRenderer { user ->
-            Checkbox(user.active).apply {
-                // when the check box is changed, update the user and reload the grid
+    private fun createTripActiveCheckboxRenderer(): ComponentRenderer<Checkbox, Trip> =
+        ComponentRenderer { trip ->
+            Checkbox(trip.active).apply {
+                // when the check box is changed, update the trip and reload the grid
                 addValueChangeListener {
-                    user.active = it.value
-                    user.save()
+                    trip.active = it.value
+                    trip.save()
                     grid.dataProvider.refreshAll()
                 }
             }
         }
 
+    private fun createImage(trip: Trip): Image =
+        Image().apply {
+            src = "images/" + trip.photo
+            width = "30px"
+        }
 
-    private fun createEditButton(user: User): Button =
+    private fun createEditButton(trip: Trip): Button =
         Button("").apply {
             icon = Icon(VaadinIcon.EDIT)
             addThemeVariants(ButtonVariant.LUMO_TERTIARY)
             height = "22px"
-            onClick { edit(user) }
+            onClick { edit(trip) }
         }
 
-    private fun edit(user: User) {
-        editorDialog.edit(user)
+    private fun edit(trip: Trip) {
+        editorDialog.edit(trip)
     }
 
     private fun updateView() {
@@ -128,19 +132,19 @@ class UserRoute : KComposite() {
         if (toolbar.searchText.isNotBlank()) {
             header.text = "Поиск “${toolbar.searchText}”"
         } else {
-            header.text = "Пользователь"
+            header.text = "Гид"
         }
-        dataProvider.setSortFields(User::username.asc)
+        dataProvider.setSortFields(Trip::name.asc)
         grid.dataProvider = dataProvider
         mgrid.dataProvider = dataProvider
     }
 
 }
 
-class UserItem(val row: User) : KComposite() {
-    val user: User get() = row
+class TripItem(val row: Trip) : KComposite() {
+    private val guide: Trip get() = row
     var onSave: () -> Unit = {}
-    val binder: Binder<User> = beanValidationBinder()
+    val binder: Binder<Trip> = beanValidationBinder()
 
     private val root = ui {
         verticalLayout(spacing = false) {
@@ -150,11 +154,12 @@ class UserItem(val row: User) : KComposite() {
 
             horizontalLayout {
                 setWidthFull()
+                alignItems = FlexComponent.Alignment.CENTER
                 checkBox("Активен") {
-                    bind(binder).bind(User::active)
+                    bind(binder).bind(Trip::active)
                     addValueChangeListener {
-                        user.active = it.value
-                        user.save()
+                        guide.active = it.value
+                        guide.save()
                     }
                 }
 
@@ -175,16 +180,21 @@ class UserItem(val row: User) : KComposite() {
                         .withPosition(Tooltip.TooltipPosition.TOP_START)
                 }
             }
-            textField("Имя пользователя") {
+            horizontalLayout {
                 setWidthFull()
-                bind(binder).bind(User::username)
-                isEnabled = false
+                alignItems = FlexComponent.Alignment.CENTER
+                image {
+                    src = "images/" + row.photo
+                    width = "30px"
+                }
+                textField {
+                    setWidthFull()
+                    bind(binder).bind(Trip::name)
+                    isEnabled = false
+                }
             }
-            textField("Роль") {
-                setWidthFull()
-                bind(binder).bind(User::role)
-                isEnabled = false
-            }
+
+
         }
 
     }

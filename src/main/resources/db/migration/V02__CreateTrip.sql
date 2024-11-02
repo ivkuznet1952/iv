@@ -5,6 +5,6 @@ create table IF NOT EXISTS trip
     description varchar(500) not null,
     photo varchar(100) not null,
     comment varchar(100) not null,
-    duration integer,
+    duration numeric,
     active boolean
 )

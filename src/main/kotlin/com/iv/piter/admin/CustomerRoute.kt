@@ -93,7 +93,7 @@ class CustomerRoute : KComposite() {
             mgrid = virtualList {
                 className = "hide-admin-panel"
                 setRenderer(ComponentRenderer { row ->
-                    val item = MCustomerItem(row)
+                    val item = CustomerItem(row)
                     item.onSave = {
                         edit(row)
                     }
@@ -148,7 +148,7 @@ class CustomerRoute : KComposite() {
 
 }
 
-class MCustomerItem(val row: Customer) : KComposite() {
+class CustomerItem(val row: Customer) : KComposite() {
     private val customer: Customer get() = row
     var onSave: () -> Unit = {}
     val binder: Binder<Customer> = beanValidationBinder()

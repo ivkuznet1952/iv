@@ -61,7 +61,8 @@ class TripEditorForm(val trip: Trip) : FormLayout(), EditorForm<Trip> {
         i18n.getAddFiles().setMany("Выберите файл...")
         upload.i18n = i18n
         add(upload)
-        val img_path = "src/main/resources/webapp/images/" // TODO
+        //val img_path = "src/main/resources/webapp/images/" // TODO
+        val img_path = "webapp/images/" // TODO
         upload.addSucceededListener { event ->
             val fileData = buffer.inputStream
             val fileName = event.getFileName()

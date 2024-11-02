@@ -25,7 +25,7 @@ data class Trip(
 
     override fun delete() {
         db {
-//            super.delete()
+            super.delete()
         }
     }
 

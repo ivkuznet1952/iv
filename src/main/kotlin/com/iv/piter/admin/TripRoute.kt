@@ -45,7 +45,7 @@ class TripRoute : KComposite() {
 
         verticalLayout(true) {
             content { align(stretch, top) }
-            toolbar = toolbarView("Новыя экскурсия") {
+            toolbar = toolbarView("Новая экскурсия") {
                 onSearch = { updateView() }
                 onCreate = { editorDialog.createNew() }
             }

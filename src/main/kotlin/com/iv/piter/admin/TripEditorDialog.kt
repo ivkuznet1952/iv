@@ -99,26 +99,32 @@ class TripEditorForm(val trip: Trip) : FormLayout(), EditorForm<Trip> {
 
             val orderCount = 1L
 
+            //println("////////////:" + frame)
+
             if (orderCount == 0L) {
-                // delete(frame, item)
+                if (frame != null) {
+                    delete(frame, item)
+                }
             } else {
                 ConfirmationDialog().open(
-                    "Удалить данные пользователя “${item.name}”?",
-                    "Число заказов, ассоциированных с данным транспортом, больше 0.",
-                    "Удаление данного пользователя приведет к наличию неопределенных данных.",
+                    "Удалить данные по экскурсии “${item.name}”?",
+                    "Число заказов, ассоциированных с данной экскурсией, больше 0.",
+                    "Удаление данной экскурсии приведет к наличию неопределенных данных.",
                     "Удалить",
                     true,
                     false,
                     false
                 ) {
-                   // if (frame != null) delete(frame, item)
+                    if (frame != null) delete(frame, item)
                 }
             }
         }
 
         private fun delete(frame: EditorDialogFrame<Trip>, item: Trip) {
+            //item.id?.let { Trip.deleteById(it) }
             item.delete()
-            Notification.show("Экскурсия успешно удалена.", 3000, Notification.Position.BOTTOM_START)
+            val n = Notification.show("Экскурсия успешно удалена.", 3000, Notification.Position.TOP_END)
+            n.addThemeVariants(NotificationVariant.LUMO_SUCCESS)
             frame.close()
             onTripChanged(item)
         }
@@ -135,7 +141,6 @@ class TripEditorForm(val trip: Trip) : FormLayout(), EditorForm<Trip> {
                 val creating: Boolean = trip.id == null
                 if (trip.photo != null) trip.photo = trip.photo!!.lowercase()
                 trip.save()
-                //println("////:" + trip)
                 val op: String = if (creating) "добавлена" else "сохранена"
                 val n = Notification.show("Экскурсия успешно ${op}.", 3000, Notification.Position.TOP_END)
                 n.addThemeVariants(NotificationVariant.LUMO_SUCCESS)
@@ -149,6 +154,3 @@ class TripEditorForm(val trip: Trip) : FormLayout(), EditorForm<Trip> {
 
 }
 
-//private fun <BEAN, TARGET> Binder.BindingBuilder<BEAN, TARGET>.withConverter(stringToFloatConverter: StringToFloatConverter): Any {
-//
-//}

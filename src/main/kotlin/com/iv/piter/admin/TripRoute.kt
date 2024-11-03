@@ -23,9 +23,14 @@ import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
+import com.vaadin.flow.server.InputStreamFactory
+import com.vaadin.flow.server.StreamResource
 import eu.vaadinonkotlin.vaadin.setSortProperty
 import eu.vaadinonkotlin.vaadin.vokdb.dataProvider
 import jakarta.annotation.security.RolesAllowed
+import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.Paths
 
 @Route("trip", layout = AdminLayout::class)
 @PageTitle("Экскурсии")
@@ -108,11 +113,13 @@ class TripRoute : KComposite() {
             }
         }
 
-    private fun createImage(trip: Trip): Image =
-        Image().apply {
-            src = "images/" + trip.photo
-            width = "30px"
-        }
+    private fun createImage(trip: Trip): Image {
+        val inputStream: InputStream = Files.newInputStream(Paths.get( "photos/${trip.photo}"))
+        val imageResource = StreamResource(trip.photo, InputStreamFactory { inputStream })
+        val image = Image(imageResource, "image" + trip.id)
+        image.width = "30px"
+        return image
+    }
 
     private fun createEditButton(trip: Trip): Button =
         Button("").apply {
@@ -132,7 +139,7 @@ class TripRoute : KComposite() {
         if (toolbar.searchText.isNotBlank()) {
             header.text = "Поиск “${toolbar.searchText}”"
         } else {
-            header.text = "Гид"
+            header.text = "Экскурсия"
         }
         dataProvider.setSortFields(Trip::name.asc)
         grid.dataProvider = dataProvider
@@ -142,7 +149,7 @@ class TripRoute : KComposite() {
 }
 
 class TripItem(val row: Trip) : KComposite() {
-    private val guide: Trip get() = row
+    private val trip: Trip get() = row
     var onSave: () -> Unit = {}
     val binder: Binder<Trip> = beanValidationBinder()
 
@@ -158,8 +165,8 @@ class TripItem(val row: Trip) : KComposite() {
                 checkBox("Активен") {
                     bind(binder).bind(Trip::active)
                     addValueChangeListener {
-                        guide.active = it.value
-                        guide.save()
+                        trip.active = it.value
+                        trip.save()
                     }
                 }
 
@@ -183,9 +190,12 @@ class TripItem(val row: Trip) : KComposite() {
             horizontalLayout {
                 setWidthFull()
                 alignItems = FlexComponent.Alignment.CENTER
-                image {
-                    src = "images/" + row.photo
-                    width = "30px"
+                if (row.photo != null) {
+                    val inputStream: InputStream = Files.newInputStream(Paths.get( "photos/${row.photo}"))
+                    val imageResource = StreamResource(row.photo, InputStreamFactory { inputStream })
+                    val image = Image(imageResource, "image" + row.id)
+                    image.width = "30px"
+                    add(image)
                 }
                 textField {
                     setWidthFull()
@@ -194,9 +204,7 @@ class TripItem(val row: Trip) : KComposite() {
                 }
             }
 
-
         }
-
     }
 
     init {

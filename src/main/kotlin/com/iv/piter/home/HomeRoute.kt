@@ -14,18 +14,24 @@ import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.html.H5
+import com.vaadin.flow.component.html.Image
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.component.virtuallist.VirtualList
 import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.data.renderer.ComponentRenderer
-
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
+import com.vaadin.flow.server.InputStreamFactory
+import com.vaadin.flow.server.StreamResource
 import com.vaadin.flow.server.auth.AnonymousAllowed
 import com.vaadin.flow.shared.Registration
 import eu.vaadinonkotlin.vaadin.vokdb.dataProvider
+import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.Paths
+
 
 @Route("", layout = MainLayout::class)
 @PageTitle("Экскурсии")
@@ -62,12 +68,10 @@ class HomeRoute : KComposite() {
             }
 
             grid = virtualList {
-
                 setRenderer(ComponentRenderer { row ->
                     val item = TripListItem(row)
                     item
                 }
-
                 )
             }
             nodata = h5 {}
@@ -98,8 +102,16 @@ class TripListItem(private val row: Trip) : KComposite() {
             style.set("border-radius", "2px")
             horizontalLayout(false) {
                 alignSelf = FlexComponent.Alignment.CENTER
-                image("images/" + row.photo, ".") {
-                    width = "50px"
+
+                if (row.photo != null) {
+                    try {
+                        val inputStream: InputStream = Files.newInputStream(Paths.get("photos/${row.photo}"))
+                        val imageResource = StreamResource(row.photo, InputStreamFactory { inputStream })
+                        val image = Image(imageResource, "image")
+                        image.width = "50px"
+                        add(image)
+                    } catch (e: Exception) {
+                    }
                 }
                 onClick {
                     ShowDetailModal(row).open(row.name)
@@ -159,13 +171,20 @@ internal class ShowDetailModal(trip: Trip) : Dialog() {
         }
         horizontalLayout(false, false) {
             verticalLayout(false, true) {
-                image("images/" + trip.photo, ".") {
-                    style.set("margin-top", "24px")
-                    setSizeFull()
+
+                verticalLayout {
+                    alignItems = FlexComponent.Alignment.CENTER
+                    if (trip.photo != null) {
+                        val inputStream: InputStream = Files.newInputStream(Paths.get("photos/${trip.photo}"))
+                        val imageResource = StreamResource(trip.photo, InputStreamFactory { inputStream })
+                        val image = Image(imageResource, "image")
+                        image.width = "250px"
+                        add(image)
+                    }
                 }
-                horizontalLayout {
-                    trip.description?.let { text(it) }
-                }
+
+                trip.description?.let { text(it) }
+
                 horizontalLayout {
                     span {
                         className = "b-text"
@@ -178,23 +197,16 @@ internal class ShowDetailModal(trip: Trip) : Dialog() {
 
 
                 horizontalLayout {
-                    span {
-                        //
-                        text("Продолжительность экскурсии:")
-                    }
-
+                    span { text("Продолжительность экскурсии:") }
                     text(trip.duration.toString())
                     text(" ч.")
                 }
 
-
-                horizontalLayout {
-                    trip.comment?.let {
-                        span {
-                            style.set("color", "lightgray")
-                            className = "b-font"
-                            text(it)
-                        }
+                trip.comment?.let {
+                    span {
+                        style.set("color", "lightgray")
+                        className = "b-font"
+                        text(it)
                     }
                 }
             }
@@ -216,5 +228,4 @@ internal class ShowDetailModal(trip: Trip) : Dialog() {
     }
 
 }
-
 

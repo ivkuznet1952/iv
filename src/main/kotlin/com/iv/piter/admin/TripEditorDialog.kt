@@ -62,11 +62,11 @@ class TripEditorForm(val trip: Trip) : FormLayout(), EditorForm<Trip> {
         upload.i18n = i18n
         add(upload)
         //val img_path = "src/main/resources/webapp/images/" // TODO
+        println("////////////////user.dir:" + System.getProperties().getProperty("user.dir"))
         val img_path = "photos/" // TODO
         upload.addSucceededListener { event ->
             val fileData = buffer.inputStream
             val fileName = event.getFileName()
-            //event.contentLength
             val file = File(img_path + fileName)
             file.createNewFile()
             photoField.value = fileName
@@ -100,7 +100,7 @@ class TripEditorForm(val trip: Trip) : FormLayout(), EditorForm<Trip> {
 
             val orderCount = 1L
 
-            //println("////////////:" + frame)
+            //
 
             if (orderCount == 0L) {
                 if (frame != null) {

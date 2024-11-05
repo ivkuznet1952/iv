@@ -28,9 +28,9 @@ import com.vaadin.flow.server.StreamResource
 import eu.vaadinonkotlin.vaadin.setSortProperty
 import eu.vaadinonkotlin.vaadin.vokdb.dataProvider
 import jakarta.annotation.security.RolesAllowed
+import java.io.ByteArrayInputStream
 import java.io.InputStream
-import java.nio.file.Files
-import java.nio.file.Paths
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Route("trip", layout = AdminLayout::class)
 @PageTitle("Экскурсии")
@@ -93,7 +93,6 @@ class TripRoute : KComposite() {
                     item
                 })
             }
-
         }
     }
 
@@ -114,11 +113,15 @@ class TripRoute : KComposite() {
         }
 
     private fun createImage(trip: Trip): Image {
-        val inputStream: InputStream = Files.newInputStream(Paths.get( "photos/${trip.photo}"))
-        val imageResource = StreamResource(trip.photo, InputStreamFactory { inputStream })
-        val image = Image(imageResource, "image" + trip.id)
-        image.width = "30px"
-        return image
+
+        if (trip.photo != null) {
+            val stream: InputStream = ByteArrayInputStream(trip.photo)
+            val imageResource = StreamResource("fileName", InputStreamFactory { stream })
+            val image = Image(imageResource, "image")
+            image.width = "30px"
+            return image
+        }
+        return Image()
     }
 
     private fun createEditButton(trip: Trip): Button =
@@ -190,20 +193,12 @@ class TripItem(val row: Trip) : KComposite() {
             horizontalLayout {
                 setWidthFull()
                 alignItems = FlexComponent.Alignment.CENTER
-                if (row.photo != null) {
-                    val inputStream: InputStream = Files.newInputStream(Paths.get( "photos/${row.photo}"))
-                    val imageResource = StreamResource(row.photo, InputStreamFactory { inputStream })
-                    val image = Image(imageResource, "image" + row.id)
-                    image.width = "30px"
-                    add(image)
-                }
                 textField {
                     setWidthFull()
                     bind(binder).bind(Trip::name)
                     isEnabled = false
                 }
             }
-
         }
     }
 

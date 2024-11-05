@@ -15,7 +15,7 @@ data class Trip(
     @field: NotBlank
     var name: String = "",
     var description: String? = "",
-    var photo: String? = "",
+    var photo: ByteArray? = ByteArray(0),
     var duration: Float = 0f,
     var comment: String? = "",
     var active: Boolean = true

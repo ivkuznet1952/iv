@@ -68,7 +68,7 @@ class HomeRoute : KComposite() {
             }
 
             grid = virtualList {
-                // style.set("background-color", "orange") // test remove
+                 style.set("background-color", "orange") // test remove
                 setRenderer(ComponentRenderer { row ->
                     setSizeFull()
                     val item = TripListItem(row)

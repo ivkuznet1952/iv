@@ -57,6 +57,7 @@ class GuideRoute : KComposite() {
 
         verticalLayout(true) {
             content { align(stretch, top) }
+            setSizeFull()
             toolbar = toolbarView("Новый гид") {
                 onSearch = { updateView() }
                 onCreate = { editorDialog.createNew() }

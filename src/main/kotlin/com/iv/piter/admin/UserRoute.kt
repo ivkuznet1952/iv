@@ -44,6 +44,7 @@ class UserRoute : KComposite() {
 
         verticalLayout(true) {
             content { align(stretch, top) }
+            setSizeFull()
             toolbar = toolbarView("Новый пользователь") {
                 onSearch = { updateView() }
                 onCreate = { editorDialog.createNew() }

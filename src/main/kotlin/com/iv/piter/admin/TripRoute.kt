@@ -49,6 +49,7 @@ class TripRoute : KComposite() {
 
         verticalLayout(true) {
             content { align(stretch, top) }
+            setSizeFull()
             toolbar = toolbarView("Новая экскурсия") {
                 onSearch = { updateView() }
                 onCreate = { editorDialog.createNew() }
@@ -98,7 +99,7 @@ class TripRoute : KComposite() {
                 }
                 element.themeList.add("row-dividers")
             }
-            grid.height = "800px"
+           // grid.height = "800px"
 
             mgrid = virtualList {
                 className = "hide-admin-panel"

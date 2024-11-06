@@ -44,6 +44,7 @@ class CustomerRoute : KComposite() {
 
         verticalLayout(true) {
             content { align(stretch, top) }
+            setSizeFull()
             toolbar = toolbarView("Новый заказчик") {
                 onSearch = { updateView() }
                 onCreate = { editorDialog.createNew() }

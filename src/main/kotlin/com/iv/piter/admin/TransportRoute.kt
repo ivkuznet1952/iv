@@ -45,6 +45,7 @@ class TransportRoute : KComposite() {
 
         verticalLayout(true) {
             content { align(stretch, top) }
+            setSizeFull()
             toolbar = toolbarView("Новый транспорт") {
                 onSearch = { updateView() }
                 onCreate = { editorDialog.createNew() }

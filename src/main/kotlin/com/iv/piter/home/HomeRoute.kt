@@ -68,7 +68,9 @@ class HomeRoute : KComposite() {
             }
 
             grid = virtualList {
+                // style.set("background-color", "orange") // test remove
                 setRenderer(ComponentRenderer { row ->
+                    setSizeFull()
                     val item = TripListItem(row)
                     item
                 }
@@ -128,7 +130,7 @@ class TripListItem(private val row: Trip) : KComposite() {
 
                 }
                 onClick {
-                     ShowDetailModal(row).open(row.name)
+                    ShowDetailModal(row).open(row.name)
                 }
             }
 

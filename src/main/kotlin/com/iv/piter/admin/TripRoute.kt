@@ -30,7 +30,6 @@ import eu.vaadinonkotlin.vaadin.vokdb.dataProvider
 import jakarta.annotation.security.RolesAllowed
 import java.io.ByteArrayInputStream
 import java.io.InputStream
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Route("trip", layout = AdminLayout::class)
 @PageTitle("Экскурсии")
@@ -78,18 +77,34 @@ class TripRoute : KComposite() {
                 }
 
                 addColumn(ComponentRenderer<Button, Trip> { tr -> createEditButton(tr) }).apply {
-                    flexGrow = 0; key = ""
+                    flexGrow = 0
+                    key = "edit"
                     isExpand = false
+                    width = "4rem"
                 }
 
+                addColumn(ComponentRenderer<Button, Trip> { tr -> createSheduleButton(tr) }).apply {
+                    flexGrow = 0
+                    key = "shedule"
+                    isExpand = false
+                    width = "4rem"
+                }
+
+                addColumn(ComponentRenderer<Button, Trip> { tr -> createCostButton(tr) }).apply {
+                    flexGrow = 0
+                    key = "cost"
+                    isExpand = false
+                    width = "4rem"
+                }
                 element.themeList.add("row-dividers")
             }
+            grid.height = "800px"
 
             mgrid = virtualList {
                 className = "hide-admin-panel"
                 setRenderer(ComponentRenderer { row ->
                     val item = TripItem(row)
-                    item.onSave = { edit(row) }
+                    item.onEdit = { edit(row) }
                     item
                 })
             }
@@ -124,13 +139,52 @@ class TripRoute : KComposite() {
         return Image()
     }
 
-    private fun createEditButton(trip: Trip): Button =
-        Button("").apply {
+    private fun createEditButton(trip: Trip): Button {
+        val editButton = Button("").apply {
             icon = Icon(VaadinIcon.EDIT)
             addThemeVariants(ButtonVariant.LUMO_TERTIARY)
             height = "22px"
+            width = "50px"
             onClick { edit(trip) }
         }
+
+        Tooltip.forComponent(editButton)
+            .withText("Редактировать")
+            .withPosition(Tooltip.TooltipPosition.TOP_START)
+        return editButton
+    }
+
+    private fun createSheduleButton(trip: Trip): Button {
+        val sheduleButton = Button("").apply {
+            icon = Icon(VaadinIcon.TASKS)
+            addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+            height = "22px"
+            width = "50px"
+            onClick {
+                //edit(trip)
+            }
+        }
+        Tooltip.forComponent(sheduleButton)
+            .withText("Расписание")
+            .withPosition(Tooltip.TooltipPosition.TOP_START)
+        return sheduleButton
+
+    }
+    private fun createCostButton(trip: Trip): Button {
+        val costButton = Button("").apply {
+            icon = Icon(VaadinIcon.COINS)
+            addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+            height = "22px"
+            width = "50px"
+            onClick {
+                //edit(trip)
+            }
+        }
+        Tooltip.forComponent(costButton)
+            .withText("Стоимость")
+            .withPosition(Tooltip.TooltipPosition.TOP_START)
+        return costButton
+    }
 
     private fun edit(trip: Trip) {
         editorDialog.edit(trip)
@@ -153,7 +207,7 @@ class TripRoute : KComposite() {
 
 class TripItem(val row: Trip) : KComposite() {
     private val trip: Trip get() = row
-    var onSave: () -> Unit = {}
+    var onEdit: () -> Unit = {}
     val binder: Binder<Trip> = beanValidationBinder()
 
     private val root = ui {
@@ -180,14 +234,39 @@ class TripItem(val row: Trip) : KComposite() {
                     val editButton = button {
                         style.set("background-color", "transparent")
                         icon = VaadinIcon.EDIT.create()
-                        width = "50px"
+                        width = "30px"
                         onClick {
-                            onSave()
+                            onEdit()
                         }
                     }
                     Tooltip.forComponent(editButton)
                         .withText("Редактировать")
                         .withPosition(Tooltip.TooltipPosition.TOP_START)
+
+                    val sheduleButton = button {
+                        style.set("background-color", "transparent")
+                        icon = VaadinIcon.TASKS.create()
+                        width = "30px"
+                        onClick {
+                           // onSave()
+                        }
+                    }
+                    Tooltip.forComponent(editButton)
+                        .withText("Расписание")
+                        .withPosition(Tooltip.TooltipPosition.TOP_START)
+
+                    val costButton = button {
+                        style.set("background-color", "transparent")
+                        icon = VaadinIcon.COINS.create()
+                        width = "30px"
+                        onClick {
+                            // onSave()
+                        }
+                    }
+                    Tooltip.forComponent(editButton)
+                        .withText("Стоимость")
+                        .withPosition(Tooltip.TooltipPosition.TOP_START)
+
                 }
             }
             horizontalLayout {

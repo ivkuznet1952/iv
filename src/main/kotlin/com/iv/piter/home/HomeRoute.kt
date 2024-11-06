@@ -8,7 +8,6 @@ import com.github.mvysny.kaributools.fetchAll
 import com.github.mvysny.kaributools.navigateTo
 import com.iv.piter.Constant
 import com.iv.piter.MainLayout
-import com.iv.piter.UploadRussianI18N
 import com.iv.piter.entity.Trip
 import com.iv.piter.security.LoginRoute
 import com.vaadin.flow.component.button.Button
@@ -19,8 +18,6 @@ import com.vaadin.flow.component.html.Image
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.shared.Tooltip
-import com.vaadin.flow.component.upload.Upload
-import com.vaadin.flow.component.upload.receivers.MemoryBuffer
 import com.vaadin.flow.component.virtuallist.VirtualList
 import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.data.renderer.ComponentRenderer
@@ -32,13 +29,7 @@ import com.vaadin.flow.server.auth.AnonymousAllowed
 import com.vaadin.flow.shared.Registration
 import eu.vaadinonkotlin.vaadin.vokdb.dataProvider
 import java.io.ByteArrayInputStream
-import java.io.File
 import java.io.InputStream
-import java.lang.Thread.sleep
-import java.nio.charset.StandardCharsets
-import java.nio.file.Files
-import java.nio.file.Paths
-import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 
@@ -50,7 +41,6 @@ class HomeRoute : KComposite() {
     private lateinit var grid: VirtualList<Trip>
     private lateinit var nodata: H5
 
-    @OptIn(ExperimentalEncodingApi::class)
     private val root = ui {
 
         verticalLayout(padding = true, spacing = false) {
@@ -85,63 +75,6 @@ class HomeRoute : KComposite() {
                 )
             }
             nodata = h5 {}
-
-//            fun readFileAsTextUsingInputStream(fileName: String): String
-//                    = File(fileName).inputStream().readBytes().toString(Charsets.UTF_8)
-//            val res = readFileAsTextUsingInputStream("base64.txt")
-            //println("////////:" + res.length)
-            // val stream1: InputStream = ByteArrayInputStream(res.toByteArray(StandardCharsets.UTF_8))
-//            val stream1: InputStream = ByteArrayInputStream(File("base64.txt").inputStream().readBytes())
-//            val imageResource1 = StreamResource("base64.txt", InputStreamFactory { stream1 })
-//            val image = Image(imageResource1, "base64.txt")
-            //image.width = "50px"
-//            add(image)
-//            image{
-//                src="data:image/png;base64,   iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==   "
-//            }
-
-//            br{}
-//            image{
-//                src="data:image/png;base64, " + res
-//                width = "150px"
-//            }
-//            br{}
-
-            // upload image
-//            val buffer = MemoryBuffer()
-//            val upload = Upload(buffer)
-//            upload.isAutoUpload = true
-
-//            val i18n = UploadRussianI18N ()
-//            i18n.getAddFiles().setMany("Выберите файл...")
-//            upload.i18n = i18n
-//            add(upload)
-            //val img_path = "src/main/resources/webapp/images/" // TODO
-            //println("////////////////user.dir:" + System.getProperties().getProperty("user.dir"))
-            //val img_path = "photos/" // TODO
-//            upload.addSucceededListener { event ->
-//
-//                val fileData = buffer.inputStream
-//                val fileName = event.getFileName()
-//                val bytes = fileData.readBytes()
-//                val str = String(bytes, StandardCharsets.UTF_8)
-//                val stream: InputStream = ByteArrayInputStream(str.toByteArray(StandardCharsets.UTF_8))
-//                val imageResource = StreamResource(fileName, InputStreamFactory { stream })
-//                val image = Image(imageResource, "image")
-//                image.width = "50px"
-//                br {}
-//                add(image)
-//            }
-//                br{}
-//                val encodedString:String = Base64.encode(bytes)
-
-            //val imgStr = Base64.decode(encodedString)
-
-//                image{
-//                    src="data:image/png;base64, " + encodedString
-//                    width = "150px"
-//                }
-//            }
         }
 
     }
@@ -159,8 +92,6 @@ class HomeRoute : KComposite() {
 
 class TripListItem(private val row: Trip) : KComposite() {
 
-   // @OptIn(ExperimentalEncodingApi::class)
-    @OptIn(ExperimentalEncodingApi::class)
     private val root = ui {
         horizontalLayout(false, true, classNames = "main-trip-background") {
             setSizeFull()
@@ -178,24 +109,7 @@ class TripListItem(private val row: Trip) : KComposite() {
                     val imageResource = StreamResource("kot.png", InputStreamFactory { stream })
                     val image = Image(imageResource, "img")
                     image.width = "50px"
-                    // image.height = "50px"
-                    // br {}
                     add(image)
-//                    try {
-//                        val inputStream: InputStream = Files.newInputStream(Paths.get("photos/${row.photo}"))
-//                        val imageResource = StreamResource(row.photo, InputStreamFactory { inputStream })
-//                        val image = Image(imageResource, "image")
-//                        image.width = "50px"
-//                        add(image)
-//                    } catch (e: Exception) {
-//                    }
-//                    image {
-//                        src = "data:image/png;base64, " + row.photo!!
-                       // src = "data:image/png;base64, " + Base64.decode(row.photo!!.toByteArray(StandardCharsets.UTF_8))
-//                        width = "50px"
-//                    }
-
-
                 }
                 onClick {
                     ShowDetailModal(row).open(row.name)
@@ -234,23 +148,7 @@ class TripListItem(private val row: Trip) : KComposite() {
                     }
                 }
             }
-
-            // upload image
-          /*  val buffer = MemoryBuffer()
-            val upload = Upload(buffer)
-            upload.isAutoUpload = true
-            val i18n = UploadRussianI18N()
-            i18n.getAddFiles().setMany("Выберите файл...")
-            upload.i18n = i18n
-            add(upload)
-            upload.addSucceededListener { event ->
-                val bytes = buffer.inputStream.readBytes()
-                row.photo = Base64.encode(bytes)
-                //println("////////:" + row.photo!!.length)
-                row.save()
-            } */
         }
-
     }
 
 }
@@ -276,23 +174,10 @@ internal class ShowDetailModal(trip: Trip) : Dialog() {
                 verticalLayout {
                     alignItems = FlexComponent.Alignment.CENTER
                     if (trip.photo != null) {
-//                        val inputStream: InputStream = Files.newInputStream(Paths.get("photos/${trip.photo}"))
-//                        val imageResource = StreamResource(trip.photo, InputStreamFactory { inputStream })
-//                        val image = Image(imageResource, "image")
-//                        image.width = "250px"
-//                        add(image)
-//                        image {
-//                            src = "data:image/png;base64, " + trip.photo!!
-                             //src = "data:image/png;base64, " + Base64.decode(row.photo!!.toByteArray(StandardCharsets.UTF_8))
-//                            width = "250px"
-//                        }
-
                         val stream: InputStream = ByteArrayInputStream(trip.photo)
                         val imageResource = StreamResource("kot.png", InputStreamFactory { stream })
                         val image = Image(imageResource, "img")
                         image.width = "250px"
-                       // image.height = "50px"
-                       // br {}
                         add(image)
                     }
                 }

@@ -18,7 +18,6 @@ import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
 import java.io.ByteArrayInputStream
 import java.io.InputStream
-import java.nio.charset.StandardCharsets
 
 
 class TripEditorForm(private var trip: Trip) : FormLayout(), EditorForm<Trip> {
@@ -32,7 +31,7 @@ class TripEditorForm(private var trip: Trip) : FormLayout(), EditorForm<Trip> {
             "0"(1); "320px"(1); "480px"(1)
             "580px"(1)
         }
-        textField("Наименование") {
+        textArea("Наименование") {
             bind(binder)
                 .trimmingConverter()
                 .asRequired()
@@ -45,12 +44,18 @@ class TripEditorForm(private var trip: Trip) : FormLayout(), EditorForm<Trip> {
             ).bind(Trip::duration)
         }
 
+        p{}
         horizontalLayout(padding = false, spacing = true) {
 
             val buffer = MemoryBuffer()
             val upload = Upload(buffer)
+            nativeLabel("Фото") {
+                style.set("font-size", "14px")
+                style.set("color", "lightgray")
+                upload
+            }
             upload.isAutoUpload = true
-
+            upload.setWidthFull()
             val i18n = UploadRussianI18N ()
             i18n.getAddFiles().setMany("Выберите файл...")
             upload.i18n = i18n
@@ -59,7 +64,6 @@ class TripEditorForm(private var trip: Trip) : FormLayout(), EditorForm<Trip> {
                 val fileData = buffer.inputStream
                 val fileName = event.getFileName()
                 val bytes = fileData.readBytes()
-                val str = String(bytes, StandardCharsets.UTF_8)
                 trip.photo = bytes
                 val stream: InputStream = ByteArrayInputStream(bytes)
                 val imageResource = StreamResource(fileName, InputStreamFactory { stream })

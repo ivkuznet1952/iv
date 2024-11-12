@@ -6,6 +6,7 @@ import com.github.mvysny.karibudsl.v23.header
 import com.github.mvysny.karibudsl.v23.virtualList
 import com.github.mvysny.kaributools.fetchAll
 import com.github.mvysny.kaributools.navigateTo
+import com.github.mvysny.kaributools.setPrimary
 import com.iv.piter.Constant
 import com.iv.piter.MainLayout
 import com.iv.piter.entity.Trip
@@ -30,7 +31,6 @@ import com.vaadin.flow.shared.Registration
 import eu.vaadinonkotlin.vaadin.vokdb.dataProvider
 import java.io.ByteArrayInputStream
 import java.io.InputStream
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 
 @Route("", layout = MainLayout::class)
@@ -68,7 +68,7 @@ class HomeRoute : KComposite() {
             }
 
             grid = virtualList {
-                 style.set("background-color", "orange") // test remove
+                 //style.set("background-color", "orange") // test remove
                 setRenderer(ComponentRenderer { row ->
                     setSizeFull()
                     val item = TripListItem(row)
@@ -155,7 +155,6 @@ class TripListItem(private val row: Trip) : KComposite() {
 
 }
 
-@OptIn(ExperimentalEncodingApi::class)
 internal class ShowDetailModal(trip: Trip) : Dialog() {
 
     private lateinit var titleField: H5
@@ -214,9 +213,8 @@ internal class ShowDetailModal(trip: Trip) : Dialog() {
         }
         footer {
             cancelButton = button("Закрыть") {
-                style.set("background-color", "white")
-                style.set("color", "black")
-                addThemeVariants(ButtonVariant.LUMO_SMALL)
+                isAutofocus = true
+                setPrimary()
                 onClick { close() }
             }
         }

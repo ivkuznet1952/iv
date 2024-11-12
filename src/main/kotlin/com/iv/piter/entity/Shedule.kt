@@ -10,7 +10,8 @@ import java.time.LocalTime
 data class Shedule(
     override var id: Long? = null,
     var trip_id: Long? = null,
-    var begin: LocalTime
+    var begin: LocalTime,
+   // var active: Boolean = false
 ) : KEntity<Long> {
     companion object : Dao<Shedule, Long>(Shedule::class.java) {
     }

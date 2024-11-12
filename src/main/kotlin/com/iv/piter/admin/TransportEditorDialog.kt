@@ -17,7 +17,7 @@ import com.vaadin.flow.data.validator.StringLengthValidator
  * A form for editing [Transport] objects.
  */
 class TransportEditorForm(val transport: Transport) : FormLayout(), EditorForm<Transport> {
-    //private val isEditing get() = transport.id != null
+
     override var isEdit:Boolean = true
     override val itemType: String get() = "транспорт"
     override val binder: Binder<Transport> = beanValidationBinder()

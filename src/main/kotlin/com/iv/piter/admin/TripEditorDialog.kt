@@ -13,11 +13,13 @@ import com.vaadin.flow.component.notification.NotificationVariant
 import com.vaadin.flow.component.upload.Upload
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer
 import com.vaadin.flow.data.binder.Binder
+import com.vaadin.flow.data.converter.LocalDateTimeToInstantConverter
 import com.vaadin.flow.data.converter.StringToFloatConverter
 import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
 import java.io.ByteArrayInputStream
 import java.io.InputStream
+import java.time.LocalTime
 
 
 class TripEditorForm(private var trip: Trip) : FormLayout(), EditorForm<Trip> {
@@ -26,7 +28,7 @@ class TripEditorForm(private var trip: Trip) : FormLayout(), EditorForm<Trip> {
     override var isEdit:Boolean = true
 
     init {
-        maxWidth = "500px"
+        maxWidth = "520px"
         responsiveSteps {
             "0"(1); "320px"(1); "480px"(1)
             "580px"(1)
@@ -37,11 +39,22 @@ class TripEditorForm(private var trip: Trip) : FormLayout(), EditorForm<Trip> {
                 .asRequired()
                 .bind(Trip::name)
         }
+        horizontalLayout(padding = false, spacing = true) {
+            textField("Продолжительность(час.)") {
+                width = "40%"
+                bind(binder).withConverter<Float>(
+                    StringToFloatConverter("Требуется число")
+                ).bind(Trip::duration)
+            }
 
-        textField("Продолжительность экскурсии (час.)") {
-            bind(binder).withConverter<Float>(
-                StringToFloatConverter("Not a number")
-            ).bind(Trip::duration)
+            timePicker("Начало") {
+                width = "25%"
+                bind(binder).bind(Trip::start)
+            }
+            timePicker("Окончание") {
+                width = "25%"
+                bind(binder).bind(Trip::finish)
+            }
         }
 
         p{}
@@ -137,6 +150,7 @@ class TripEditorForm(private var trip: Trip) : FormLayout(), EditorForm<Trip> {
 
                 frame.onSaveItem = {
                     val creating: Boolean = trip.id == null
+                   // println("//////:" + trip)
                     trip.save()
                     val op: String = if (creating) "добавлена" else "сохранена"
                     val n = Notification.show("Экскурсия успешно ${op}.", 3000, Notification.Position.TOP_END)

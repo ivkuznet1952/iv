@@ -95,12 +95,12 @@ class TripRoute : KComposite() {
                     width = "4rem"
                 }
 
-                addColumn(ComponentRenderer<Button, Trip> { tr -> createSheduleButton(tr) }).apply {
+              /*  addColumn(ComponentRenderer<Button, Trip> { tr -> createSheduleButton(tr) }).apply {
                     flexGrow = 0
                     key = "shedule"
                     isExpand = false
                     width = "4rem"
-                }
+                } */
 
                 addColumn(ComponentRenderer<Button, Trip> { tr -> createCostButton(tr) }).apply {
                     flexGrow = 0
@@ -168,7 +168,7 @@ class TripRoute : KComposite() {
         return editButton
     }
 
-    private fun createSheduleButton(trip: Trip): Button {
+ /*   private fun createSheduleButton(trip: Trip): Button {
         val sheduleButton = Button("").apply {
             icon = Icon(VaadinIcon.TASKS)
             addThemeVariants(ButtonVariant.LUMO_TERTIARY)
@@ -183,7 +183,7 @@ class TripRoute : KComposite() {
             .withPosition(Tooltip.TooltipPosition.TOP_START)
         return sheduleButton
 
-    }
+    } */
 
     private fun createCostButton(trip: Trip): Button {
         val costButton = Button("").apply {
@@ -261,7 +261,7 @@ class TripItem(private val row: Trip) : KComposite() {
                         .withText("Редактировать")
                         .withPosition(Tooltip.TooltipPosition.TOP_START)
 
-                    val sheduleButton = button {
+                  /*  val sheduleButton = button {
                         style.set("background-color", "transparent")
                         icon = VaadinIcon.TASKS.create()
                         width = "30px"
@@ -271,7 +271,7 @@ class TripItem(private val row: Trip) : KComposite() {
                     }
                     Tooltip.forComponent(sheduleButton)
                         .withText("Расписание")
-                        .withPosition(Tooltip.TooltipPosition.TOP_START)
+                        .withPosition(Tooltip.TooltipPosition.TOP_START) */
 
                     val costButton = button {
                         style.set("background-color", "transparent")

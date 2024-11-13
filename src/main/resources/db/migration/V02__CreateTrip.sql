@@ -6,5 +6,7 @@ create table IF NOT EXISTS trip
     photo bytea null,
     comment varchar(100) null,
     duration numeric,
+    start time null,
+    finish time null,
     active boolean
 )

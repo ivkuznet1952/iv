@@ -40,6 +40,7 @@ class HomeRoute : KComposite() {
 
     private lateinit var grid: VirtualList<Trip>
     private lateinit var nodata: H5
+    //var w: Int = 4
 
     private val root = ui {
 
@@ -55,16 +56,15 @@ class HomeRoute : KComposite() {
                     height = "25px"
                 }
                 h6("Индивидуальные экскурсии")
-                val room = button {
+                val room = button("Личный кабинет") {
                     icon = VaadinIcon.COIN_PILES.create()
                     style.set("background-color", "transparent")
-                    style.set("color", "white")
+                    style.set("color", "gray")
                     style.set("margin-left", "auto")
-                    onClick {
-                        navigateTo<LoginRoute>()
-                    }
+                    style.set("font-size", "13px")
+                    onClick { navigateTo<LoginRoute>() }
                 }
-                Tooltip.forComponent(room).withText("Личный кабинет")
+                //Tooltip.forComponent(room).withText("Личный кабинет")
             }
 
             grid = virtualList {
@@ -228,3 +228,28 @@ internal class ShowDetailModal(trip: Trip) : Dialog() {
 
 }
 
+//text("///// EXAMPLE:" + grid.width)
+/*
+            br{}
+            val w = 15
+            val begin: Int = 4
+            val duration = 1
+
+            val len = duration * w
+            val offset = begin * w
+            verticalLayout {
+                horizontalLayout {
+                    setSizeFull()
+                   // maxWidth = "960px"
+                    style.set("background-color", "yellow")
+                    height = "10px"
+                }
+                //br {}
+                horizontalLayout {
+                    setSizeFull()
+                    width = "$len" + "px"
+                    style.set("background-color", "red")
+                    style.set("margin-left", "$offset" + "px")
+                    height = "10px"
+                }
+            } */

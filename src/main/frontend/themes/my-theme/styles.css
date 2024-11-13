@@ -11,9 +11,7 @@ body {
     background-color: var(--lumo-contrast-5pct);
     -webkit-font-smoothing: antialiased;
 }
-/*.app-content{*/
-/*    background-color: green;*/
-/*}*/
+
 
 .view-toolbar {
     display: flex;
@@ -24,7 +22,6 @@ body {
     position: relative;
     z-index: 1;
     flex: none;
-    /*max-width: 960px;*/
 }
 
 .view-toolbar-background {
@@ -58,7 +55,7 @@ body {
         display: none;
     }
     .hide-admin-menu {
-        //background-color: canvas;
+        //background-color: transparent;
     }
     .hide-admin-panel {
         display: none;

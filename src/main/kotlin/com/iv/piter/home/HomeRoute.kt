@@ -9,6 +9,7 @@ import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.kaributools.setPrimary
 import com.iv.piter.Constant
 import com.iv.piter.MainLayout
+import com.iv.piter.entity.Cost
 import com.iv.piter.entity.Trip
 import com.iv.piter.security.LoginRoute
 import com.vaadin.flow.component.button.Button
@@ -18,7 +19,6 @@ import com.vaadin.flow.component.html.H5
 import com.vaadin.flow.component.html.Image
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
-import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.component.virtuallist.VirtualList
 import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.data.renderer.ComponentRenderer
@@ -40,7 +40,6 @@ class HomeRoute : KComposite() {
 
     private lateinit var grid: VirtualList<Trip>
     private lateinit var nodata: H5
-    //var w: Int = 4
 
     private val root = ui {
 
@@ -59,16 +58,15 @@ class HomeRoute : KComposite() {
                 val room = button("Личный кабинет") {
                     icon = VaadinIcon.COIN_PILES.create()
                     style.set("background-color", "transparent")
-                    style.set("color", "gray")
+                    style.set("color", "whitesmoke")
                     style.set("margin-left", "auto")
                     style.set("font-size", "13px")
                     onClick { navigateTo<LoginRoute>() }
                 }
-                //Tooltip.forComponent(room).withText("Личный кабинет")
             }
 
             grid = virtualList {
-                 //style.set("background-color", "orange") // test remove
+                //style.set("background-color", "orange") // TODO test remove
                 setRenderer(ComponentRenderer { row ->
                     setSizeFull()
                     val item = TripListItem(row)
@@ -81,6 +79,8 @@ class HomeRoute : KComposite() {
 
     }
 
+
+
     init {
         val dp: ListDataProvider<Trip> = ListDataProvider(Trip.dataProvider.fetchAll().filter { it.active == true })
         grid.dataProvider = dp
@@ -89,12 +89,17 @@ class HomeRoute : KComposite() {
             nodata.text = "нет данных"
         }
     }
+
 }
 
 
 class TripListItem(private val row: Trip) : KComposite() {
 
     private val root = ui {
+
+        val costs = row.id?.let { Cost.findByTripId(it) }
+        val cost = if (costs == null || costs.isEmpty()) 0 else costs.map{ it.cost }.min()
+
         horizontalLayout(false, true, classNames = "main-trip-background") {
             setSizeFull()
             height = "90px"
@@ -102,6 +107,7 @@ class TripListItem(private val row: Trip) : KComposite() {
             style.set("border-bottom", "gray solid 0.005em")
             style.set("border-top", "gray solid 0.005em")
             style.set("border-radius", "2px")
+
             horizontalLayout(false) {
                 alignSelf = FlexComponent.Alignment.CENTER
 
@@ -145,7 +151,8 @@ class TripListItem(private val row: Trip) : KComposite() {
                     span {
                         style.set("font-size", "13px")
                         className = "b-font"
-                        text("1900") // TODO
+
+                        text("$cost") // TODO
                         html("&#x20bd")
                     }
                 }
@@ -160,6 +167,8 @@ internal class ShowDetailModal(trip: Trip) : Dialog() {
     private lateinit var titleField: H5
     private lateinit var cancelButton: Button
     private var registrationForConfirm: Registration? = null
+    val costs = trip.id?.let { Cost.findByTripId(it) }
+    val cost = if (costs == null || costs.isEmpty()) 0 else costs.map{ it.cost }.min()
 
     init {
         addClassNames("confirm-dialog trip-detail-width")
@@ -169,8 +178,8 @@ internal class ShowDetailModal(trip: Trip) : Dialog() {
         header {
             titleField = h5()
         }
-        horizontalLayout(false, false) {
-            verticalLayout(false, true) {
+        horizontalLayout(padding = false, spacing = false) {
+            verticalLayout(padding = false,spacing = true) {
 
                 verticalLayout {
                     alignItems = FlexComponent.Alignment.CENTER
@@ -190,8 +199,7 @@ internal class ShowDetailModal(trip: Trip) : Dialog() {
                         className = "b-text"
                         text("Стоимость от:")
                     }
-
-                    text("1900")
+                    text("$cost")
                     html("&#x20bd")
                 }
 
@@ -228,28 +236,30 @@ internal class ShowDetailModal(trip: Trip) : Dialog() {
 
 }
 
-//text("///// EXAMPLE:" + grid.width)
-/*
-            br{}
-            val w = 15
-            val begin: Int = 4
-            val duration = 1
+/*  // SCREEN RESOLUTION NEED TEST
+    private fun isMobileView(): Boolean {
+        val ui: UI = UI.getCurrent()
+        val page: Page = ui.getPage()
+        var isScreenWidthLessThan600 = false
+        if (page != null) {
+            page.retrieveExtendedClientDetails { details ->
+                val screenWidth: Int = details.getScreenWidth()
+                val screenHeight: Int = details.getScreenHeight()
+                isScreenWidthLessThan600 = screenWidth < 600
+            }
+        }
+        return isScreenWidthLessThan600
+    }
 
-            val len = duration * w
-            val offset = begin * w
-            verticalLayout {
-                horizontalLayout {
-                    setSizeFull()
-                   // maxWidth = "960px"
-                    style.set("background-color", "yellow")
-                    height = "10px"
-                }
-                //br {}
-                horizontalLayout {
-                    setSizeFull()
-                    width = "$len" + "px"
-                    style.set("background-color", "red")
-                    style.set("margin-left", "$offset" + "px")
-                    height = "10px"
-                }
-            } */
+    fun isMobileDevice(): Boolean {
+        val webBrowser = VaadinSession.getCurrent().browser
+        return webBrowser.isAndroid || webBrowser.isIPhone || webBrowser.isWindowsPhone
+    }
+
+    fun isMobi(): Boolean {
+        val userAgent = VaadinService.getCurrentRequest().getHeader("User-Agent")
+        val isMobi = userAgent != null && userAgent.lowercase(Locale.getDefault()).contains("mobi")
+
+        return isMobi
+    }
+*/

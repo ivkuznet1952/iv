@@ -43,10 +43,12 @@ class AdminLayout : KComposite(), RouterLayout {
 
             drawer {
                 sideNav {
+                    route(OrderRoute::class, VaadinIcon.BRIEFCASE)
                     route(TripRoute::class, VaadinIcon.BUS)
                     route(CustomerRoute::class, VaadinIcon.ABACUS)
                     route(TransportRoute::class, VaadinIcon.CAR)
                     route(GuideRoute::class, VaadinIcon.COG)
+                    route(SheduleRoute::class, VaadinIcon.CALENDAR_USER)
                     route(UserRoute::class, VaadinIcon.LIST)
                 }
 
@@ -65,6 +67,10 @@ class AdminLayout : KComposite(), RouterLayout {
             content {
                 contentPane = div("admin-layout") {
                     horizontalLayout (spacing = false, padding = true, classNames = "hide-admin-menu") {
+                        routerLink(null, "Заказы", OrderRoute::class) {
+                            addClassName("admin-layout__nav-item")
+                            highlightCondition = HighlightConditions.sameLocation()
+                        }
                         routerLink(null, "Экскурсии", TripRoute::class) {
                             addClassName("admin-layout__nav-item")
                             highlightCondition = HighlightConditions.sameLocation()
@@ -78,6 +84,10 @@ class AdminLayout : KComposite(), RouterLayout {
                             highlightCondition = HighlightConditions.sameLocation()
                         }
                         routerLink(null, "Гиды", GuideRoute::class) {
+                            addClassName("admin-layout__nav-item")
+                            highlightCondition = HighlightConditions.sameLocation()
+                        }
+                        routerLink(null, "Расписание", SheduleRoute::class) {
                             addClassName("admin-layout__nav-item")
                             highlightCondition = HighlightConditions.sameLocation()
                         }

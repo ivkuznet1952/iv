@@ -72,8 +72,8 @@ class Bootstrap: ServletContextListener {
         val flyway: Flyway = Flyway.configure()
             .dataSource(VaadinOnKotlin.dataSource)
             .load()
-        flyway.migrate()
-//        flyway.repair()
+//        flyway.migrate()
+        flyway.repair()
 //         setup security
         // security interceptor is configured in AppServiceInitListener
 //        User(username = "admin", roles = "").apply { setPassword("admin"); save() }

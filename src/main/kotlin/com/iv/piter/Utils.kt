@@ -1,13 +1,6 @@
 package com.iv.piter
 
-import com.github.mvysny.karibudsl.v10.*
-import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.datepicker.DatePicker
-import com.vaadin.flow.component.html.Div
-import com.vaadin.flow.component.icon.VaadinIcon
-import com.vaadin.flow.component.notification.Notification
-import com.vaadin.flow.component.notification.NotificationVariant
-import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.component.upload.UploadI18N
 
 class UploadRussianI18N : UploadI18N() {
@@ -48,12 +41,17 @@ class UploadRussianI18N : UploadI18N() {
 
 class DatePickerRussianI18N : DatePicker.DatePickerI18n() {
 
+    val years: MutableSet<String> = mutableSetOf(
+        "2024", "2025", "2026", "2027", "2028", "2029", "2030"
+    )
+
     init {
         monthNames = listOf(
             "Январь", "Февраль", "Март", "Апрель",
             "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь",
             "Ноябрь", "Декабрь"
         )
+
         weekdays = listOf(
             "Воскресенье", "Понедельник", "Вторник",
             "Среда", "Черверг", "Пятница", "Суббота"
@@ -61,6 +59,13 @@ class DatePickerRussianI18N : DatePicker.DatePickerI18n() {
         weekdaysShort = listOf("Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб")
         today = "Сегодня"
         cancel = "Выйти"
+    }
+
+    fun monthNumber(month: String): Int {
+        for (i in 0..monthNames.size) {
+            if (monthNames[i] == month) return i + 1
+        }
+        return 0
     }
 }
 

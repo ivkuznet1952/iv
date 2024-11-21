@@ -13,13 +13,12 @@ import com.vaadin.flow.component.notification.NotificationVariant
 import com.vaadin.flow.component.upload.Upload
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer
 import com.vaadin.flow.data.binder.Binder
-import com.vaadin.flow.data.converter.LocalDateTimeToInstantConverter
 import com.vaadin.flow.data.converter.StringToFloatConverter
 import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
 import java.io.ByteArrayInputStream
 import java.io.InputStream
-import java.time.LocalTime
+import java.util.*
 
 
 class TripEditorForm(private var trip: Trip) : FormLayout(), EditorForm<Trip> {
@@ -41,18 +40,20 @@ class TripEditorForm(private var trip: Trip) : FormLayout(), EditorForm<Trip> {
         }
         horizontalLayout(padding = false, spacing = true) {
             textField("Продолжительность(час.)") {
-                width = "40%"
+                width = "25%"
                 bind(binder).withConverter<Float>(
                     StringToFloatConverter("Требуется число")
                 ).bind(Trip::duration)
             }
 
             timePicker("Начало") {
-                width = "25%"
+                width = "30%"
+                locale = Locale.getDefault()
                 bind(binder).bind(Trip::start)
             }
             timePicker("Окончание") {
-                width = "25%"
+                width = "30%"
+                locale = Locale.getDefault()
                 bind(binder).bind(Trip::finish)
             }
         }
@@ -110,7 +111,7 @@ class TripEditorForm(private var trip: Trip) : FormLayout(), EditorForm<Trip> {
 
             fun maybeDelete(frame: EditorDialogFrame<Trip>?, item: Trip) { // TODO
 
-                val orderCount = 1L
+                val orderCount = 0L
 
                 if (orderCount == 0L) {
                     if (frame != null) {

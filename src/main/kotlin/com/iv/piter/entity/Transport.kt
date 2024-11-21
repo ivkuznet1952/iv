@@ -14,6 +14,7 @@ import jakarta.validation.constraints.NotBlank
 data class Transport(override var id: Long? = null,
                 @field: NotBlank
                 var name: String = "",
+                var maxcount: Int = 0,
                 var active: Boolean = true,
                 ) : KEntity<Long> {
     companion object : Dao<Transport, Long>(Transport::class.java) {

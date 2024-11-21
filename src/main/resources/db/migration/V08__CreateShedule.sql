@@ -1,6 +1,7 @@
 create table IF NOT EXISTS shedule
 (
     id        bigserial primary key,
-    trip_id   integer not null,
-    begin     time   null
+    guide_id   integer     not null,
+    start      timestamp   null,
+    finish     timestamp   null
 )

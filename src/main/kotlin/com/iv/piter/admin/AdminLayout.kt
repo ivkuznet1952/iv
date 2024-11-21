@@ -50,6 +50,7 @@ class AdminLayout : KComposite(), RouterLayout {
                     route(GuideRoute::class, VaadinIcon.COG)
                     route(SheduleRoute::class, VaadinIcon.CALENDAR_USER)
                     route(UserRoute::class, VaadinIcon.LIST)
+                    route(ArchiveRoute::class, VaadinIcon.ARCHIVES)
                 }
 
                 // logout menu item
@@ -92,6 +93,10 @@ class AdminLayout : KComposite(), RouterLayout {
                             highlightCondition = HighlightConditions.sameLocation()
                         }
                         routerLink(null,"Пользователи", UserRoute::class) {
+                            addClassName("admin-layout__nav-item")
+                            highlightCondition = HighlightConditions.sameLocation()
+                        }
+                        routerLink(null, "Архив заказов", ArchiveRoute::class) {
                             addClassName("admin-layout__nav-item")
                             highlightCondition = HighlightConditions.sameLocation()
                         }

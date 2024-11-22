@@ -24,12 +24,12 @@ class TransportEditorForm(val transport: Transport) : FormLayout(), EditorForm<T
 
     init {
         responsiveSteps {
-            "0"(1); "320px"(1); "480px"(1)
-            "580px"(1)
+            "0"(1); "320px"(1); "380px"(2)
+            "480px"(2)
         }
 
         textField("Наименование") {
-            minWidth = "250px"
+            minWidth = "280px"
             bind(binder)
                 .trimmingConverter()
                 .withValidator(
@@ -39,6 +39,10 @@ class TransportEditorForm(val transport: Transport) : FormLayout(), EditorForm<T
                     )
                 )
                 .bind(Transport::name)
+        }
+        integerField("Мах кол-во туристов") {
+            maxWidth = "180px"
+            bind(binder).bind(Transport::maxcount)
         }
     }
 

@@ -64,9 +64,14 @@ class TransportRoute : KComposite() {
                 }
                 columnFor(Transport::name) {
                     setHeader("Наименование")
+                    width = "50%"
                     setSortProperty(Transport::name.exp)
                 }
-
+                columnFor(Transport::maxcount) {
+                    setHeader("Макс. кол-во туристов")
+                    width = "20%"
+                    setSortProperty(Transport::maxcount.exp)
+                }
                 addColumn(ComponentRenderer<Button, Transport> { tr -> createEditButton(tr) }).apply {
                     flexGrow = 0; key = ""
                     isExpand = false
@@ -172,6 +177,12 @@ class TransportItem(val row: Transport) : KComposite() {
             textField("Наименование") {
                 setWidthFull()
                 bind(binder).bind(Transport::name)
+                isEnabled = false
+            }
+            integerField("Макс. кол-во туристов") {
+                //setWidthFull()
+               // width = "30%"
+                bind(binder).bind(Transport::maxcount)
                 isEnabled = false
             }
           }

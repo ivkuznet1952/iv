@@ -2,6 +2,10 @@ package com.iv.piter
 
 import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.upload.UploadI18N
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.*
 
 class UploadRussianI18N : UploadI18N() {
     init {
@@ -68,6 +72,27 @@ class DatePickerRussianI18N : DatePicker.DatePickerI18n() {
         return 0
     }
 }
+
+fun convertToLocalDate(dateToConvert: Date): LocalDate {
+    return LocalDate.ofInstant(
+        dateToConvert.toInstant(), ZoneId.systemDefault()
+    )
+}
+
+fun convertToLocalDateViaInstant(dateToConvert: Date): LocalDate {
+    return dateToConvert.toInstant()
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate()
+}
+
+fun convertToDateViaInstant(dateToConvert: LocalDateTime): Date {
+    return Date
+        .from(
+            dateToConvert.atZone(ZoneId.systemDefault())
+                .toInstant()
+        )
+}
+
 
 /*
 class LineMenuItem(

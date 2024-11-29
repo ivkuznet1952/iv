@@ -8,23 +8,25 @@ import com.iv.piter.entity.Guide
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.notification.NotificationVariant
+import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.data.binder.Binder
 
 
 /**
  * A form for editing [Guide] objects.
  */
-class GuideEditorForm(val guide: Guide) : FormLayout(), EditorForm<Guide> {
+class GuideEditorForm(val guide: Guide) : VerticalLayout(), EditorForm<Guide> {
 
     override val itemType: String get() = "гид"
     override val binder: Binder<Guide> = beanValidationBinder()
-    override var isEdit:Boolean = true
+    override var isEdit: Boolean = true
 
     init {
-
+        isPadding = false
+        formLayout {
             responsiveSteps {
-               "0"(1); "320px"(1); "480px"(1)
-                "580px"(1)
+                "0"(1); "320px"(1); "480px"(3)
+                "580px"(3)
             }
             textField("Имя") {
                 bind(binder)
@@ -41,14 +43,18 @@ class GuideEditorForm(val guide: Guide) : FormLayout(), EditorForm<Guide> {
                     .trimmingConverter()
                     .bind(Guide::phone)
             }
+        }
+        horizontalLayout(spacing = true) {
+            setWidthFull()
             textArea("Комментарий") {
+                setWidthFull()
                 bind(binder)
                     .trimmingConverter()
                     .bind(Guide::comment)
             }
+        }
 
     }
-
 
 
     /**

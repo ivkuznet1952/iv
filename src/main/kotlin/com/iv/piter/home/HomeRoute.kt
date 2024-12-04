@@ -47,12 +47,13 @@ class HomeRoute : KComposite() {
 
             content { align(center, top) }
 
-            horizontalLayout(spacing = true, padding = false) {
+            horizontalLayout(spacing = true, padding = false,  classNames = "trip-background") {
                 setSizeFull()
                 alignItems = FlexComponent.Alignment.CENTER
                 image(Constant.titleImage, ".") {
                     width = "25px"
                     height = "25px"
+                    style.set("margin-left", "5px")
                 }
                 h6("Индивидуальные экскурсии")
                 val room = button("Личный кабинет") {
@@ -60,11 +61,12 @@ class HomeRoute : KComposite() {
                     style.set("background-color", "transparent")
                     style.set("color", "whitesmoke")
                     style.set("margin-left", "auto")
-                    style.set("font-size", "13px")
+                    style.set("font-size", "11px")
                     onClick { navigateTo<LoginRoute>() }
                 }
-            }
 
+            }
+            p {  }
             grid = virtualList {
                 //style.set("background-color", "orange") // TODO test remove
                 setRenderer(ComponentRenderer { row ->
@@ -100,7 +102,7 @@ class TripListItem(private val row: Trip) : KComposite() {
         val costs = row.id?.let { Cost.findByTripId(it) }
         val cost = if (costs == null || costs.isEmpty()) 0 else costs.map{ it.cost }.min()
 
-        horizontalLayout(false, true, classNames = "main-trip-background") {
+        horizontalLayout(false, true) {
             setSizeFull()
             height = "90px"
             style.set("padding", "5px")
@@ -112,7 +114,6 @@ class TripListItem(private val row: Trip) : KComposite() {
                 alignSelf = FlexComponent.Alignment.CENTER
 
                 if (row.photo != null) {
-
                     val stream: InputStream = ByteArrayInputStream(row.photo)
                     val imageResource = StreamResource("kot.png", InputStreamFactory { stream })
                     val image = Image(imageResource, "img")
@@ -172,7 +173,7 @@ internal class ShowDetailModal(trip: Trip) : Dialog() {
 
     init {
         addClassNames("confirm-dialog trip-detail-width")
-        isCloseOnEsc = true
+            isCloseOnEsc = true
         isCloseOnOutsideClick = false
 
         header {

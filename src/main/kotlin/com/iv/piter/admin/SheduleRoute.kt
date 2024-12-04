@@ -4,7 +4,6 @@ import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.karibudsl.v23.footer
 import com.github.mvysny.karibudsl.v23.header
 import com.github.mvysny.karibudsl.v23.virtualList
-import com.github.mvysny.kaributools.fetchAll
 import com.github.mvysny.kaributools.setPrimary
 import com.iv.piter.DatePickerRussianI18N
 import com.iv.piter.entity.Guide
@@ -16,6 +15,7 @@ import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.html.H5
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.component.virtuallist.VirtualList
@@ -30,7 +30,6 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
-import java.util.*
 import kotlin.math.ceil
 
 
@@ -111,15 +110,14 @@ class SheduleRoute : KComposite() {
     init {
         if (guides.isEmpty()) nodata.text = "нет данных"
         else {
-            //sheduler = guides.first().id?.let { Sheduler(it, LocalDate.now()) }
             sheduler = Sheduler(guides.first(), LocalDate.now())
         }
         vl.removeAll()
-        vl.add(sheduler!!)
+        if (sheduler != null) vl.add(sheduler!!)
     }
 
 }
-//}
+
 
 class Sheduler(private val guide: Guide, day: LocalDate) : VerticalLayout() {
 
@@ -135,41 +133,51 @@ class Sheduler(private val guide: Guide, day: LocalDate) : VerticalLayout() {
 
     init {
         setWidthFull()
-        //val d = LocalDateTime.now()
-        //val m: LocalDate = convertToLocalDate(convertToDateViaInstant(d))
-        //val m = LocalDate.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-        // val today = LocalDate.of(2024, 11, 25)
-        // println("//////// m:" + m)
-        //if (today.equals(m)){
-        //     println("//////// YES:")
-        //}
 
         for (i in 1..rows) {
             horizontalLayout(spacing = true, padding = false) {
                 setWidthFull()
 
                 for (j in 1..7) {
-                    horizontalLayout(spacing = true, padding = false) {
-                        setWidthFull()
+                   horizontalLayout(spacing = true, padding = false) {
+                       //val calendarCell = thi
+                           setWidthFull()
                         val s = (i - 1) * 7 + j - offbegin
                         if (s > 0 && s <= lastDayOfMonth.dayOfMonth) {
                             if (j == 6 || j == 7) style.set("border", "red solid 0.001rem")
                             else style.set("border", "gray solid 0.001rem")
+                            // TODO //order color
+                            var orderExist = false
+                            if (s == 29) orderExist = true
+
+                            if (orderExist) {
+                                var orderIcon = VaadinIcon.BRIEFCASE.create()
+                                orderIcon.className = "order-icon-shedule"
+                                add(orderIcon)
+                            }
                             span {
                                 style.set("margin-left", "auto")
                                 style.set("margin-right", "2px")
                                 text("$s")
+                                if (orderExist) {
+                                    style.set("color", "darkgreen")
+                                    style.set("font-weight", "900")
+                                }
                             }
-                            style.set("background-color", "gray")
+
+                             val notWorkTime = guide.id?.let { Shedule.findByGuideId(it, LocalDate.of(yyyy, mm, s)) }.isNullOrEmpty()
+                             if (notWorkTime) style.set("background-color", "gray")
+                             else style.set("background-color", "red")
+
                         }
                         onClick {
-                            // println("Clicked $s")
                             style.set("border", "green solid 0.001rem")
 
                             val currentDay = LocalDate.of(yyyy, mm, s)
                             val pattern = DateTimeFormatter.ofPattern("dd.MM.yyyy")
                             val formattedDate: String = currentDay.format(pattern)
-                            SheduleModal(guide, currentDay).open(formattedDate)
+                           // edit
+                            SheduleModal(this, guide, currentDay).open(formattedDate)
                         }
                         // if (j == 6 || j == 7) style.set("background-color", "red")
                         //else style.set("background-color", "green")
@@ -179,13 +187,11 @@ class Sheduler(private val guide: Guide, day: LocalDate) : VerticalLayout() {
                 }
             }
         }
-
-        //br{}
-        //if (guideId != 0L) text("/////:" + Guide.getById(guideId).lastname + " " + Guide.getById(guideId).firstname)
     }
+
 }
 
-internal class SheduleModal(private val guide: Guide, private val day: LocalDate) : Dialog() {
+internal class SheduleModal(calendarCell: @VaadinDsl HorizontalLayout, private val guide: Guide, private val day: LocalDate) : Dialog() {
 
     private lateinit var titleField: H5
     private lateinit var cancelButton: Button
@@ -237,7 +243,11 @@ internal class SheduleModal(private val guide: Guide, private val day: LocalDate
         footer {
             cancelButton = button("Закрыть") {
                 isAutofocus = true
-                onClick { close() }
+                onClick {
+                    close()
+                    if  (sheduleGrid.dataCommunicator.itemCount == 0) calendarCell.style.set("background-color", "gray")
+                    else calendarCell.style.set("background-color", "red")
+                }
             }
         }
         updateView()

@@ -45,6 +45,9 @@ body {
     .hide-admin-grid {
         display: none;
     }
+    .order-icon-shedule {
+        display: none;
+    }
 }
 
 @media (min-width: 767px) {
@@ -54,11 +57,17 @@ body {
     .hide-admin-drawer {
         display: none;
     }
-    .hide-admin-menu {
-        //background-color: transparent;
-    }
+    /*.hide-admin-menu {*/
+        /*background-color: transparent;*/
+    /*}*/
     .hide-admin-panel {
         display: none;
+    }
+    .order-icon-shedule {
+        color: green;
+        margin-left: 5px;
+        margin-top: 5px;
+        height: 14px;
     }
 }
 
@@ -101,6 +110,9 @@ vaadin-app-layout::part(navbar){
     /*background-color: #0a0a1a*/
 }
 
+.trip-background {
+    background-color: rgb(35,35,49)
+}
 
 .main-layout > * {
     flex: auto;

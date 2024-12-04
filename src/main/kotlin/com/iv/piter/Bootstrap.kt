@@ -69,7 +69,7 @@ class Bootstrap: ServletContextListener {
         sleep(5000)
 
 
-//        val flyway: Flyway = Flyway.configure().dataSource(VaadinOnKotlin.dataSource).load()
+        //val flyway: Flyway = Flyway.configure().dataSource(VaadinOnKotlin.dataSource).load()
         flyway.migrate()
        // flyway.repair()
 //         setup security

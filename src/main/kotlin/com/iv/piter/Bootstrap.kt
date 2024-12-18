@@ -19,7 +19,6 @@ import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
 import java.lang.Thread.sleep
 
-
 /**
  * Called by the Servlet Container to bootstrap your app. We need to bootstrap the Vaadin-on-Kotlin framework,
  * in order to have support for the database; then we'll run Flyway migration scripts, to make sure that the database is up-to-date.

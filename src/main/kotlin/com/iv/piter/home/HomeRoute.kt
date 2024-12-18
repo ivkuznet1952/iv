@@ -31,6 +31,8 @@ import com.vaadin.flow.shared.Registration
 import eu.vaadinonkotlin.vaadin.vokdb.dataProvider
 import java.io.ByteArrayInputStream
 import java.io.InputStream
+//import dev.inmo.tgbotapi.webapps.webApp
+
 
 
 @Route("", layout = MainLayout::class)
@@ -66,6 +68,9 @@ class HomeRoute : KComposite() {
                 }
 
             }
+//            text("ID: ")
+//            text(webApp.initDataUnsafe.user?.id?.toString() ?: "no id")
+
             p {  }
             grid = virtualList {
                 //style.set("background-color", "orange") // TODO test remove

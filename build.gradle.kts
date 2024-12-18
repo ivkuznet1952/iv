@@ -55,6 +55,8 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation(kotlin("test"))
 
+   // implementation(libs.tgbotapi.webapps)
+
 }
 
 java {

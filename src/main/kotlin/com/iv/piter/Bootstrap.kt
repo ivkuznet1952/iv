@@ -143,18 +143,6 @@ class Bootstrap : ServletContextListener {
 @Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 class AppShell : AppShellConfigurator
 
-
-//    suspend fun initbot() {
-//        val bot = telegramBot("6038173806:AAGMKgMM1A4SrzUhy-earibyuWQiDMgOiNU")
-//        bot.buildBehaviourWithLongPolling {
-//            println("////// init bot")
-//            onCommand("start") {
-//                reply(it, "Ivan Hi:)")
-//            }
-//        }.join()
-//    }
-
-
 object BotConfig {
 
     val botName: String = "sasterra"

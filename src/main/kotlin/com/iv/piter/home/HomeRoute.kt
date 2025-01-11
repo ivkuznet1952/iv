@@ -7,7 +7,9 @@ import com.github.mvysny.karibudsl.v23.virtualList
 import com.github.mvysny.kaributools.fetchAll
 import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.kaributools.setPrimary
+import com.iv.piter.BotConfig
 import com.iv.piter.Constant
+import com.iv.piter.ExcursTelegramBot
 import com.iv.piter.MainLayout
 import com.iv.piter.entity.Cost
 import com.iv.piter.entity.Trip
@@ -22,26 +24,70 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.virtuallist.VirtualList
 import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.data.renderer.ComponentRenderer
-import com.vaadin.flow.router.PageTitle
-import com.vaadin.flow.router.Route
+import com.vaadin.flow.router.*
 import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
 import com.vaadin.flow.server.auth.AnonymousAllowed
 import com.vaadin.flow.shared.Registration
+import eu.vaadinonkotlin.vaadin.Session
 import eu.vaadinonkotlin.vaadin.vokdb.dataProvider
+import org.telegram.telegrambots.meta.TelegramBotsApi
 import java.io.ByteArrayInputStream
 import java.io.InputStream
+
+
 //import dev.inmo.tgbotapi.webapps.webApp
 
 
 
-@Route("", layout = MainLayout::class)
+//@Route(value = "/23", layout = MainLayout::class)
+@Route(value = "", layout = MainLayout::class)
 @PageTitle("Экскурсии")
 @AnonymousAllowed
-class HomeRoute : KComposite() {
+//class HomeRoute : KComposite(), BeforeEnterObserver {
+    class HomeRoute : KComposite(), HasUrlParameter<String> {
+
 
     private lateinit var grid: VirtualList<Trip>
     private lateinit var nodata: H5
+    private lateinit var chat: H5
+
+    private var chat_id: String? = null
+
+//    override fun beforeEnter(event: BeforeEnterEvent) {
+//        println("######### 000000000000:" + chat_id)
+//        chat_id = event.routeParameters["chat_id"].get()
+//        println("#########:" + chat_id)
+//    }
+
+    // HasUrlParameter interface
+ /*   override fun setParameter(event: BeforeEvent?,  @OptionalParameter id: String?) {
+        if (id != null) {
+            if (event != null) {
+                chat_id = event.routeParameters["chat_id"].get()
+            }
+            println("#########:" + chat_id)
+        } else {
+            println("######### NOOOOOOO" )
+           // navigateTo<HomeRoute>()
+        }
+    } */
+
+    override fun setParameter(event: BeforeEvent?, @OptionalParameter parameter: String?) {
+        if (parameter == null) {
+            println("Welcome anonymous.")
+        } else {
+           // println(String.format("Welcome %s.", parameter))
+            chat_id = parameter
+            chat.text = parameter.trim()
+        }
+    }
+
+//    public override fun setParameter(event: BeforeEvent?, parameter: String?) {
+       // setText(String.format("Hello, %s!", parameter))
+//        println("######### NOOOOOOO:" + parameter)
+//    }
+
 
     private val root = ui {
 
@@ -64,12 +110,19 @@ class HomeRoute : KComposite() {
                     style.set("color", "whitesmoke")
                     style.set("margin-left", "auto")
                     style.set("font-size", "11px")
-                    onClick { navigateTo<LoginRoute>() }
+
+                    onClick {
+                        if  (BotConfig.bot != null) {
+                            BotConfig.bot!!.sendOrder(BotConfig.chatId, "Посылаю техт от $chat_id")
+                        }
+                        navigateTo<LoginRoute>()
+                    }
                 }
 
             }
-//            text("ID: ")
-//            text(webApp.initDataUnsafe.user?.id?.toString() ?: "no id")
+
+            text("ID: ")
+            chat = h5 {}
 
             p {  }
             grid = virtualList {

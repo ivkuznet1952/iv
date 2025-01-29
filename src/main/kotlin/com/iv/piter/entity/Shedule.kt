@@ -23,7 +23,9 @@ data class Shedule(
         fun findByGuideId(guideId: Long, date: LocalDate): List<Shedule> =
             Shedule.findAllBy { (Shedule::guide_id eq guideId).and(Shedule::day eq date) }
                 .sortedWith(compareBy { it.id })
+        fun isSheduleExists(guideId: Long, date: LocalDate): Boolean = findByGuideId(guideId, date).isNotEmpty()
     }
+
 
     override fun delete() {
         db {

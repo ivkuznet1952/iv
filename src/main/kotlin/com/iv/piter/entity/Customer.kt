@@ -17,24 +17,24 @@ data class Customer(override var id: Long? = null,
                     var firstname: String = "",
                     @field: NotBlank
                     var lastname: String = "",
-                    private var hashedPassword: String = "",
+                    var chatid: String = "",
                     var email: String? = "",
                     var phone: String? = "",
                     var created: LocalDateTime? = null,
                     var updated: LocalDateTime? = null,
                     var comment: String? = "",
                     var active: Boolean = true
-) : KEntity<Long> , HasPassword {
+) : KEntity<Long>  {
     companion object : Dao<Customer, Long>(Customer::class.java) {
         fun findByCustomername(username: String): Customer? = findSingleBy { Customer::username eq username }
         fun existsWithName(username: String): Boolean = existsBy{ Customer::username eq username }
 
     }
-    override fun getHashedPassword(): String = hashedPassword
-
-    override fun setHashedPassword(hashedPassword: String) {
-        this.hashedPassword = hashedPassword
-    }
+//    override fun getHashedPassword(): String = hashedPassword
+//
+//    override fun setHashedPassword(hashedPassword: String) {
+//        this.hashedPassword = hashedPassword
+//    }
 
     override fun delete() {
         db {

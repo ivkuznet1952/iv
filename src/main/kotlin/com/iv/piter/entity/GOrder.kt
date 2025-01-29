@@ -2,16 +2,20 @@ package com.iv.piter.entity
 
 import com.github.vokorm.KEntity
 import com.github.vokorm.db
+import com.github.vokorm.findAllBy
 import com.gitlab.mvysny.jdbiorm.Dao
 import com.gitlab.mvysny.jdbiorm.Table
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Table("gorder")
 data class GOrder(override var id: Long? = null,
                   var num: Int = 0,
                   var trip_id: Long = 0,
                   var count: Int = 0,
-                  var start: LocalDateTime? = null,
+                  var day: LocalDate? = null,
+                  var start: LocalTime? = null,
                   var transport_id: Long = 0,
                   var guide_id: Long = 0,
                   var cost: Int = 0,
@@ -26,7 +30,13 @@ data class GOrder(override var id: Long? = null,
                   ) : KEntity<Long> {
 
     companion object : Dao<GOrder, Long>(GOrder::class.java) {
-         //fun getNewOrderNumber
+
+        fun findByGuideId(guideId: Long, date: LocalDate): List<GOrder> =
+            GOrder.findAllBy { (GOrder::guide_id eq guideId).and(GOrder::day eq date) }
+                .sortedWith(compareBy { it.id })
+
+        fun isGOrderExists(guideId: Long, date: LocalDate): Boolean = findByGuideId(guideId, date).isNotEmpty()
+
     }
 
     override fun delete() {

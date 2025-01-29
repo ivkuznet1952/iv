@@ -5,13 +5,15 @@ import com.github.mvysny.karibudsl.v23.footer
 import com.github.mvysny.karibudsl.v23.header
 import com.github.mvysny.karibudsl.v23.virtualList
 import com.github.mvysny.kaributools.setPrimary
+import com.github.vokorm.exp
 import com.iv.piter.DatePickerRussianI18N
-import com.iv.piter.entity.Guide
-import com.iv.piter.entity.Shedule
+import com.iv.piter.entity.*
+import com.vaadin.flow.component.Text
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.dialog.Dialog
+import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.H5
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
@@ -25,6 +27,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.shared.Registration
+import eu.vaadinonkotlin.vaadin.setSortProperty
 import jakarta.annotation.security.RolesAllowed
 import java.time.LocalDate
 import java.time.LocalTime
@@ -46,8 +49,8 @@ class SheduleRoute : KComposite() {
     private var guideCombo: ComboBox<Guide> = ComboBox<Guide>()
     private var monthCombo: ComboBox<String> = ComboBox<String>()
     private var yearCombo: ComboBox<String> = ComboBox<String>()
-    private var sheduler: Sheduler? = null
-    private var vl: VerticalLayout = VerticalLayout()
+    private var guideCalendar: GuideCalendar? = null
+    private var vdata: VerticalLayout = VerticalLayout()
 
     private val root = ui {
         verticalLayout(padding = true, spacing = false) {
@@ -62,8 +65,8 @@ class SheduleRoute : KComposite() {
                     }
                     isSpacing = true
 
-                    guideCombo = comboBox<Guide>("Гид") {
-                        // setSizeFull()
+                    guideCombo = comboBox("Гид") {
+                        //
                         isAllowCustomValue = false
                         setItems(guides)
                         value = if (guides.isNotEmpty()) guides.first() else null
@@ -71,7 +74,7 @@ class SheduleRoute : KComposite() {
                         addValueChangeListener { updateCalendar() }
                     }
 
-                    monthCombo = comboBox<String>("Месяц") {
+                    monthCombo = comboBox("Месяц") {
                         maxWidth = "200px"
                         setItems(datePickerRussianI18N.monthNames)
                         val today = LocalDate.now()
@@ -79,7 +82,7 @@ class SheduleRoute : KComposite() {
                         addValueChangeListener { updateCalendar() }
                     }
 
-                    yearCombo = comboBox<String>("Год") {
+                    yearCombo = comboBox("Год") {
                         maxWidth = "200px"
                         setItems(datePickerRussianI18N.years)
                         val today = LocalDate.now()
@@ -87,7 +90,7 @@ class SheduleRoute : KComposite() {
                         addValueChangeListener { updateCalendar() }
                     }
                 }
-                add(vl)
+                add(vdata)
             }
             verticalLayout(spacing = true) {
                 alignItems = FlexComponent.Alignment.CENTER
@@ -101,24 +104,24 @@ class SheduleRoute : KComposite() {
         val mm = datePickerRussianI18N.monthNumber(monthCombo.value)
         val yy: Int = yearCombo.value.toInt()
         val day = LocalDate.of(yy, mm, 1)
-        sheduler = Sheduler(guide, day)
-        vl.removeAll()
-        vl.add(sheduler!!)
+        guideCalendar = GuideCalendar(guide, day)
+        vdata.removeAll()
+        vdata.add(guideCalendar!!)
     }
 
     init {
         if (guides.isEmpty()) nodata.text = "нет данных"
         else {
-            sheduler = Sheduler(guides.first(), LocalDate.now())
+            guideCalendar = GuideCalendar(guides.first(), LocalDate.now())
         }
-        vl.removeAll()
-        if (sheduler != null) vl.add(sheduler!!)
+        vdata.removeAll()
+        if (guideCalendar != null) vdata.add(guideCalendar!!)
     }
 
 }
 
 
-class Sheduler(private val guide: Guide, day: LocalDate) : VerticalLayout() {
+class GuideCalendar(private val guide: Guide, day: LocalDate) : VerticalLayout() {
 
     private val mm: Int = day.month.value
     private val yyyy: Int = day.year
@@ -139,17 +142,16 @@ class Sheduler(private val guide: Guide, day: LocalDate) : VerticalLayout() {
 
                 for (j in 1..7) {
                     horizontalLayout(spacing = true, padding = false) {
-                        //val calendarCell = thi
+                        //
                         setWidthFull()
                         val s = (i - 1) * 7 + j - offbegin
                         if (s > 0 && s <= lastDayOfMonth.dayOfMonth) {
                             if (j == 6 || j == 7) style.set("border", "red solid 0.001rem")
                             else style.set("border", "gray solid 0.001rem")
-                            // TODO //order color
-                            var orderExist = false
-                            //if (s == 29) orderExist = true
+                            //
+                            val isGorderExist = guide.id?.let { GOrder.isGOrderExists(it, LocalDate.of(yyyy, mm, s)) }
 
-                            if (orderExist) {
+                            if (isGorderExist == true) {
                                 val orderIcon = VaadinIcon.BRIEFCASE.create()
                                 orderIcon.className = "order-icon-shedule"
                                 add(orderIcon)
@@ -158,7 +160,7 @@ class Sheduler(private val guide: Guide, day: LocalDate) : VerticalLayout() {
                                 style.set("margin-left", "auto")
                                 style.set("margin-right", "2px")
                                 text("$s")
-                                if (orderExist) {
+                                if (isGorderExist == true) {
                                     style.set("color", "darkgreen")
                                     style.set("font-weight", "900")
                                 }
@@ -200,8 +202,10 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
     private lateinit var errorField: H5
     private lateinit var cancelButton: Button
     private var registrationForConfirm: Registration? = null
+    private lateinit var gorderGrid: Grid<GOrder>
     private lateinit var sheduleGrid: VirtualList<Shedule>
     private lateinit var dp: ListDataProvider<Shedule>
+    private val dpgorder: ListDataProvider<GOrder> = ListDataProvider(guide.id?.let { GOrder.findByGuideId(it, day) })
 
     init {
         addClassNames("confirm-dialog trip-detail-width")
@@ -217,8 +221,42 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
 
         verticalLayout(padding = false, spacing = false) {
 
+            if (dpgorder.items.isNotEmpty()) {
+                text("Заказы")
+                p {}
+                gorderGrid = grid(dpgorder) {
+                    isExpand = true
+                    width = "100%"
+                    maxHeight = "170px"
+
+                    columnFor(GOrder::num) {
+                        setHeader("Номер")
+                        width = "20%"
+                        setSortProperty(GOrder::num.exp)
+                    }
+
+                    columnFor(GOrder::start, createGOrderStart()) {
+                        setHeader("Начало")
+                        width = "20%"
+                        setSortProperty(GOrder::start.exp)
+                    }
+
+                    columnFor(GOrder::cost) {
+                        setHeader("Стоимость")
+                        width = "25%"
+                    }
+                    columnFor(GOrder::customer_id, createTransport()) {
+                        setHeader("Транспорт")
+                        width = "35%"
+                    }
+                }
+
+                br()
+            }
+
             horizontalLayout(spacing = true, padding = false) {
                 setWidthFull()
+
                 text("Рабочее время")
                 button("Добавить") {
                     icon = VaadinIcon.EDIT.create()
@@ -249,7 +287,7 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
                         updateView()
                         val sheduleList = guide.id?.let { shedules() }
 
-                        if (sheduleList != null && sheduleList.isNotEmpty()) {
+                        if (!sheduleList.isNullOrEmpty()) {
                             if (isErrorTime(sheduleList.first())) errorField.text = "Ошибка задания периода времени!"
                         }
 
@@ -266,7 +304,6 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
                 isAutofocus = true
                 onClick {
                     close()
-
                     val sheduleList = shedules()
                     if (sheduleList.isNotEmpty()) {
                         if (sheduleList.size == 1 && sheduleList.first().start == LocalTime.of(0, 0) &&
@@ -280,6 +317,18 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
         }
         updateView()
     }
+
+    private fun createGOrderStart(): ComponentRenderer<Text, GOrder> =
+        ComponentRenderer { gorder ->
+            Text(gorder.start.toString())
+        }
+
+    private fun createTransport(): ComponentRenderer<Text, GOrder> =
+        ComponentRenderer { gorder ->
+            val name = Transport.getById(gorder.transport_id).name
+            Text(name)
+        }
+
 
     private fun isErrorTime(shedule: Shedule): Boolean {
 
@@ -326,6 +375,7 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
         if (sheduleList.isNotEmpty()) {
             if (isErrorTime(sheduleList.first())) errorField.text = "Ошибка задания периода времени!"
         }
+        gorderGrid.dataProvider = dpgorder
     }
 
     private fun shedules(): MutableCollection<Shedule> = dp.items
@@ -337,7 +387,7 @@ class SheduleItem(private val row: Shedule, private val count: Int) : KComposite
     var onDelete: () -> Unit = {}
 
     private val vdata = HorizontalLayout()
-    lateinit var timePanel: EditTimePanel
+    private lateinit var timePanel: EditTimePanel
 
     private val root = ui {
 
@@ -429,8 +479,6 @@ class EditTimePanel(val state: Boolean, private var begin: LocalTime, var end: L
             } else {
 
                 span {
-                   // style.set("color", "darkgreen")
-
                     style.set("font-weight", "900")
                     text("$begin - $end")
                 }

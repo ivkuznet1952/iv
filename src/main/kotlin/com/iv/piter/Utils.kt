@@ -46,7 +46,7 @@ class UploadRussianI18N : UploadI18N() {
 class DatePickerRussianI18N : DatePicker.DatePickerI18n() {
 
     val years: MutableSet<String> = mutableSetOf(
-        "2024", "2025", "2026", "2027", "2028", "2029", "2030"
+        "2025", "2026", "2027", "2028", "2029", "2030"
     )
 
     init {

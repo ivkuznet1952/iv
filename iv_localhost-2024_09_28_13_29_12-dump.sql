@@ -350,7 +350,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 -- Data for Name: customer; Type: TABLE DATA; Schema: public; Owner: iv
 --
 
-COPY public.customer (id, comment, email, hashedpassword, firstname, lastname, phone, created, updated) FROM stdin;
+COPY public.customer (id, comment, email, chatid, firstname, lastname, phone, created, updated) FROM stdin;
 \.
 
 

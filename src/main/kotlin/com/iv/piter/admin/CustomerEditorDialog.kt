@@ -57,14 +57,14 @@ class CustomerEditorForm(val customer: Customer) : FormLayout(), EditorForm<Cust
 
         horizontalLayout(padding = false, spacing = false) {
 
-            pwd = passwordField("Пароль") {
-
-                bind(binder)
-                    .withValidator(
-                        { it.length >= 5 },
-                        "не менее 5 символов"
-                    ).bind(Customer::getHashedPassword, Customer::setPassword)
-            }
+//            pwd = passwordField("Пароль") {
+//
+//                bind(binder)
+//                    .withValidator(
+//                        { it.length >= 5 },
+//                        "не менее 5 символов"
+//                    ).bind(Customer::getHashedPassword, Customer::setPassword)
+//            }
 
             button {
                 style.set("margin-left", "auto")
@@ -153,11 +153,12 @@ class CustomerEditorForm(val customer: Customer) : FormLayout(), EditorForm<Cust
                 customer.updated = LocalDateTime.now()
                 if (creating) {
                     customer.created = LocalDateTime.now()
-                } else {
-                    if (!frame.editorForm.isEdit) {
-                        customer.hashedPassword = Customer.getById(customer.id!!).hashedPassword
-                    }
                 }
+//                else {
+//                    if (!frame.editorForm.isEdit) {
+//                        customer.hashedPassword = Customer.getById(customer.id!!).hashedPassword
+//                    }
+//                }
                 customer.save()
                 val op: String = if (creating) "добавлен" else "сохранен"
                 val n = Notification.show("Заказчик успешно ${op}.", 3000, Notification.Position.TOP_END)

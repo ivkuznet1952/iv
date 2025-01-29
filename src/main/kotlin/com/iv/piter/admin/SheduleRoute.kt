@@ -18,8 +18,8 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.shared.Tooltip
+import com.vaadin.flow.component.timepicker.TimePicker
 import com.vaadin.flow.component.virtuallist.VirtualList
-import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.PageTitle
@@ -87,7 +87,6 @@ class SheduleRoute : KComposite() {
                         addValueChangeListener { updateCalendar() }
                     }
                 }
-                // br{}
                 add(vl)
             }
             verticalLayout(spacing = true) {
@@ -139,19 +138,19 @@ class Sheduler(private val guide: Guide, day: LocalDate) : VerticalLayout() {
                 setWidthFull()
 
                 for (j in 1..7) {
-                   horizontalLayout(spacing = true, padding = false) {
-                       //val calendarCell = thi
-                           setWidthFull()
+                    horizontalLayout(spacing = true, padding = false) {
+                        //val calendarCell = thi
+                        setWidthFull()
                         val s = (i - 1) * 7 + j - offbegin
                         if (s > 0 && s <= lastDayOfMonth.dayOfMonth) {
                             if (j == 6 || j == 7) style.set("border", "red solid 0.001rem")
                             else style.set("border", "gray solid 0.001rem")
                             // TODO //order color
                             var orderExist = false
-                            if (s == 29) orderExist = true
+                            //if (s == 29) orderExist = true
 
                             if (orderExist) {
-                                var orderIcon = VaadinIcon.BRIEFCASE.create()
+                                val orderIcon = VaadinIcon.BRIEFCASE.create()
                                 orderIcon.className = "order-icon-shedule"
                                 add(orderIcon)
                             }
@@ -165,23 +164,26 @@ class Sheduler(private val guide: Guide, day: LocalDate) : VerticalLayout() {
                                 }
                             }
 
-                             val notWorkTime = guide.id?.let { Shedule.findByGuideId(it, LocalDate.of(yyyy, mm, s)) }.isNullOrEmpty()
-                             if (notWorkTime) style.set("background-color", "gray")
-                             else style.set("background-color", "red")
+                            val timePeriods = guide.id?.let { Shedule.findByGuideId(it, LocalDate.of(yyyy, mm, s)) }
+                            if (timePeriods != null) {
+                                if (timePeriods.isNotEmpty()) {
+                                    if (timePeriods.size == 1 && timePeriods[0].start == LocalTime.of(0, 0) &&
+                                        timePeriods[0].finish == LocalTime.of(23, 59)
+                                    ) {
+                                        style.set("background-color", "gray")
+                                    } else style.set("background-color", "red")
+                                } else style.set("background-color", "gray")
+                            } else style.set("background-color", "gray")
 
                         }
                         onClick {
                             style.set("border", "green solid 0.001rem")
-
                             val currentDay = LocalDate.of(yyyy, mm, s)
                             val pattern = DateTimeFormatter.ofPattern("dd.MM.yyyy")
                             val formattedDate: String = currentDay.format(pattern)
-                           // edit
+                            // edit
                             SheduleModal(this, guide, currentDay).open(formattedDate)
                         }
-                        // if (j == 6 || j == 7) style.set("background-color", "red")
-                        //else style.set("background-color", "green")
-                        //style.set("margin-left", "auto")
                     }
 
                 }
@@ -191,12 +193,15 @@ class Sheduler(private val guide: Guide, day: LocalDate) : VerticalLayout() {
 
 }
 
-internal class SheduleModal(calendarCell: @VaadinDsl HorizontalLayout, private val guide: Guide, private val day: LocalDate) : Dialog() {
+internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: Guide, private val day: LocalDate) :
+    Dialog() {
 
     private lateinit var titleField: H5
+    private lateinit var errorField: H5
     private lateinit var cancelButton: Button
     private var registrationForConfirm: Registration? = null
     private lateinit var sheduleGrid: VirtualList<Shedule>
+    private lateinit var dp: ListDataProvider<Shedule>
 
     init {
         addClassNames("confirm-dialog trip-detail-width")
@@ -214,30 +219,46 @@ internal class SheduleModal(calendarCell: @VaadinDsl HorizontalLayout, private v
 
             horizontalLayout(spacing = true, padding = false) {
                 setWidthFull()
-                text("Нерабочее время")
+                text("Рабочее время")
                 button("Добавить") {
-                    icon = VaadinIcon.PLUS.create()
+                    icon = VaadinIcon.EDIT.create()
                     style.set("margin-left", "auto")
                     setPrimary()
-                    onClick { createNew() }
+                    onClick {
+                        createNew()
+                    }
                 }
             }
 
             sheduleGrid = virtualList {
-                minHeight = "100px"
+                minHeight = "70px"
                 height = "auto"
+
                 setRenderer(ComponentRenderer { row ->
-                    val item = SheduleItem(row)
+                    val item = SheduleItem(row, sheduleGrid.dataCommunicator.itemCount)
                     item.onSave = {
-                        item.binder.writeBeanIfValid(row)
-                        row.save()
+                        if (isErrorTime(row)) {
+                            errorField.text = "Ошибка! Данные не сохранены."
+                        } else {
+                            row.save()
+                            updateView()
+                        }
                     }
                     item.onDelete = {
                         if (row.id != null) row.delete()
                         updateView()
+                        val sheduleList = guide.id?.let { shedules() }
+
+                        if (sheduleList != null && sheduleList.isNotEmpty()) {
+                            if (isErrorTime(sheduleList.first())) errorField.text = "Ошибка задания периода времени!"
+                        }
+
                     }
                     item
                 })
+            }
+            errorField = h5() {
+                style.set("color", "red")
             }
         }
         footer {
@@ -245,12 +266,35 @@ internal class SheduleModal(calendarCell: @VaadinDsl HorizontalLayout, private v
                 isAutofocus = true
                 onClick {
                     close()
-                    if  (sheduleGrid.dataCommunicator.itemCount == 0) calendarCell.style.set("background-color", "gray")
-                    else calendarCell.style.set("background-color", "red")
+
+                    val sheduleList = shedules()
+                    if (sheduleList.isNotEmpty()) {
+                        if (sheduleList.size == 1 && sheduleList.first().start == LocalTime.of(0, 0) &&
+                            sheduleList.first().finish == LocalTime.of(23, 59)
+                        ) {
+                            calendarCell.style.set("background-color", "gray")
+                        } else calendarCell.style.set("background-color", "red")
+                    } else calendarCell.style.set("background-color", "gray")
                 }
             }
         }
         updateView()
+    }
+
+    private fun isErrorTime(shedule: Shedule): Boolean {
+
+        val sheduleList = shedules()
+
+        if (sheduleList.isEmpty()) return false
+        if (sheduleList.size == 1 && shedule.start?.isAfter(shedule.finish) == true) return true
+        for (i in sheduleList) {
+            if (i.id == shedule.id) continue
+            if (shedule.start?.isAfter(shedule.finish) == true) return true
+            if (shedule.finish!!.isAfter(i.start) && shedule.start!!.isBefore(i.finish)) return true
+            if (i.finish!!.isAfter(shedule.start) && i.start!!.isBefore(shedule.finish)) return true
+        }
+
+        return false
     }
 
     private fun createNew() {
@@ -258,67 +302,163 @@ internal class SheduleModal(calendarCell: @VaadinDsl HorizontalLayout, private v
         shedule.guide_id = guide.id
         shedule.day = day
         shedule.start = LocalTime.of(0, 0)
-        shedule.finish = LocalTime.of(23, 0)
+        shedule.finish = LocalTime.of(23, 59)
         shedule.save()
-        val dp: ListDataProvider<Shedule> = ListDataProvider(guide.id?.let { Shedule.findByGuideId(it, day) })
-        dp.items.add(shedule)
-        sheduleGrid.dataProvider = dp
         updateView()
+        if (isErrorTime(shedule)) errorField.text = "Ошибка задания периода времени!"
     }
 
     private fun updateView() {
-        val dp: ListDataProvider<Shedule> = ListDataProvider(guide.id?.let { Shedule.findByGuideId(it, day) })
+        errorField.text = ""
+        dp = ListDataProvider(guide.id?.let { Shedule.findByGuideId(it, day) })
         sheduleGrid.dataProvider = dp
+        val sheduleList = dp.items
+        if (sheduleList != null && sheduleList.isEmpty()) {
+            createNew()
+        }
     }
 
     fun open(title: String) {
         titleField.text = title
         registrationForConfirm?.remove()
         open()
-    }
-
-}
-
-class SheduleItem(private val row: Shedule) : KComposite() {
-    private val shedule: Shedule get() = row
-    var onSave: () -> Unit = {}
-    var onDelete: () -> Unit = {}
-    val binder: Binder<Shedule> = beanValidationBinder()
-
-    private val root = ui {
-        horizontalLayout(spacing = true, padding = false) {
-            setWidthFull()
-
-            timePicker("Начало") {
-                width = "100px"
-                bind(binder).bind(Shedule::start)
-                addValueChangeListener {
-                    if (binder.validate().isOk) onSave()
-                }
-            }
-            timePicker("Окончание") {
-                width = "100px"
-                bind(binder).bind(Shedule::finish)
-                addValueChangeListener {
-                    if (binder.validate().isOk) onSave()
-                }
-            }
-
-            val deleteButton = button {
-                icon = VaadinIcon.TRASH.create()
-                addThemeVariants(ButtonVariant.LUMO_TERTIARY)
-                style.set("color", "white")
-                style.set("margin-left", "auto")
-                onClick { onDelete() }
-            }
-            Tooltip.forComponent(deleteButton)
-                .withText("Удалить")
-                .withPosition(Tooltip.TooltipPosition.TOP_START)
+        val sheduleList = shedules()
+        if (sheduleList.isNotEmpty()) {
+            if (isErrorTime(sheduleList.first())) errorField.text = "Ошибка задания периода времени!"
         }
     }
 
-    init {
-        binder.readBean(row)
-        binder.validate()
+    private fun shedules(): MutableCollection<Shedule> = dp.items
+}
+
+class SheduleItem(private val row: Shedule, private val count: Int) : KComposite() {
+    private val shedule: Shedule get() = row
+    var onSave: () -> Unit = {}
+    var onDelete: () -> Unit = {}
+
+    private val vdata = HorizontalLayout()
+    lateinit var timePanel: EditTimePanel
+
+    private val root = ui {
+
+        horizontalLayout(spacing = true) {
+            setWidthFull()
+            vdata.setWidthFull()
+            add(vdata)
+        }
     }
+
+    private fun updateView(state: Boolean = true) {
+        vdata.removeAll()
+        timePanel = row.finish?.let { row.start?.let { it1 -> EditTimePanel(state, it1, it, count) } }!!
+        vdata.add(timePanel)
+        timePanel.onClose = {
+            updateView(true)
+        }
+        timePanel.onSave = {
+            row.start = timePanel.b.value
+            row.finish = timePanel.e.value
+            onSave()
+            updateView(true)
+        }
+        timePanel.onEdit = {
+            updateView(false)
+        }
+        timePanel.onDelete = {
+            onDelete()
+        }
+    }
+
+
+    init {
+        updateView(true)
+    }
+}
+
+class EditTimePanel(val state: Boolean, private var begin: LocalTime, var end: LocalTime, val count: Int) :
+    KComposite() {
+
+    var b: TimePicker = TimePicker()
+    var e: TimePicker = TimePicker()
+    var onClose: () -> Unit = {}
+    var onSave: () -> Unit = {}
+    var onEdit: () -> Unit = {}
+    var onDelete: () -> Unit = {}
+
+    private val root = ui {
+
+        horizontalLayout(spacing = true, padding = false) {
+            setWidthFull()
+            //style.set("background-color", "red")
+            //style.set("background-color", "rgba(61, 61, 88, 0.5)")
+            if (!state) {
+                b = timePicker("Начало") {
+                    value = begin
+                    width = "100px"
+                    addValueChangeListener {
+                        begin = value
+                    }
+                }
+                e = timePicker("Окончание") {
+                    value = end
+                    width = "100px"
+                    addValueChangeListener {
+                        end = value
+                    }
+                }
+                val saveButton = button {
+                    icon = VaadinIcon.CHECK.create()
+                    addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+                    style.set("margin-left", "auto")
+                    onClick { onSave() }
+                }
+
+                Tooltip.forComponent(saveButton)
+                    .withText("Сохранить")
+                    .withPosition(Tooltip.TooltipPosition.TOP_START)
+
+                val closeButton = button {
+                    icon = VaadinIcon.CLOSE.create()
+                    addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+                    style.set("color", "white")
+                    onClick { onClose() }
+                }
+                Tooltip.forComponent(closeButton)
+                    .withText("Отменить")
+                    .withPosition(Tooltip.TooltipPosition.TOP_START)
+            } else {
+
+                span {
+                   // style.set("color", "darkgreen")
+
+                    style.set("font-weight", "900")
+                    text("$begin - $end")
+                }
+
+                val editButton = button {
+                    icon = VaadinIcon.EDIT.create()
+                    addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+                    style.set("color", "white")
+                    style.set("margin-left", "auto")
+                    onClick { onEdit() }
+                }
+
+                Tooltip.forComponent(editButton)
+                    .withText("Редактировать")
+                    .withPosition(Tooltip.TooltipPosition.TOP_START)
+
+                val deleteButton = button {
+                    icon = VaadinIcon.TRASH.create()
+                    addThemeVariants(ButtonVariant.LUMO_TERTIARY)
+                    style.set("color", "white")
+                    isVisible = count > 1
+                    onClick { onDelete() }
+                }
+                Tooltip.forComponent(deleteButton)
+                    .withText("Удалить")
+                    .withPosition(Tooltip.TooltipPosition.TOP_START)
+            }
+        }
+    }
+
 }

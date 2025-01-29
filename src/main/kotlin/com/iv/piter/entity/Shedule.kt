@@ -20,12 +20,9 @@ data class Shedule(
     var finish: LocalTime? = null
 ) : KEntity<Long> {
     companion object : Dao<Shedule, Long>(Shedule::class.java) {
-        //        fun  findByGuideId(guideId: Long, date: LocalDate): List<Shedule> {
-//           return Shedule.findAllBy { Shedule::guide_id eq guideId}.filter { it.start?.let { it1 ->
-//                convertToDateViaInstant(it1)}?.let { it2 -> convertToLocalDate(it2) } == date }
-//        }
         fun findByGuideId(guideId: Long, date: LocalDate): List<Shedule> =
             Shedule.findAllBy { (Shedule::guide_id eq guideId).and(Shedule::day eq date) }
+                .sortedWith(compareBy { it.id })
     }
 
     override fun delete() {

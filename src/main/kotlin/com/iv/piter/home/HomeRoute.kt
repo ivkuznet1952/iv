@@ -9,7 +9,6 @@ import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.kaributools.setPrimary
 import com.iv.piter.BotConfig
 import com.iv.piter.Constant
-import com.iv.piter.ExcursTelegramBot
 import com.iv.piter.MainLayout
 import com.iv.piter.entity.Cost
 import com.iv.piter.entity.Trip
@@ -29,9 +28,7 @@ import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
 import com.vaadin.flow.server.auth.AnonymousAllowed
 import com.vaadin.flow.shared.Registration
-import eu.vaadinonkotlin.vaadin.Session
 import eu.vaadinonkotlin.vaadin.vokdb.dataProvider
-import org.telegram.telegrambots.meta.TelegramBotsApi
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 
@@ -45,7 +42,7 @@ import java.io.InputStream
 @PageTitle("Экскурсии")
 @AnonymousAllowed
 //class HomeRoute : KComposite(), BeforeEnterObserver {
-    class HomeRoute : KComposite(), HasUrlParameter<String> {
+class HomeRoute : KComposite(), HasUrlParameter<String> {
 
 
     private lateinit var grid: VirtualList<Trip>
@@ -60,24 +57,12 @@ import java.io.InputStream
 //        println("#########:" + chat_id)
 //    }
 
-    // HasUrlParameter interface
- /*   override fun setParameter(event: BeforeEvent?,  @OptionalParameter id: String?) {
-        if (id != null) {
-            if (event != null) {
-                chat_id = event.routeParameters["chat_id"].get()
-            }
-            println("#########:" + chat_id)
-        } else {
-            println("######### NOOOOOOO" )
-           // navigateTo<HomeRoute>()
-        }
-    } */
 
     override fun setParameter(event: BeforeEvent?, @OptionalParameter parameter: String?) {
         if (parameter == null) {
             println("Welcome anonymous.")
         } else {
-           // println(String.format("Welcome %s.", parameter))
+            println(String.format("Welcome %s.", parameter))
             chat_id = parameter
             chat.text = parameter.trim()
         }
@@ -104,7 +89,7 @@ import java.io.InputStream
                     style.set("margin-left", "5px")
                 }
                 h6("Индивидуальные экскурсии")
-                val room = button("Личный кабинет") {
+                button("Личный кабинет") {
                     icon = VaadinIcon.COIN_PILES.create()
                     style.set("background-color", "transparent")
                     style.set("color", "whitesmoke")
@@ -112,7 +97,7 @@ import java.io.InputStream
                     style.set("font-size", "11px")
 
                     onClick {
-                        if  (BotConfig.bot != null) {
+                        if  (BotConfig.bot != null && chat_id != null) {
                             BotConfig.bot!!.sendOrder(BotConfig.chatId, "Посылаю техт от $chat_id")
                         }
                         navigateTo<LoginRoute>()
@@ -123,7 +108,9 @@ import java.io.InputStream
 
             text("ID: ")
             chat = h5 {}
-
+//            if  (BotConfig.bot != null) {
+//                chat.text = BotConfig.chatId.toString()
+//            }
             p {  }
             grid = virtualList {
                 //style.set("background-color", "orange") // TODO test remove
@@ -144,7 +131,7 @@ import java.io.InputStream
     init {
         val dp: ListDataProvider<Trip> = ListDataProvider(Trip.dataProvider.fetchAll().filter { it.active == true })
         grid.dataProvider = dp
-        if (dp.items.size == 0) {
+        if (dp.items.isEmpty()) {
             grid.isVisible = false
             nodata.text = "нет данных"
         }
@@ -158,7 +145,7 @@ class TripListItem(private val row: Trip) : KComposite() {
     private val root = ui {
 
         val costs = row.id?.let { Cost.findByTripId(it) }
-        val cost = if (costs == null || costs.isEmpty()) 0 else costs.map{ it.cost }.min()
+        val cost = if (costs.isNullOrEmpty()) 0 else costs.map{ it.cost }.min()
 
         horizontalLayout(false, true) {
             setSizeFull()

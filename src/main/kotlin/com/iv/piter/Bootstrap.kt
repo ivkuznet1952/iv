@@ -11,7 +11,6 @@ import com.vaadin.flow.theme.lumo.Lumo
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import eu.vaadinonkotlin.VaadinOnKotlin
-import eu.vaadinonkotlin.vaadin.Session
 import eu.vaadinonkotlin.vaadin.vokdb.dataSource
 import jakarta.servlet.ServletContextEvent
 import jakarta.servlet.ServletContextListener
@@ -102,7 +101,7 @@ class Bootstrap : ServletContextListener {
         ).apply { setPassword("admin"); save() }
 
 
-        val bot: ExcursTelegramBot = ExcursTelegramBot()
+        val bot = ExcursTelegramBot()
         try {
             val telegramBotsApi = TelegramBotsApi(DefaultBotSession::class.java)
             telegramBotsApi.registerBot(bot)
@@ -144,15 +143,14 @@ class Bootstrap : ServletContextListener {
 class AppShell : AppShellConfigurator
 
 object BotConfig {
-
     val botName: String = "sasterra"
     val token: String = "6038173806:AAGMKgMM1A4SrzUhy-earibyuWQiDMgOiNU"
     val chatId: Long = 436071699
-    val webapp = "https://3ti7or-176-117-132-130.ru.tuna.am"
+    val webapp = "https://pqvgup-176-117-129-130.ru.tuna.am"
     var bot: ExcursTelegramBot? = null
 }
 
- class ExcursTelegramBot : TelegramLongPollingBot(BotConfig.token), BotCommands {
+class ExcursTelegramBot : TelegramLongPollingBot(BotConfig.token), BotCommands {
 
      override fun getBotUsername(): String = BotConfig.botName
 

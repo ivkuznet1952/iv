@@ -159,7 +159,9 @@ vaadin-app-layout::part(navbar){
     pointer-events: none;
 }
 
-
+/*.test {*/
+/*    color: red !important;*/
+/*}*/
 
 
 /*vaadin-dialog-overlay::part(content){*/

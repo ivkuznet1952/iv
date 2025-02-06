@@ -31,6 +31,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.shared.Registration
+import com.vaadin.flow.theme.lumo.LumoUtility.Width
 import eu.vaadinonkotlin.vaadin.setSortProperty
 import jakarta.annotation.security.RolesAllowed
 import java.time.LocalDate
@@ -246,14 +247,14 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
                         width = "35%"
                         setSortProperty(GOrder::start.exp)
                     }
-                   columnFor(GOrder::transport_id, createTransport()) {
+                    columnFor(GOrder::transport_id, createTransport()) {
                         setHeader("Транспорт")
                         width = "40%"
                     }
                 }
                 br()
             } else {
-                gorderGrid = grid(ListDataProvider(emptyList())){
+                gorderGrid = grid(ListDataProvider(emptyList())) {
                     isVisible = false
                 }
             }
@@ -330,7 +331,7 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
     }
 
     private class TripDetailsFormLayout(g: Grid<GOrder>) : VerticalLayout() {
-       // private class TripDetailsFormLayout(g: Grid<GOrder>) : FormLayout() {
+        // private class TripDetailsFormLayout(g: Grid<GOrder>) : FormLayout() {
 //        private val emailField: TextField = TextField("Email address")
 //        private val phoneField: TextField = TextField("Phone number")
 //        private val streetField: TextField = TextField("Street address")
@@ -341,7 +342,8 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
         private val startField: TextField = TextField("Начало")
         private val costField: TextField = TextField("Стоимость")
         private val typeField: TextField = TextField("Тип заказа")
-           //private var tripName : TextField = TextField("tripName")
+
+        //private var tripName : TextField = TextField("tripName")
 //        var commemt = h5 {  }
 //        private var tripName = ""
         init {
@@ -349,19 +351,20 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
             g.height = "500px"
             isPadding = false
             isSpacing = false
+
             //style.set("background-color", "gray")
             //style.set("padding", "0 !important")
             //style.set("background-color", "white")
-           // Stream.of(
+            // Stream.of(
 //                emailField, phoneField, streetField, zipField, cityField,
-               // tripField
+            // tripField
             //).for//Each { field ->
-                //field.setReadOnly(true)
-                //field.width = "100%"
-                //field.isEnabled = false
-                //add(field)
+            //field.setReadOnly(true)
+            //field.width = "100%"
+            //field.isEnabled = false
+            //add(field)
             //}
-           // println("000000000000000")
+            // println("000000000000000")
             //nativeLabel("Наименование экскурсии")
             //nativeLabel("Комментарий")
             //add(text(tripName))
@@ -370,26 +373,42 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
 //                style.set("padding-left", "10px")
 //                style.set("padding-right", "10px")
 //            }
-               horizontalLayout(spacing = true, padding = false) {
-                   setWidthFull()
-                   add(tripField)
-                   //style.set("background-color", "red")
-               }
-             // horizontalLayout(spacing = true, padding = false) {
-              formLayout {
-                  //setResponsiveSteps(ResponsiveStep("0", 3))
-                  responsiveSteps {
-                      "0"(1); "320px"(2); "480px"(4)
-                  }
-                  setWidthFull()
-                  add(dayField)
-                  add(startField)
-                  add(costField)
-                  add(typeField)
-                  //style.set("background-color", "yellow")
-              }
+            horizontalLayout(spacing = true, padding = false) {
+                setWidthFull()
+                add(tripField)
+                //style.set("background-color", "red")
+            }
+            // horizontalLayout(spacing = true, padding = false) {
+            formLayout {
+                //setResponsiveSteps(ResponsiveStep("0", 3))
+                responsiveSteps {
+                    "0"(1); "320px"(2); "480px"(4)
+                }
+                setWidthFull()
+                add(dayField)
+                add(startField)
+                add(costField)
+                add(typeField)
+                //style.set("background-color", "yellow")
+            }
+//            verticalLayout(spacing = false, padding = false) {
+//                nativeLabel("Комментарий") {
+//                    style.set("color", "gray")
+//                    style.set("font-size", "13px")
+//                }
+//                span {
+//                    text("мои описания тура")
+//                    style.set("background-color", "rgb(52,63,82)")
+//                    style.set("color", "lightgray")
+//                    style.set("padding", "8px")
+//                    maxWidth = "250px"
+//                }
+                //maxWidth = "350px"
+//            }
+            add(TextComponent("еще один экземпляр текста", "300px"))
 
-           // setResponsiveSteps(ResponsiveStep("0", 3))
+
+            // setResponsiveSteps(ResponsiveStep("0", 3))
 //            setColspan(emailField, 3)
 //            setColspan(phoneField, 3)
 //            setColspan(streetField, 3)
@@ -401,7 +420,7 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
 
         fun setTrip(gorder: GOrder) {
             val trip = Trip.getById(gorder.trip_id)
-           // commemt.text = gorder.comment.toString()
+            // commemt.text = gorder.comment.toString()
             //println("11111111111111")
             //commemt.text = gorder.comment
             //tripName = "Все гости едут в гости к нам"
@@ -414,6 +433,7 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
             tripField.width = "100%"
             tripField.isEnabled = false
             tripField.minRows = 1
+            //tripField.style.set("color", "red !important")
 
             dayField.value = gorder.day.toString()
             dayField.width = "130px"
@@ -431,6 +451,8 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
             if (gorder.is_online) typeField.value = "Онлайн" else typeField.value = "Админ"
             typeField.width = "140px"
             typeField.isEnabled = false
+            // typeField.className = "test"
+            //typeField.style.set("color", "red !important")
 
         }
 
@@ -442,7 +464,7 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
         }
 
     private fun createTransport(): ComponentRenderer<Text, GOrder> =
-         ComponentRenderer { gorder ->
+        ComponentRenderer { gorder ->
             val name = Transport.getById(gorder.transport_id).name
             text(name)
         }
@@ -486,7 +508,7 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
     fun open(title: String) {
         titleField.text = title
         registrationForConfirm?.remove()
-       // width = "1000px"
+        // width = "1000px"
         open()
         val sheduleList = shedules()
         if (sheduleList.isNotEmpty()) {
@@ -496,6 +518,25 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
     }
 
     private fun shedules(): MutableCollection<Shedule> = dp.items
+}
+
+private class TextComponent(text: String, width: String) : VerticalLayout() {
+    init {
+        isPadding = false
+        isSpacing = false
+        nativeLabel("Комментарий") {
+            style.set("color", "gray")
+            style.set("font-size", "13px")
+            style.set("padding", "3px")
+        }
+        span {
+            text(text)
+            style.set("background-color", "rgb(52,63,82)")
+            style.set("color", "lightgray")
+            style.set("padding", "6px")
+            maxWidth = width
+        }
+    }
 }
 
 class SheduleItem(private val row: Shedule, private val count: Int) : KComposite() {
@@ -554,7 +595,7 @@ class EditTimePanel(val state: Boolean, private var begin: LocalTime, var end: L
 
     private val root = ui {
 
-       horizontalLayout(spacing = true, padding = false) {
+        horizontalLayout(spacing = true, padding = false) {
             setWidthFull()
             //style.set("background-color", "red")
             //style.set("background-color", "rgba(61, 61, 88, 0.5)")

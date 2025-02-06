@@ -21,6 +21,7 @@ data class GOrder(override var id: Long? = null,
                   var cost: Int = 0,
                   var status: OrderStatus? = null,
                   var paystatus: PayOrderStatus? = null,
+                  var is_online: Boolean = false,
                   var customer_id: Long = 0,
                   var comment: String? = "",
                   var created: LocalDateTime? = null,
@@ -32,10 +33,11 @@ data class GOrder(override var id: Long? = null,
     companion object : Dao<GOrder, Long>(GOrder::class.java) {
 
         fun findByGuideId(guideId: Long, date: LocalDate): List<GOrder> =
-            GOrder.findAllBy { (GOrder::guide_id eq guideId).and(GOrder::day eq date) }
+            GOrder.findAllBy { (GOrder::guide_id eq guideId).and(GOrder::day eq date)
+                .and(GOrder::archived eq false) }
                 .sortedWith(compareBy { it.id })
 
-        fun isGOrderExists(guideId: Long, date: LocalDate): Boolean = findByGuideId(guideId, date).isNotEmpty()
+        fun isGOrdersExist(guideId: Long, date: LocalDate): Boolean = findByGuideId(guideId, date).isNotEmpty()
 
     }
 

@@ -4,6 +4,7 @@ import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.karibudsl.v23.footer
 import com.github.mvysny.karibudsl.v23.header
 import com.github.mvysny.karibudsl.v23.virtualList
+import com.github.mvysny.kaributools.label
 import com.github.mvysny.kaributools.setPrimary
 import com.github.vokorm.exp
 import com.iv.piter.DatePickerRussianI18N
@@ -13,6 +14,7 @@ import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.dialog.Dialog
+import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.H5
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -20,6 +22,8 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.shared.Tooltip
+import com.vaadin.flow.component.textfield.TextArea
+import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.timepicker.TimePicker
 import com.vaadin.flow.component.virtuallist.VirtualList
 import com.vaadin.flow.data.provider.ListDataProvider
@@ -33,6 +37,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
+import java.util.stream.Stream
 import kotlin.math.ceil
 
 
@@ -56,7 +61,7 @@ class SheduleRoute : KComposite() {
         verticalLayout(padding = true, spacing = false) {
             content { align(stretch, top) }
 
-            text("Расписание заказов и нерабочего времени гидов")
+            text("Расписание заказов и рабочего времени гидов")
             if (guides.isNotEmpty()) {
                 formLayout {
                     responsiveSteps {
@@ -148,8 +153,8 @@ class GuideCalendar(private val guide: Guide, day: LocalDate) : VerticalLayout()
                         if (s > 0 && s <= lastDayOfMonth.dayOfMonth) {
                             if (j == 6 || j == 7) style.set("border", "red solid 0.001rem")
                             else style.set("border", "gray solid 0.001rem")
-                            //
-                            val isGorderExist = guide.id?.let { GOrder.isGOrderExists(it, LocalDate.of(yyyy, mm, s)) }
+                            //not archive
+                            val isGorderExist = guide.id?.let { GOrder.isGOrdersExist(it, LocalDate.of(yyyy, mm, s)) }
 
                             if (isGorderExist == true) {
                                 val orderIcon = VaadinIcon.BRIEFCASE.create()
@@ -202,10 +207,11 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
     private lateinit var errorField: H5
     private lateinit var cancelButton: Button
     private var registrationForConfirm: Registration? = null
-    private lateinit var gorderGrid: Grid<GOrder>
+
     private lateinit var sheduleGrid: VirtualList<Shedule>
     private lateinit var dp: ListDataProvider<Shedule>
     private val dpgorder: ListDataProvider<GOrder> = ListDataProvider(guide.id?.let { GOrder.findByGuideId(it, day) })
+    private lateinit var gorderGrid: Grid<GOrder>
 
     init {
         addClassNames("confirm-dialog trip-detail-width")
@@ -227,36 +233,36 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
                 gorderGrid = grid(dpgorder) {
                     isExpand = true
                     width = "100%"
-                    maxHeight = "170px"
+                    height = (70 + dpgorder.items.size * 30).toString() + "px"
 
                     columnFor(GOrder::num) {
-                        setHeader("Номер")
-                        width = "20%"
+                        setHeader("№")
+                        width = "25%"
                         setSortProperty(GOrder::num.exp)
                     }
 
                     columnFor(GOrder::start, createGOrderStart()) {
                         setHeader("Начало")
-                        width = "20%"
+                        width = "35%"
                         setSortProperty(GOrder::start.exp)
                     }
-
-                    columnFor(GOrder::cost) {
-                        setHeader("Стоимость")
-                        width = "25%"
-                    }
-                    columnFor(GOrder::customer_id, createTransport()) {
+                   columnFor(GOrder::transport_id, createTransport()) {
                         setHeader("Транспорт")
-                        width = "35%"
+                        width = "40%"
                     }
                 }
-
                 br()
+            } else {
+                gorderGrid = grid(ListDataProvider(emptyList())){
+                    isVisible = false
+                }
             }
+
+            gorderGrid.setItemDetailsRenderer(createPersonDetailsRenderer(gorderGrid));
+
 
             horizontalLayout(spacing = true, padding = false) {
                 setWidthFull()
-
                 text("Рабочее время")
                 button("Добавить") {
                     icon = VaadinIcon.EDIT.create()
@@ -286,11 +292,9 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
                         if (row.id != null) row.delete()
                         updateView()
                         val sheduleList = guide.id?.let { shedules() }
-
                         if (!sheduleList.isNullOrEmpty()) {
                             if (isErrorTime(sheduleList.first())) errorField.text = "Ошибка задания периода времени!"
                         }
-
                     }
                     item
                 })
@@ -318,17 +322,130 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
         updateView()
     }
 
+    private fun createPersonDetailsRenderer(g: Grid<GOrder>): ComponentRenderer<TripDetailsFormLayout, GOrder> {
+        return ComponentRenderer(
+            { TripDetailsFormLayout(g) },
+            TripDetailsFormLayout::setTrip
+        )
+    }
+
+    private class TripDetailsFormLayout(g: Grid<GOrder>) : VerticalLayout() {
+       // private class TripDetailsFormLayout(g: Grid<GOrder>) : FormLayout() {
+//        private val emailField: TextField = TextField("Email address")
+//        private val phoneField: TextField = TextField("Phone number")
+//        private val streetField: TextField = TextField("Street address")
+//        private val zipField: TextField = TextField("ZIP code")
+//        private val cityField: TextField = TextField("City")
+        private val tripField: TextArea = TextArea("Экскурсия")
+        private val dayField: TextField = TextField("Дата")
+        private val startField: TextField = TextField("Начало")
+        private val costField: TextField = TextField("Стоимость")
+        private val typeField: TextField = TextField("Тип заказа")
+           //private var tripName : TextField = TextField("tripName")
+//        var commemt = h5 {  }
+//        private var tripName = ""
+        init {
+            //minHeight = "500px"
+            g.height = "500px"
+            isPadding = false
+            isSpacing = false
+            //style.set("background-color", "gray")
+            //style.set("padding", "0 !important")
+            //style.set("background-color", "white")
+           // Stream.of(
+//                emailField, phoneField, streetField, zipField, cityField,
+               // tripField
+            //).for//Each { field ->
+                //field.setReadOnly(true)
+                //field.width = "100%"
+                //field.isEnabled = false
+                //add(field)
+            //}
+           // println("000000000000000")
+            //nativeLabel("Наименование экскурсии")
+            //nativeLabel("Комментарий")
+            //add(text(tripName))
+//            commemt = h5 {
+//                style.setBackgroundColor("red")
+//                style.set("padding-left", "10px")
+//                style.set("padding-right", "10px")
+//            }
+               horizontalLayout(spacing = true, padding = false) {
+                   setWidthFull()
+                   add(tripField)
+                   //style.set("background-color", "red")
+               }
+             // horizontalLayout(spacing = true, padding = false) {
+              formLayout {
+                  //setResponsiveSteps(ResponsiveStep("0", 3))
+                  responsiveSteps {
+                      "0"(1); "320px"(2); "480px"(4)
+                  }
+                  setWidthFull()
+                  add(dayField)
+                  add(startField)
+                  add(costField)
+                  add(typeField)
+                  //style.set("background-color", "yellow")
+              }
+
+           // setResponsiveSteps(ResponsiveStep("0", 3))
+//            setColspan(emailField, 3)
+//            setColspan(phoneField, 3)
+//            setColspan(streetField, 3)
+
+            addDetachListener {
+                g.height = (70 + g.dataCommunicator.itemCount * 30).toString() + "px"
+            }
+        }
+
+        fun setTrip(gorder: GOrder) {
+            val trip = Trip.getById(gorder.trip_id)
+           // commemt.text = gorder.comment.toString()
+            //println("11111111111111")
+            //commemt.text = gorder.comment
+            //tripName = "Все гости едут в гости к нам"
+//            emailField.setValue(person.getEmail())
+//            phoneField.setValue(person.getAddress().getPhone())
+//            streetField.setValue(person.getAddress().getStreet())
+//            zipField.setValue(person.getAddress().getZip())
+//            cityField.setValue(person.getAddress().getCity())
+            tripField.value = trip.name
+            tripField.width = "100%"
+            tripField.isEnabled = false
+            tripField.minRows = 1
+
+            dayField.value = gorder.day.toString()
+            dayField.width = "130px"
+            dayField.isEnabled = false
+
+            startField.value = gorder.start.toString()
+            startField.width = "100px"
+            startField.isEnabled = false
+
+            costField.value = gorder.cost.toString()
+            costField.width = "100px"
+            costField.isEnabled = false
+
+
+            if (gorder.is_online) typeField.value = "Онлайн" else typeField.value = "Админ"
+            typeField.width = "140px"
+            typeField.isEnabled = false
+
+        }
+
+    }
+
     private fun createGOrderStart(): ComponentRenderer<Text, GOrder> =
         ComponentRenderer { gorder ->
-            Text(gorder.start.toString())
+            text(gorder.start.toString())
         }
 
     private fun createTransport(): ComponentRenderer<Text, GOrder> =
-        ComponentRenderer { gorder ->
+         ComponentRenderer { gorder ->
             val name = Transport.getById(gorder.transport_id).name
-            Text(name)
+            text(name)
         }
-
 
     private fun isErrorTime(shedule: Shedule): Boolean {
 
@@ -342,7 +459,6 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
             if (shedule.finish!!.isAfter(i.start) && shedule.start!!.isBefore(i.finish)) return true
             if (i.finish!!.isAfter(shedule.start) && i.start!!.isBefore(shedule.finish)) return true
         }
-
         return false
     }
 
@@ -370,6 +486,7 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
     fun open(title: String) {
         titleField.text = title
         registrationForConfirm?.remove()
+       // width = "1000px"
         open()
         val sheduleList = shedules()
         if (sheduleList.isNotEmpty()) {
@@ -437,7 +554,7 @@ class EditTimePanel(val state: Boolean, private var begin: LocalTime, var end: L
 
     private val root = ui {
 
-        horizontalLayout(spacing = true, padding = false) {
+       horizontalLayout(spacing = true, padding = false) {
             setWidthFull()
             //style.set("background-color", "red")
             //style.set("background-color", "rgba(61, 61, 88, 0.5)")

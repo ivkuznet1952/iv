@@ -1,8 +1,8 @@
 [versions]
-vaadin = "24.6.2"
+vaadin = "24.6.4"
 # https://repo1.maven.org/maven2/org/slf4j/slf4j-api/
 slf4j = "2.0.16"
-vok = "0.18"
+vok = "0.18.1"
 #tgbotapi = "23.1.1"
 
 [libraries]
@@ -13,7 +13,7 @@ vaadin-core = { module = "com.vaadin:vaadin-core", version.ref = "vaadin" }
 karibu-testing = "com.github.mvysny.kaributesting:karibu-testing-v24:2.2.0"
 flyway = "org.flywaydb:flyway-core:10.15.2"
 flywaydb = "org.flywaydb:flyway-database-postgresql:10.15.2"
-postgresql = { module = "org.postgresql:postgresql", version = "42.7.3" }
+postgresql = { module = "org.postgresql:postgresql", version = "42.7.5" }
 hikaricp = "com.zaxxer:HikariCP:5.1.0"
 junit = "org.junit.jupiter:junit-jupiter-engine:5.11.0"
 vok-db = { module = "eu.vaadinonkotlin:vok-framework-vokdb", version.ref = "vok" }

@@ -44,7 +44,7 @@ dependencies {
     // logging
     implementation(libs.slf4j.simple)
 
-    implementation(kotlin("stdlib-jdk8"))
+    //implementation(kotlin("stdlib-jdk8"))
 
     // db
     implementation(libs.hikaricp)

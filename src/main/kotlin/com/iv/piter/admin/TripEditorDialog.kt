@@ -40,7 +40,7 @@ class TripEditorForm(private var trip: Trip) : FormLayout(), EditorForm<Trip> {
         }
         horizontalLayout(padding = false, spacing = true) {
             textField("Продолжительность(час.)") {
-                width = "25%"
+                width = "30%"
                 bind(binder).withConverter<Float>(
                     StringToFloatConverter("Требуется число")
                 ).bind(Trip::duration)

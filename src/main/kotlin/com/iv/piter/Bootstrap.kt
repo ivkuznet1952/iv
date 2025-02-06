@@ -31,6 +31,7 @@ import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import java.io.File
+import java.lang.Thread.sleep
 
 
 //import org.telegram.telegrambots.bots.TelegramLongPollingBot
@@ -57,7 +58,7 @@ class Bootstrap : ServletContextListener {
         log.info("Initializing the database connection");
 
         if (jdbc_url == null) {
-            jdbc_url = "jdbc:postgresql://localhost:5432/iv"
+            jdbc_url = "jdbc:postgresql://localhost:5432/excurs"
             jdbc_username = "iv";
             jdbc_password = "iv";
         }
@@ -81,16 +82,16 @@ class Bootstrap : ServletContextListener {
         // Initializes the VoK framework
         // Makes sure the database is up-to-date. See src/main/resources/db/migration for db init scripts.
         log.info("Running DB migrations")
-//         val flyway = Flyway.configure().cleanDisabled(false)
-//            .dataSource(JdbiOrm.getDataSource())
-//            .load()
-//        flyway.clean()
-//        sleep(5000)
+         val flyway = Flyway.configure().cleanDisabled(false)
+            .dataSource(JdbiOrm.getDataSource())
+            .load()
+        flyway.clean()
+        sleep(5000)
 
 
-        val flyway: Flyway = Flyway.configure().dataSource(VaadinOnKotlin.dataSource).load()
+//        val flyway: Flyway = Flyway.configure().dataSource(VaadinOnKotlin.dataSource).load()
         flyway.migrate()
-        // flyway.repair()
+//         flyway.repair()
 //         setup security
         // security interceptor is configured in AppServiceInitListener
 //        User(username = "admin", roles = "").apply { setPassword("admin"); save() }

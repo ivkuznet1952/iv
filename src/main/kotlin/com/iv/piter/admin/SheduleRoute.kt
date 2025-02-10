@@ -4,7 +4,6 @@ import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.karibudsl.v23.footer
 import com.github.mvysny.karibudsl.v23.header
 import com.github.mvysny.karibudsl.v23.virtualList
-import com.github.mvysny.kaributools.label
 import com.github.mvysny.kaributools.setPrimary
 import com.github.vokorm.exp
 import com.iv.piter.DatePickerRussianI18N
@@ -14,7 +13,6 @@ import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.dialog.Dialog
-import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.H5
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -31,14 +29,12 @@ import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.shared.Registration
-import com.vaadin.flow.theme.lumo.LumoUtility.Width
 import eu.vaadinonkotlin.vaadin.setSortProperty
 import jakarta.annotation.security.RolesAllowed
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
-import java.util.stream.Stream
 import kotlin.math.ceil
 
 
@@ -219,6 +215,7 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
         isCloseOnEsc = true
         isCloseOnOutsideClick = false
         setWidthFull()
+
         header {
             horizontalLayout(padding = false, spacing = true) {
                 setWidthFull()
@@ -235,7 +232,6 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
                     isExpand = true
                     width = "100%"
                     height = (70 + dpgorder.items.size * 30).toString() + "px"
-
                     columnFor(GOrder::num) {
                         setHeader("№")
                         width = "25%"
@@ -331,128 +327,78 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
     }
 
     private class TripDetailsFormLayout(g: Grid<GOrder>) : VerticalLayout() {
-        // private class TripDetailsFormLayout(g: Grid<GOrder>) : FormLayout() {
-//        private val emailField: TextField = TextField("Email address")
-//        private val phoneField: TextField = TextField("Phone number")
-//        private val streetField: TextField = TextField("Street address")
-//        private val zipField: TextField = TextField("ZIP code")
-//        private val cityField: TextField = TextField("City")
+
         private val tripField: TextArea = TextArea("Экскурсия")
         private val dayField: TextField = TextField("Дата")
         private val startField: TextField = TextField("Начало")
         private val costField: TextField = TextField("Стоимость")
         private val typeField: TextField = TextField("Тип заказа")
+        private val commentField: TextArea = TextArea("Комментарий")
+        private val customerField: TextArea = TextArea("Заказчик")
 
-        //private var tripName : TextField = TextField("tripName")
-//        var commemt = h5 {  }
-//        private var tripName = ""
         init {
-            //minHeight = "500px"
-            g.height = "500px"
+            g.height = "550px"
             isPadding = false
             isSpacing = false
+            style.set("background-color", "rgba(52, 63, 82, 0.8)")
+            style.set("padding-left", "10px")
+            style.set("padding-right", "10px")
+            style.set("padding-bottom", "10px")
 
-            //style.set("background-color", "gray")
-            //style.set("padding", "0 !important")
-            //style.set("background-color", "white")
-            // Stream.of(
-//                emailField, phoneField, streetField, zipField, cityField,
-            // tripField
-            //).for//Each { field ->
-            //field.setReadOnly(true)
-            //field.width = "100%"
-            //field.isEnabled = false
-            //add(field)
-            //}
-            // println("000000000000000")
-            //nativeLabel("Наименование экскурсии")
-            //nativeLabel("Комментарий")
-            //add(text(tripName))
-//            commemt = h5 {
-//                style.setBackgroundColor("red")
-//                style.set("padding-left", "10px")
-//                style.set("padding-right", "10px")
-//            }
-            horizontalLayout(spacing = true, padding = false) {
-                setWidthFull()
-                add(tripField)
-                //style.set("background-color", "red")
-            }
-            // horizontalLayout(spacing = true, padding = false) {
+            add(tripField)
             formLayout {
-                //setResponsiveSteps(ResponsiveStep("0", 3))
                 responsiveSteps {
-                    "0"(1); "320px"(2); "480px"(4)
+                    "0"(2); "320px"(2); "480px"(4)
                 }
-                setWidthFull()
                 add(dayField)
                 add(startField)
                 add(costField)
                 add(typeField)
-                //style.set("background-color", "yellow")
             }
-//            verticalLayout(spacing = false, padding = false) {
-//                nativeLabel("Комментарий") {
-//                    style.set("color", "gray")
-//                    style.set("font-size", "13px")
-//                }
-//                span {
-//                    text("мои описания тура")
-//                    style.set("background-color", "rgb(52,63,82)")
-//                    style.set("color", "lightgray")
-//                    style.set("padding", "8px")
-//                    maxWidth = "250px"
-//                }
-                //maxWidth = "350px"
-//            }
-            add(TextComponent("еще один экземпляр текста", "300px"))
 
-
-            // setResponsiveSteps(ResponsiveStep("0", 3))
-//            setColspan(emailField, 3)
-//            setColspan(phoneField, 3)
-//            setColspan(streetField, 3)
+            add(commentField)
 
             addDetachListener {
                 g.height = (70 + g.dataCommunicator.itemCount * 30).toString() + "px"
             }
+            add(customerField)
+
         }
 
         fun setTrip(gorder: GOrder) {
             val trip = Trip.getById(gorder.trip_id)
-            // commemt.text = gorder.comment.toString()
-            //println("11111111111111")
-            //commemt.text = gorder.comment
-            //tripName = "Все гости едут в гости к нам"
-//            emailField.setValue(person.getEmail())
-//            phoneField.setValue(person.getAddress().getPhone())
-//            streetField.setValue(person.getAddress().getStreet())
-//            zipField.setValue(person.getAddress().getZip())
-//            cityField.setValue(person.getAddress().getCity())
             tripField.value = trip.name
             tripField.width = "100%"
             tripField.isEnabled = false
-            tripField.minRows = 1
-            //tripField.style.set("color", "red !important")
+            tripField.className = "area_disable_text_color"
 
-            dayField.value = gorder.day.toString()
-            dayField.width = "130px"
+            val pattern = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+            dayField.value = gorder.day?.format(pattern) ?: ""
             dayField.isEnabled = false
+            dayField.className = "field_disable_text_color"
 
             startField.value = gorder.start.toString()
-            startField.width = "100px"
             startField.isEnabled = false
+            startField.className = "field_disable_text_color"
 
             costField.value = gorder.cost.toString()
-            costField.width = "100px"
             costField.isEnabled = false
-
+            costField.className = "field_disable_text_color"
 
             if (gorder.is_online) typeField.value = "Онлайн" else typeField.value = "Админ"
-            typeField.width = "140px"
             typeField.isEnabled = false
-            // typeField.className = "test"
-            //typeField.style.set("color", "red !important")
+            typeField.className = "field_disable_text_color"
+
+            commentField.value = gorder.comment
+            commentField.width = "100%"
+            commentField.isEnabled = false
+            commentField.className = "area_disable_text_color"
+
+            val customer = Customer.getById(gorder.customer_id)
+            customerField.value = customer.firstname + " " + customer.lastname + " " + customer.phone
+            customerField.isEnabled = false
+            customerField.width = "100%"
+            customerField.className = "area_disable_text_color"
 
         }
 
@@ -508,7 +454,6 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
     fun open(title: String) {
         titleField.text = title
         registrationForConfirm?.remove()
-        // width = "1000px"
         open()
         val sheduleList = shedules()
         if (sheduleList.isNotEmpty()) {
@@ -520,24 +465,6 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
     private fun shedules(): MutableCollection<Shedule> = dp.items
 }
 
-private class TextComponent(text: String, width: String) : VerticalLayout() {
-    init {
-        isPadding = false
-        isSpacing = false
-        nativeLabel("Комментарий") {
-            style.set("color", "gray")
-            style.set("font-size", "13px")
-            style.set("padding", "3px")
-        }
-        span {
-            text(text)
-            style.set("background-color", "rgb(52,63,82)")
-            style.set("color", "lightgray")
-            style.set("padding", "6px")
-            maxWidth = width
-        }
-    }
-}
 
 class SheduleItem(private val row: Shedule, private val count: Int) : KComposite() {
     private val shedule: Shedule get() = row
@@ -597,8 +524,6 @@ class EditTimePanel(val state: Boolean, private var begin: LocalTime, var end: L
 
         horizontalLayout(spacing = true, padding = false) {
             setWidthFull()
-            //style.set("background-color", "red")
-            //style.set("background-color", "rgba(61, 61, 88, 0.5)")
             if (!state) {
                 b = timePicker("Начало") {
                     value = begin

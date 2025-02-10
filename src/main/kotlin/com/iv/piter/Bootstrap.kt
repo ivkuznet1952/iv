@@ -31,7 +31,6 @@ import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import java.io.File
-import java.lang.Thread.sleep
 
 
 //import org.telegram.telegrambots.bots.TelegramLongPollingBot
@@ -87,8 +86,8 @@ class Bootstrap : ServletContextListener {
             .load()
         flyway.clean()
         sleep(5000)
-
-
+//
+//
 //        val flyway: Flyway = Flyway.configure().dataSource(VaadinOnKotlin.dataSource).load()
         flyway.migrate()
 //         flyway.repair()

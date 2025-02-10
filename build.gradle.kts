@@ -12,10 +12,7 @@ defaultTasks("clean", "build")
 
 repositories {
     mavenCentral()
-
 }
-
-
 
 tasks.withType<KotlinCompile> {
     // Vaadin 24 requires JDK 17+
@@ -57,9 +54,6 @@ dependencies {
 //    testImplementation(libs.junit)
 //    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 //    testImplementation(kotlin("test"))
-
-//    implementation("dev.inmo:tgbotapi:23.1.0")
-//    runtimeOnly("dev.inmo:tgbotapi.core:23.1.0")
     implementation("org.telegram:telegrambots:6.9.7.1")
 
 }

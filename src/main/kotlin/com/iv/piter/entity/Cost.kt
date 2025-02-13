@@ -11,7 +11,7 @@ data class Cost(
     override var id: Long? = null,
     var trip_id: Long? = null,
     var transport_id: Long? = null,
-    var cost: Int = 0,   // var active: Boolean = false
+    var cost: Int = 0
 ) : KEntity<Long> {
     companion object : Dao<Cost, Long>(Cost::class.java) {
        fun  findByTripId(tripId: Long): List<Cost> = Cost.findAllBy { Cost::trip_id eq tripId }

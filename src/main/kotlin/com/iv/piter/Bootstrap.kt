@@ -93,7 +93,7 @@ class Bootstrap : ServletContextListener {
 //         flyway.repair()
 //         setup security
         // security interceptor is configured in AppServiceInitListener
-//        User(username = "admin", roles = "").apply { setPassword("admin"); save() }
+
         if (User.findByUsername("admin") == null) User(
             username = "admin",
             role = "Администратор",

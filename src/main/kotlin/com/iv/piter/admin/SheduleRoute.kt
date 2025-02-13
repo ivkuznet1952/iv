@@ -8,8 +8,6 @@ import com.github.mvysny.kaributools.setPrimary
 import com.github.vokorm.exp
 import com.iv.piter.DatePickerRussianI18N
 import com.iv.piter.entity.*
-import com.vaadin.flow.component.Component
-import com.vaadin.flow.component.Tag
 import com.vaadin.flow.component.Text
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
@@ -33,7 +31,6 @@ import com.vaadin.flow.router.Route
 import com.vaadin.flow.shared.Registration
 import eu.vaadinonkotlin.vaadin.setSortProperty
 import jakarta.annotation.security.RolesAllowed
-import kotlinx.css.textarea
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -329,7 +326,7 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
         )
     }
 
-    private class TripDetailsFormLayout(g: Grid<GOrder>) : VerticalLayout() {
+    private class TripDetailsFormLayout(grid: Grid<GOrder>) : VerticalLayout() {
 
         private val tripField: TextArea = TextArea("Экскурсия")
         private val dayField: TextField = TextField("Дата")
@@ -339,10 +336,8 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
         private val commentField: TextArea = TextArea("Комментарий")
         private val customerField: TextArea = TextArea("Заказчик")
 
-        //var test : MTextField = MTextField("FINISH")
-
         init {
-            g.height = "550px"
+            grid.height = "550px"
             isPadding = false
             isSpacing = false
             style.set("background-color", "rgba(52, 63, 82, 0.8)")
@@ -364,12 +359,10 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
             add(commentField)
 
             addDetachListener {
-                g.height = (70 + g.dataCommunicator.itemCount * 30).toString() + "px"
+                grid.height = (70 + grid.dataCommunicator.itemCount * 30).toString() + "px"
             }
             add(customerField)
-textArea(""){
 
-}
         }
 
         fun setTrip(gorder: GOrder) {
@@ -406,7 +399,6 @@ textArea(""){
             customerField.isEnabled = false
             customerField.width = "100%"
             customerField.className = "area_disable_text_color"
-
         }
 
     }
@@ -474,6 +466,7 @@ textArea(""){
 
 
 class SheduleItem(private val row: Shedule, private val count: Int) : KComposite() {
+
     private val shedule: Shedule get() = row
     var onSave: () -> Unit = {}
     var onDelete: () -> Unit = {}

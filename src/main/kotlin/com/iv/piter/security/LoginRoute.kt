@@ -5,6 +5,7 @@ import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.kaributools.setErrorMessage
 import com.github.mvysny.vaadinsimplesecurity.HasPassword
 import com.iv.piter.admin.CustomerRoute
+import com.iv.piter.admin.OrderRoute
 import com.iv.piter.admin.SheduleRoute
 import com.iv.piter.admin.TripRoute
 import com.vaadin.flow.component.login.LoginForm
@@ -56,7 +57,7 @@ class LoginRoute : KComposite() {
         loginForm.addLoginListener { e ->
             try {
                 Session.loginService.login(e.username, e.password)
-                navigateTo<SheduleRoute>()
+                navigateTo<OrderRoute>() // TODO entry after login
             } catch (e: LoginException) {
                 log.warn("Login failed", e)
                 loginForm.setErrorMessage("Ошибка входа", "Неправильный логин или пароль")

@@ -3,6 +3,7 @@ package com.iv.piter.security
 import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.kaributools.setErrorMessage
+import com.github.mvysny.vaadinsimplesecurity.HasPassword
 import com.iv.piter.admin.CustomerRoute
 import com.iv.piter.admin.SheduleRoute
 import com.iv.piter.admin.TripRoute

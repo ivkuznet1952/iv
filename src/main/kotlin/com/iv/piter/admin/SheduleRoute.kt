@@ -8,6 +8,8 @@ import com.github.mvysny.kaributools.setPrimary
 import com.github.vokorm.exp
 import com.iv.piter.DatePickerRussianI18N
 import com.iv.piter.entity.*
+import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.Tag
 import com.vaadin.flow.component.Text
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
@@ -31,6 +33,7 @@ import com.vaadin.flow.router.Route
 import com.vaadin.flow.shared.Registration
 import eu.vaadinonkotlin.vaadin.setSortProperty
 import jakarta.annotation.security.RolesAllowed
+import kotlinx.css.textarea
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -336,6 +339,8 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
         private val commentField: TextArea = TextArea("Комментарий")
         private val customerField: TextArea = TextArea("Заказчик")
 
+        //var test : MTextField = MTextField("FINISH")
+
         init {
             g.height = "550px"
             isPadding = false
@@ -362,7 +367,9 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
                 g.height = (70 + g.dataCommunicator.itemCount * 30).toString() + "px"
             }
             add(customerField)
+textArea(""){
 
+}
         }
 
         fun setTrip(gorder: GOrder) {

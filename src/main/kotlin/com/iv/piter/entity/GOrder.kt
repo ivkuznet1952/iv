@@ -32,12 +32,16 @@ data class GOrder(override var id: Long? = null,
 
     companion object : Dao<GOrder, Long>(GOrder::class.java) {
 
-        fun findByGuideId(guideId: Long, date: LocalDate): List<GOrder> =
+        fun findByGuideAndDay(guideId: Long, date: LocalDate): List<GOrder> =
             GOrder.findAllBy { (GOrder::guide_id eq guideId).and(GOrder::day eq date)
                 .and(GOrder::archived eq false) }
                 .sortedWith(compareBy { it.id })
 
-        fun isGOrdersExist(guideId: Long, date: LocalDate): Boolean = findByGuideId(guideId, date).isNotEmpty()
+        //fun isGOrdersExist(guideId: Long, date: LocalDate): Boolean = findByGuideAndDay(guideId, date).isNotEmpty()
+
+        fun findByGuideAndMonth(guideId: Long, mm: Int, yyyy: Int): List<GOrder> =
+            GOrder.findAllBy { GOrder::guide_id eq guideId }
+                .filter { it.day?.year == yyyy && it.day?.month?.value == mm }
 
     }
 

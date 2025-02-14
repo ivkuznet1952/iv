@@ -57,7 +57,7 @@ class LoginRoute : KComposite() {
         loginForm.addLoginListener { e ->
             try {
                 Session.loginService.login(e.username, e.password)
-                navigateTo<OrderRoute>() // TODO entry after login
+                navigateTo<OrderRoute>() // TODO entrypoint after login
             } catch (e: LoginException) {
                 log.warn("Login failed", e)
                 loginForm.setErrorMessage("Ошибка входа", "Неправильный логин или пароль")

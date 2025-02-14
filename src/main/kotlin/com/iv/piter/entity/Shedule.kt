@@ -5,10 +5,7 @@ import com.github.vokorm.db
 import com.github.vokorm.findAllBy
 import com.gitlab.mvysny.jdbiorm.Dao
 import com.gitlab.mvysny.jdbiorm.Table
-import com.iv.piter.convertToDateViaInstant
-import com.iv.piter.convertToLocalDate
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 
 @Table("shedule")
@@ -20,10 +17,16 @@ data class Shedule(
     var finish: LocalTime? = null
 ) : KEntity<Long> {
     companion object : Dao<Shedule, Long>(Shedule::class.java) {
-        fun findByGuideId(guideId: Long, date: LocalDate): List<Shedule> =
-            Shedule.findAllBy { (Shedule::guide_id eq guideId).and(Shedule::day eq date) }
+        fun findByGuideAndDay(guideId: Long, day: LocalDate): List<Shedule> =
+            Shedule.findAllBy { (Shedule::guide_id eq guideId).and(Shedule::day eq day) }
                 .sortedWith(compareBy { it.id })
-        fun isSheduleExists(guideId: Long, date: LocalDate): Boolean = findByGuideId(guideId, date).isNotEmpty()
+
+        //fun isSheduleExists(guideId: Long, day: LocalDate): Boolean = findByGuideAndDay(guideId, day).isNotEmpty()
+
+        fun findByGuideAndMonth(guideId: Long, mm: Int, yyyy: Int): List<Shedule> =
+            Shedule.findAllBy { Shedule::guide_id eq guideId }
+                .filter { it.day?.year == yyyy && it.day?.month?.value == mm }
+
     }
 
 

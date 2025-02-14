@@ -105,8 +105,9 @@ class SheduleRoute : KComposite() {
         val guide = guideCombo.value
         val mm = datePickerRussianI18N.monthNumber(monthCombo.value)
         val yy: Int = yearCombo.value.toInt()
-        val day = LocalDate.of(yy, mm, 1)
-        guideCalendar = GuideCalendar(guide, day)
+       // val day = LocalDate.of(yy, mm, 1)
+        //guideCalendar = GuideCalendar(guide, day)
+        guideCalendar = GuideCalendar(guide, mm, yy)
         vdata.removeAll()
         vdata.add(guideCalendar!!)
     }
@@ -114,7 +115,8 @@ class SheduleRoute : KComposite() {
     init {
         if (guides.isEmpty()) nodata.text = "нет данных"
         else {
-            guideCalendar = GuideCalendar(guides.first(), LocalDate.now())
+            //guideCalendar = GuideCalendar(guides.first(), LocalDate.now())
+            guideCalendar = GuideCalendar(guides.first(), LocalDate.now().month.value,LocalDate.now().year )
         }
         vdata.removeAll()
         if (guideCalendar != null) vdata.add(guideCalendar!!)
@@ -123,20 +125,24 @@ class SheduleRoute : KComposite() {
 }
 
 
-class GuideCalendar(private val guide: Guide, day: LocalDate) : VerticalLayout() {
+//class GuideCalendar(private val guide: Guide, day: LocalDate) : VerticalLayout() {
+    class GuideCalendar(private val guide: Guide, mm: Int, yyyy: Int) : VerticalLayout() {
 
-    private val mm: Int = day.month.value
-    private val yyyy: Int = day.year
-    private val lastDayOfMonth: LocalDate = day.with(TemporalAdjusters.lastDayOfMonth())
+   // private val mm: Int = day.month.value
+    //private val yyyy: Int = day.year
+    private val lastDayOfMonth: LocalDate = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth())
 
     private val offbegin = LocalDate.of(yyyy, mm, 1).dayOfWeek.value - 1 // offset first day of month
     private val offend =
         7 - LocalDate.of(yyyy, mm, lastDayOfMonth.dayOfMonth).dayOfWeek.value // offset last days of month
     private val rows: Int = ceil(((offbegin + lastDayOfMonth.dayOfMonth + offend) / 7).toDouble()).toInt()
 
+    private val sheduleList = guide.id?.let { Shedule.findByGuideAndMonth(it, mm, yyyy) }
+    private val orderList = guide.id?.let { GOrder.findByGuideAndMonth(it, mm, yyyy) }
 
     init {
         setWidthFull()
+
 
         for (i in 1..rows) {
             horizontalLayout(spacing = true, padding = false) {
@@ -151,9 +157,9 @@ class GuideCalendar(private val guide: Guide, day: LocalDate) : VerticalLayout()
                             if (j == 6 || j == 7) style.set("border", "red solid 0.001rem")
                             else style.set("border", "gray solid 0.001rem")
                             //not archive
-                            val isGorderExist = guide.id?.let { GOrder.isGOrdersExist(it, LocalDate.of(yyyy, mm, s)) }
-
-                            if (isGorderExist == true) {
+                            //val isExist = guide.id?.let { GOrder.isGOrdersExist(it, LocalDate.of(yyyy, mm, s)) }
+                            val isExist = orderList?.let { isGOrdersExist(s, it) }
+                            if (isExist == true) {
                                 val orderIcon = VaadinIcon.BRIEFCASE.create()
                                 orderIcon.className = "order-icon-shedule"
                                 add(orderIcon)
@@ -162,13 +168,13 @@ class GuideCalendar(private val guide: Guide, day: LocalDate) : VerticalLayout()
                                 style.set("margin-left", "auto")
                                 style.set("margin-right", "2px")
                                 text("$s")
-                                if (isGorderExist == true) {
+                                if (isExist == true) {
                                     style.set("color", "darkgreen")
                                     style.set("font-weight", "900")
                                 }
                             }
 
-                            val timePeriods = guide.id?.let { Shedule.findByGuideId(it, LocalDate.of(yyyy, mm, s)) }
+                           val timePeriods = sheduleList?.let { getShedulePerDay(s, it) }
                             if (timePeriods != null) {
                                 if (timePeriods.isNotEmpty()) {
                                     if (timePeriods.size == 1 && timePeriods[0].start == LocalTime.of(0, 0) &&
@@ -195,6 +201,11 @@ class GuideCalendar(private val guide: Guide, day: LocalDate) : VerticalLayout()
         }
     }
 
+    private fun getShedulePerDay(day: Int, list: List<Shedule>): List<Shedule> =
+        list.filter { it.day?.dayOfMonth == day }
+
+    private fun isGOrdersExist(day: Int, list: List<GOrder>): Boolean =
+        list.any { it.day?.dayOfMonth == day }
 }
 
 internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: Guide, private val day: LocalDate) :
@@ -207,7 +218,7 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
 
     private lateinit var sheduleGrid: VirtualList<Shedule>
     private lateinit var dp: ListDataProvider<Shedule>
-    private val dpgorder: ListDataProvider<GOrder> = ListDataProvider(guide.id?.let { GOrder.findByGuideId(it, day) })
+    private val dpgorder: ListDataProvider<GOrder> = ListDataProvider(guide.id?.let { GOrder.findByGuideAndDay(it, day) })
     private lateinit var gorderGrid: Grid<GOrder>
 
     init {
@@ -255,7 +266,7 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
                 }
             }
 
-            gorderGrid.setItemDetailsRenderer(createPersonDetailsRenderer(gorderGrid));
+            gorderGrid.setItemDetailsRenderer(createTripDetailsRenderer(gorderGrid));
 
 
             horizontalLayout(spacing = true, padding = false) {
@@ -282,7 +293,7 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
                             errorField.text = "Ошибка! Данные не сохранены."
                         } else {
                             row.save()
-                            updateView()
+                            //updateView()
                         }
                     }
                     item.onDelete = {
@@ -319,7 +330,7 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
         updateView()
     }
 
-    private fun createPersonDetailsRenderer(g: Grid<GOrder>): ComponentRenderer<TripDetailsFormLayout, GOrder> {
+    private fun createTripDetailsRenderer(g: Grid<GOrder>): ComponentRenderer<TripDetailsFormLayout, GOrder> {
         return ComponentRenderer(
             { TripDetailsFormLayout(g) },
             TripDetailsFormLayout::setTrip
@@ -442,7 +453,7 @@ internal class SheduleModal(calendarCell: HorizontalLayout, private val guide: G
 
     private fun updateView() {
         errorField.text = ""
-        dp = ListDataProvider(guide.id?.let { Shedule.findByGuideId(it, day) })
+        dp = ListDataProvider(guide.id?.let { Shedule.findByGuideAndDay(it, day) })
         sheduleGrid.dataProvider = dp
         val sheduleList = dp.items
         if (sheduleList != null && sheduleList.isEmpty()) {
@@ -494,7 +505,7 @@ class SheduleItem(private val row: Shedule, private val count: Int) : KComposite
             row.start = timePanel.b.value
             row.finish = timePanel.e.value
             onSave()
-            updateView(true)
+           // updateView(true)
         }
         timePanel.onEdit = {
             updateView(false)
@@ -527,37 +538,40 @@ class EditTimePanel(val state: Boolean, private var begin: LocalTime, var end: L
             if (!state) {
                 b = timePicker("Начало") {
                     value = begin
-                    width = "100px"
+                    width = "120px"
                     addValueChangeListener {
                         begin = value
+                        onSave()
                     }
                 }
                 e = timePicker("Окончание") {
                     value = end
-                    width = "100px"
+                    width = "120px"
                     addValueChangeListener {
                         end = value
+                        onSave()
                     }
                 }
-                val saveButton = button {
+              /*  val saveButton = button {
                     icon = VaadinIcon.CHECK.create()
                     addThemeVariants(ButtonVariant.LUMO_TERTIARY)
                     style.set("margin-left", "auto")
                     onClick { onSave() }
-                }
+                }*/
 
-                Tooltip.forComponent(saveButton)
+              /*  Tooltip.forComponent(saveButton)
                     .withText("Сохранить")
-                    .withPosition(Tooltip.TooltipPosition.TOP_START)
+                    .withPosition(Tooltip.TooltipPosition.TOP_START) */
 
                 val closeButton = button {
                     icon = VaadinIcon.CLOSE.create()
                     addThemeVariants(ButtonVariant.LUMO_TERTIARY)
                     style.set("color", "white")
+                    style.set("margin-left", "auto")
                     onClick { onClose() }
                 }
                 Tooltip.forComponent(closeButton)
-                    .withText("Отменить")
+                    .withText("Закрыть")
                     .withPosition(Tooltip.TooltipPosition.TOP_START)
             } else {
 

@@ -99,7 +99,7 @@ class Bootstrap : ServletContextListener {
             role = "Администратор",
             active = true
         ).apply { setPassword("admin"); save() }
-
+/*
         val bot = ExcursTelegramBot()
         try {
             val telegramBotsApi = TelegramBotsApi(DefaultBotSession::class.java)
@@ -109,7 +109,7 @@ class Bootstrap : ServletContextListener {
         } catch (e: TelegramApiException) {
 //        } catch (e: Exception) {
             log.error(e.message)
-        }
+        } */
         log.info("Initialization complete")
 
     } catch (t: Throwable) {
@@ -124,7 +124,6 @@ class Bootstrap : ServletContextListener {
         log.info("Closing database connections")
         JdbiOrm.destroy()
         log.info("Shutdown complete")
-        //BotConfig.bot.
     }
 
     companion object {

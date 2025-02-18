@@ -40,7 +40,7 @@ data class GOrder(override var id: Long? = null,
         //fun isGOrdersExist(guideId: Long, date: LocalDate): Boolean = findByGuideAndDay(guideId, date).isNotEmpty()
 
         fun findByGuideAndMonth(guideId: Long, mm: Int, yyyy: Int): List<GOrder> =
-            GOrder.findAllBy { GOrder::guide_id eq guideId }
+            GOrder.findAllBy { (GOrder::guide_id eq guideId).and(GOrder::archived eq false) }
                 .filter { it.day?.year == yyyy && it.day?.month?.value == mm }
 
     }

@@ -17,6 +17,7 @@ import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.shared.Tooltip
+import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.virtuallist.VirtualList
 import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.renderer.ComponentRenderer
@@ -65,7 +66,6 @@ class TransportRoute : KComposite() {
                 columnFor(Transport::name) {
                     setHeader("Наименование")
                     width = "50%"
-                    setSortProperty(Transport::name.exp)
                 }
                 columnFor(Transport::maxcount) {
                     setHeader("Макс. кол-во туристов")
@@ -108,6 +108,13 @@ class TransportRoute : KComposite() {
             }
         }
 
+    private fun test(): ComponentRenderer<TextField, Transport> =
+        ComponentRenderer { transport ->
+           TextField("test").apply {
+               value = "test"
+           }
+
+        }
 
     private fun createEditButton(transport: Transport): Button =
         Button("").apply {
@@ -178,12 +185,12 @@ class TransportItem(val row: Transport) : KComposite() {
                 setWidthFull()
                 bind(binder).bind(Transport::name)
                 isEnabled = false
+                className = "field_disable_text_color"
             }
             integerField("Макс. кол-во туристов") {
-                //setWidthFull()
-               // width = "30%"
                 bind(binder).bind(Transport::maxcount)
                 isEnabled = false
+                className = "field_disable_text_color"
             }
           }
 

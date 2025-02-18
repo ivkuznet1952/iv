@@ -200,7 +200,7 @@ class TripRoute : KComposite() {
 class TripItem(private val row: Trip) : KComposite() {
     private val trip: Trip get() = row
     var onEdit: () -> Unit = {}
-    var onShedule: () -> Unit = {}
+    //var onShedule: () -> Unit = {}
     var onCost: () -> Unit = {}
 
     val binder: Binder<Trip> = beanValidationBinder()
@@ -255,10 +255,11 @@ class TripItem(private val row: Trip) : KComposite() {
             horizontalLayout {
                 setWidthFull()
                 alignItems = FlexComponent.Alignment.CENTER
-                textField {
+                textArea {
                     setWidthFull()
                     bind(binder).bind(Trip::name)
                     isEnabled = false
+                    className = "area_disable_text_color"
                 }
             }
         }

@@ -199,16 +199,19 @@ class GuideItem(val row: Guide) : KComposite() {
                 setWidthFull()
                 bind(binder).bind(Guide::firstname)
                 isEnabled = false
+                className = "field_disable_text_color"
             }
             textField("Фамилия") {
                 setWidthFull()
                 bind(binder).bind(Guide::lastname)
                 isEnabled = false
+                className = "field_disable_text_color"
             }
             textField("Телефон") {
                 setWidthFull()
                 bind(binder).bind(Guide::phone)
                 isEnabled = false
+                className = "field_disable_text_color"
             }
         }
 

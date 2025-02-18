@@ -180,11 +180,13 @@ class UserItem(val row: User) : KComposite() {
                 setWidthFull()
                 bind(binder).bind(User::username)
                 isEnabled = false
+                className = "field_disable_text_color"
             }
             textField("Роль") {
                 setWidthFull()
                 bind(binder).bind(User::role)
                 isEnabled = false
+                className = "field_disable_text_color"
             }
         }
 

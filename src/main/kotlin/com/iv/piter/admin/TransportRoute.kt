@@ -17,7 +17,6 @@ import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.shared.Tooltip
-import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.virtuallist.VirtualList
 import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.renderer.ComponentRenderer
@@ -71,6 +70,7 @@ class TransportRoute : KComposite() {
                     setHeader("Макс. кол-во туристов")
                     width = "20%"
                     setSortProperty(Transport::maxcount.exp)
+                   // setVisible(false)
                 }
                 addColumn(ComponentRenderer<Button, Transport> { tr -> createEditButton(tr) }).apply {
                     flexGrow = 0; key = ""
@@ -93,27 +93,23 @@ class TransportRoute : KComposite() {
     }
 
     init {
+//        UI.getCurrent().getPage().retrieveExtendedClientDetails {
+//            println("Width " + it.getWindowInnerWidth())
+//            println("Height " + it.getWindowInnerHeight())
+//        }
         updateView()
     }
 
     private fun createTransportActiveCheckboxRenderer(): ComponentRenderer<Checkbox, Transport> =
         ComponentRenderer { transport ->
             Checkbox(transport.active).apply {
-                // when the check box is changed, update the transport and reload the grid
+                // when the checkbox is changed, update the transport and reload the grid
                 addValueChangeListener {
                     transport.active = it.value
                     transport.save()
                     grid.dataProvider.refreshAll()
                 }
             }
-        }
-
-    private fun test(): ComponentRenderer<TextField, Transport> =
-        ComponentRenderer { transport ->
-           TextField("test").apply {
-               value = "test"
-           }
-
         }
 
     private fun createEditButton(transport: Transport): Button =
@@ -144,7 +140,7 @@ class TransportRoute : KComposite() {
 }
 
 class TransportItem(val row: Transport) : KComposite() {
-    val guide: Transport get() = row
+    private val guide: Transport get() = row
     var onSave: () -> Unit = {}
     val binder: Binder<Transport> = beanValidationBinder()
 

@@ -43,6 +43,13 @@ data class GOrder(override var id: Long? = null,
             GOrder.findAllBy { (GOrder::guide_id eq guideId).and(GOrder::archived eq false) }
                 .filter { it.day?.year == yyyy && it.day?.month?.value == mm }
 
+        fun findByActual(actual: Boolean): List<GOrder> {
+            var date: LocalDate = LocalDate.now()
+            if (!actual) date = LocalDate.of(1970, 1, 1)
+            return GOrder.findAllBy { (GOrder::archived eq false).and(GOrder::day ge date) }
+        }
+
+        fun findByArchved(): List<GOrder> = GOrder.findAllBy { (GOrder::archived eq true) }
     }
 
     override fun delete() {

@@ -140,7 +140,7 @@ class TransportRoute : KComposite() {
 }
 
 class TransportItem(val row: Transport) : KComposite() {
-    private val guide: Transport get() = row
+    private val transport: Transport get() = row
     var onSave: () -> Unit = {}
     val binder: Binder<Transport> = beanValidationBinder()
 
@@ -155,8 +155,8 @@ class TransportItem(val row: Transport) : KComposite() {
                 checkBox("Активен") {
                     bind(binder).bind(Transport::active)
                     addValueChangeListener {
-                        guide.active = it.value
-                        guide.save()
+                        transport.active = it.value
+                        transport.save()
                     }
                 }
 

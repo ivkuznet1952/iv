@@ -4,13 +4,16 @@ import com.github.mvysny.karibudsl.v10.*
 import com.iv.piter.EditorDialogFrame
 import com.iv.piter.EditorForm
 import com.iv.piter.entity.GOrder
+import com.iv.piter.entity.GOrderDTO
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.notification.NotificationVariant
 import com.vaadin.flow.data.binder.Binder
+import com.vaadin.flow.data.binder.Setter
 import com.vaadin.flow.data.validator.StringLengthValidator
+import com.vaadin.flow.function.ValueProvider
 
-class GOrderEditorForm(val gorder: GOrder) : FormLayout(), EditorForm<GOrder> {
+class GOrderEditorForm(val gorderDTO: GOrderDTO) : FormLayout(), EditorForm<GOrder> {
 
     override var isEdit: Boolean = true
     override val itemType: String get() = "заказ"
@@ -28,11 +31,13 @@ class GOrderEditorForm(val gorder: GOrder) : FormLayout(), EditorForm<GOrder> {
                 .trimmingConverter()
                 .withValidator(
                     StringLengthValidator(
-                        "Коментарий",
+                        "Комментарий",
                         0, null
                     )
-                )
-                .bind(GOrder::comment)
+                ) .bind(GOrder::comment)
+
+
+
         }
         integerField("Кол-во туристов") {
             maxWidth = "180px"
@@ -45,36 +50,39 @@ class GOrderEditorForm(val gorder: GOrder) : FormLayout(), EditorForm<GOrder> {
      * Opens dialogs for editing [GOrder] objects.
      * @property onGOrderChanged called when a user has been created/edited/deleted.
      */
-    class GOrderEditorDialog(private val onGOrderChanged: (GOrder) -> Unit) {
-        private fun maybeDelete(frame: EditorDialogFrame<GOrder>, item: GOrder) { // TODO
+    class GOrderEditorDialog(private val onGOrderChanged: (GOrderDTO) -> Unit) {
+        private fun maybeDelete(frame: EditorDialogFrame<GOrderDTO>, item: GOrderDTO) { // TODO
 
         }
 
-        private fun delete(frame: EditorDialogFrame<GOrder>, item: GOrder) {
-            item.delete()
+        private fun delete(frame: EditorDialogFrame<GOrderDTO>, item: GOrderDTO) {
+            item.gOrder?.delete()
             Notification.show("Заказ успешно удален.", 3000, Notification.Position.BOTTOM_START)
             frame.close()
             onGOrderChanged(item)
         }
 
         fun createNew() {
-            edit(GOrder())
+            val gOrderDTO = GOrderDTO()
+            gOrderDTO.gOrder = GOrder()
+            edit(gOrderDTO)
         }
 
-        fun edit(gorder: GOrder) {
+        fun edit(gorderDTO: GOrderDTO) {
 
-            val frame = EditorDialogFrame(GOrderEditorForm(gorder))
-            frame.onSaveItem = {
-                val creating: Boolean = gorder.id == null
-                gorder.save()
+            val frame = EditorDialogFrame(GOrderEditorForm(gorderDTO))
+            frame.deleteButton.text = "В архив"
+             frame.onSaveItem = {
+                val creating: Boolean = gorderDTO.gOrder?.id == null
+                gorderDTO.gOrder?.save()
                 val op: String = if (creating) "добавлен" else "сохранен"
                 val n = Notification.show("Заказ успешно ${op}.", 3000, Notification.Position.TOP_END)
                 n.addThemeVariants(NotificationVariant.LUMO_SUCCESS)
-                onGOrderChanged(gorder)
+                onGOrderChanged(gorderDTO)
                 frame.closeDialog()
             }
-            frame.onDeleteItem = { item -> maybeDelete(frame, item) }
-            frame.open(gorder, gorder.id == null)
+            //frame.onDeleteItem = { item -> maybeDelete(frame, item) }
+            gorderDTO.gOrder?.let { frame.open(it, gorderDTO.gOrder?.id == null) }
         }
     }
 }

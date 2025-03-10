@@ -1,10 +1,16 @@
 package com.iv.piter.entity
 
 import com.github.vokorm.KEntity
+import com.github.vokorm.buildCondition
 import com.github.vokorm.db
 import com.github.vokorm.findAllBy
 import com.gitlab.mvysny.jdbiorm.Dao
+import com.gitlab.mvysny.jdbiorm.DaoOfJoin
 import com.gitlab.mvysny.jdbiorm.Table
+import com.gitlab.mvysny.jdbiorm.condition.Condition
+import com.gitlab.mvysny.jdbiorm.vaadin.EntityDataProvider
+import org.jdbi.v3.core.mapper.Nested
+import java.io.Serializable
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -50,6 +56,7 @@ data class GOrder(override var id: Long? = null,
         }
 
         fun findByArchved(): List<GOrder> = GOrder.findAllBy { (GOrder::archived eq true) }
+
     }
 
     override fun delete() {
@@ -63,74 +70,66 @@ data class GOrder(override var id: Long? = null,
 /**
  * Holds the join of GOrder and its others.
  */
-/*
+
 data class GOrderDTO(
     @field:Nested
     var gOrder: GOrder? = null,
-    var tur_name: String? = null,
-    var group_date: LocalDate? = null,
-    var group_num: Int? = null,
+    var trip_name: String? = null,
     var customerFirstName: String? = null,
     var customerLastName: String? = null,
-    var customerPhone: String? = null,
-    var agency_name: String? = null,
-
+    var customerPhone: String? = null
     ) : Serializable {
     companion object {
 
         const val query = """
                 select o.*,
-                COALESCE(t.name, '') as tur_name,
-                g.begin as group_date,
-                g.num as group_num,
+                COALESCE(t.name, '') as trip_name,
                 COALESCE(c.firstname, '') as customerFirstName,
                 COALESCE(c.lastname, '') as customerLastName,
-                COALESCE(c.phone, '') as customerPhone,
-                COALESCE(a.name, '') as agency_name
+                COALESCE(c.phone, '') as customerPhone
                 FROM gorder o
-                left join tur t on o.tur_id = t.id
-                left join ggroup g on o.group_id = g.id
-                left join customer c on o.customer_type = 0 and o.customer_id = c.id
-                left join agency a on o.customer_type = 1 and o.customer_id = a.id
+                left join trip t on o.trip_id = t.id
+                left join customer c on o.customer_id = c.id
                 """
         val dataProvider: EntityDataProvider<GOrderDTO>
     get() = EntityDataProvider(
         DaoOfJoin(GOrderDTO::class.java, query)
     )
-    }
-} */
-//ORDER BY o.id asc
-/*
-fun EntityDataProvider<GOrderDTO>.setFilterTextGOrderDTO(filter: String?) {
 
-   // val org_id = MainLayout.currentOrgId()
+    }
+}
+
+
+fun EntityDataProvider<GOrderDTO>.setFilterTextGOrderDTO(filter: String?, actual: Boolean) {
+
+    var date: LocalDate = LocalDate.now()
+    if (!actual) date = LocalDate.of(1970, 1, 1)
     if (filter.isNullOrBlank()) {
-//        this.filter = buildCondition<GOrderDTO> {
-//            """o.org_id=$org_id order by o.id desc""".trimMargin()()
-//        }
+        this.filter = buildCondition<GOrderDTO> {
+            """o.day>='$date'::date order by o.num desc""".trimMargin()()
+        }
+        println(this.filter)
     } else {
         val normalizedFilter: String = "%" + filter.trim().lowercase() + "%"
         val cond: Condition = buildCondition<GOrderDTO> {
         """(t.name LIKE :filter
                     or LOWER(c.firstname) LIKE :filter
                     or LOWER(c.lastname) LIKE :filter
-                    or LOWER(a.name) LIKE :filter
+                     or LOWER(c.phone) LIKE :filter
                     or LOWER(t.name) LIKE :filter
                     or LOWER(o.status) LIKE :filter
                     or LOWER(o.paystatus) LIKE :filter
                     or CAST(o.cost as varchar(10)) LIKE :filter
                     or CAST(o.num as varchar(10)) LIKE :filter
-                    or TO_CHAR(g.begin, 'DD.MM.YYYY') LIKE :filter
                     or COALESCE(LOWER(t.name), '') LIKE :filter
                     or COALESCE(LOWER(c.firstname), '') LIKE :filter
                     or COALESCE(LOWER(c.lastname), '') LIKE :filter
-                    or COALESCE(LOWER(c.phone), '') LIKE :filter) and o.org_id=$org_id order by o.id desc
+                    or COALESCE(LOWER(c.phone), '') LIKE :filter) and o.day>='$date'::date order by o.num desc
                     """.trimMargin()("filter" to normalizedFilter)
         }
         this.filter = cond
     }
 }
-*/
 
 enum class OrderStatus {
     НОВЫЙ,

@@ -105,8 +105,6 @@ class SheduleRoute : KComposite() {
         val guide = guideCombo.value
         val mm = datePickerRussianI18N.monthNumber(monthCombo.value)
         val yy: Int = yearCombo.value.toInt()
-       // val day = LocalDate.of(yy, mm, 1)
-        //guideCalendar = GuideCalendar(guide, day)
         guideCalendar = GuideCalendar(guide, mm, yy)
         vdata.removeAll()
         vdata.add(guideCalendar!!)
@@ -115,7 +113,6 @@ class SheduleRoute : KComposite() {
     init {
         if (guides.isEmpty()) nodata.text = "нет данных"
         else {
-            //guideCalendar = GuideCalendar(guides.first(), LocalDate.now())
             guideCalendar = GuideCalendar(guides.first(), LocalDate.now().month.value,LocalDate.now().year )
         }
         vdata.removeAll()
@@ -125,11 +122,8 @@ class SheduleRoute : KComposite() {
 }
 
 
-//class GuideCalendar(private val guide: Guide, day: LocalDate) : VerticalLayout() {
     class GuideCalendar(private val guide: Guide, mm: Int, yyyy: Int) : VerticalLayout() {
 
-   // private val mm: Int = day.month.value
-    //private val yyyy: Int = day.year
     private val lastDayOfMonth: LocalDate = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth())
 
     private val offbegin = LocalDate.of(yyyy, mm, 1).dayOfWeek.value - 1 // offset first day of month
@@ -157,7 +151,6 @@ class SheduleRoute : KComposite() {
                             if (j == 6 || j == 7) style.set("border", "red solid 0.001rem")
                             else style.set("border", "gray solid 0.001rem")
                             //not archive
-                            //val isExist = guide.id?.let { GOrder.isGOrdersExist(it, LocalDate.of(yyyy, mm, s)) }
                             val isExist = orderList?.let { isGOrdersExist(s, it) }
                             if (isExist == true) {
                                 val orderIcon = VaadinIcon.BRIEFCASE.create()

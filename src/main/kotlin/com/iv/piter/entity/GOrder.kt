@@ -108,7 +108,6 @@ fun EntityDataProvider<GOrderDTO>.setFilterTextGOrderDTO(filter: String?, actual
         this.filter = buildCondition<GOrderDTO> {
             """o.day>='$date'::date order by o.num desc""".trimMargin()()
         }
-        println(this.filter)
     } else {
         val normalizedFilter: String = "%" + filter.trim().lowercase() + "%"
         val cond: Condition = buildCondition<GOrderDTO> {

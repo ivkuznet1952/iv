@@ -1,10 +1,9 @@
 package com.iv.piter.admin
 
 import com.github.mvysny.karibudsl.v10.*
+import com.iv.piter.*
 import com.iv.piter.ConfirmationDialog
-import com.iv.piter.EditorDialogFrame
-import com.iv.piter.EditorForm
-import com.iv.piter.UploadRussianI18N
+import com.iv.piter.entity.Photos
 import com.iv.piter.entity.Trip
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.html.Image
@@ -16,15 +15,16 @@ import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.converter.StringToFloatConverter
 import com.vaadin.flow.server.InputStreamFactory
 import com.vaadin.flow.server.StreamResource
-import java.io.ByteArrayInputStream
-import java.io.InputStream
+import java.io.*
+import java.time.LocalTime
 import java.util.*
 
 
-class TripEditorForm(private var trip: Trip) : FormLayout(), EditorForm<Trip> {
+class TripEditorForm(private var trip: Trip, private var photos: Photos) : FormLayout(), EditorForm<Trip> {
     override val itemType: String get() = "экскурсию"
     override val binder: Binder<Trip> = beanValidationBinder()
     override var isEdit:Boolean = true
+
 
     init {
         maxWidth = "520px"
@@ -77,8 +77,16 @@ class TripEditorForm(private var trip: Trip) : FormLayout(), EditorForm<Trip> {
             upload.addSucceededListener { event ->
                 val fileData = buffer.inputStream
                 val fileName = event.getFileName()
+
                 val bytes = fileData.readBytes()
-                trip.photo = bytes
+
+                // photos = Photos()
+                photos.trip_id = trip.id
+                photos.name = fileName
+                photos.bytes = bytes
+                //photos.save()
+
+                trip.photo = fileName
                 val stream: InputStream = ByteArrayInputStream(bytes)
                 val imageResource = StreamResource(fileName, InputStreamFactory { stream })
                 val image = Image(imageResource, "image")
@@ -142,17 +150,23 @@ class TripEditorForm(private var trip: Trip) : FormLayout(), EditorForm<Trip> {
             }
 
             fun createNew() {
-                edit(Trip())
+                edit(Trip(), Photos())
             }
 
-            fun edit(trip: Trip) {
+            fun edit(trip: Trip, photos: Photos) {
 
-                val frame = EditorDialogFrame(TripEditorForm(trip))
+                if (trip.id == null) {
+                    trip.start = LocalTime.of(0, 0)
+                    trip.finish = LocalTime.of(23, 59)
+                }
+                val frame = EditorDialogFrame(TripEditorForm(trip, photos))
 
                 frame.onSaveItem = {
                     val creating: Boolean = trip.id == null
-                   // println("//////:" + trip)
                     trip.save()
+                    photos.trip_id = trip.id
+                    trip.id?.let { it1 -> Photos.findByTripId(it1) }?.delete()
+                    photos.save()
                     val op: String = if (creating) "добавлена" else "сохранена"
                     val n = Notification.show("Экскурсия успешно ${op}.", 3000, Notification.Position.TOP_END)
                     n.addThemeVariants(NotificationVariant.LUMO_SUCCESS)

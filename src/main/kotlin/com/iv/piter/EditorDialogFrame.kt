@@ -124,8 +124,7 @@ class EditorDialogFrame<T : Serializable>(private val form: EditorForm<T>) : Dia
     }
 
     private fun saveClicked() {
-        // form.binder.isValid won't set `isInvalid` and `errorMessage` of invalid components - avoid.
-        // use form.binder.validate() instead.
+
         if (form.binder.validate().isOk && form.binder.writeBeanIfValid(currentItem!!)) {
             onSaveItem(currentItem!!)
         } else {

@@ -11,6 +11,7 @@ import com.iv.piter.BotConfig
 import com.iv.piter.Constant
 import com.iv.piter.MainLayout
 import com.iv.piter.entity.Cost
+import com.iv.piter.entity.Photos
 import com.iv.piter.entity.Trip
 import com.iv.piter.security.LoginRoute
 import com.vaadin.flow.component.button.Button
@@ -159,11 +160,15 @@ class TripListItem(private val row: Trip) : KComposite() {
                 alignSelf = FlexComponent.Alignment.CENTER
 
                 if (row.photo != null) {
-                    val stream: InputStream = ByteArrayInputStream(row.photo)
-                    val imageResource = StreamResource("kot.png", InputStreamFactory { stream })
-                    val image = Image(imageResource, "img")
-                    image.width = "50px"
-                    add(image)
+                    val photo = row.id?.let { Photos.findByTripIdAndName(it, row.photo) }
+                    if (photo != null) {
+                        val stream: InputStream = ByteArrayInputStream(photo.bytes)
+                        val imageResource = StreamResource("kot.png", InputStreamFactory { stream })
+                        val image = Image(imageResource, "img")
+                        image.width = "50px"
+                        add(image)
+                    }
+//                    add(image)
                 }
                 onClick {
                     ShowDetailModal(row).open(row.name)
@@ -230,11 +235,14 @@ internal class ShowDetailModal(trip: Trip) : Dialog() {
                 verticalLayout {
                     alignItems = FlexComponent.Alignment.CENTER
                     if (trip.photo != null) {
-                        val stream: InputStream = ByteArrayInputStream(trip.photo)
-                        val imageResource = StreamResource("kot.png", InputStreamFactory { stream })
-                        val image = Image(imageResource, "img")
-                        image.width = "250px"
-                        add(image)
+                        val photo = trip.id?.let { Photos.findByTripIdAndName(it, trip.photo) }
+                        if (photo != null) {
+                            val stream: InputStream = ByteArrayInputStream(photo.bytes)
+                            val imageResource = StreamResource("kot.png", InputStreamFactory { stream })
+                            val image = Image(imageResource, "img")
+                            image.width = "350px"
+                            add(image)
+                        }
                     }
                 }
 

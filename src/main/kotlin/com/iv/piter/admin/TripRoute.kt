@@ -9,10 +9,7 @@ import com.github.mvysny.kaributools.setPrimary
 import com.github.vokorm.asc
 import com.github.vokorm.exp
 import com.iv.piter.Toolbar
-import com.iv.piter.entity.Cost
-import com.iv.piter.entity.Transport
-import com.iv.piter.entity.Trip
-import com.iv.piter.entity.setFilterText
+import com.iv.piter.entity.*
 import com.iv.piter.toolbarView
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
@@ -135,16 +132,19 @@ class TripRoute : KComposite() {
             }
         }
 
-    private fun createImage(trip: Trip): Image {
+    private fun createImage(trip: Trip): Image? {
 
         if (trip.photo != null) {
-            val stream: InputStream = ByteArrayInputStream(trip.photo)
-            val imageResource = StreamResource("fileName", InputStreamFactory { stream })
-            val image = Image(imageResource, "image")
-            image.width = "30px"
-            return image
+            val photo = trip.id?.let { Photos.findByTripIdAndName(it, trip.photo) }
+            if (photo != null) {
+                val stream: InputStream = ByteArrayInputStream(photo.bytes)
+                val imageResource = StreamResource("kot.png", InputStreamFactory { stream })
+                val image = Image(imageResource, "img")
+                image.width = "35px"
+                return image
+            }
         }
-        return Image()
+        return null
     }
 
     private fun createEditButton(trip: Trip): Button {
@@ -179,7 +179,7 @@ class TripRoute : KComposite() {
     }
 
     private fun edit(trip: Trip) {
-        editorDialog.edit(trip)
+        editorDialog.edit(trip, Photos())
     }
 
     private fun updateView() {

@@ -16,12 +16,12 @@ data class Trip(
     @field: NotBlank
     var name: String = "",
     var description: String? = "",
-    var photo: ByteArray? = ByteArray(0),
     var duration: Float = 0f,
     var comment: String? = "",
     var start: LocalTime? = null,
     var finish: LocalTime? = null,
-    var active: Boolean = true
+    var active: Boolean = true,
+    var photo: String? = "",
 ) : KEntity<Long> {
     companion object : Dao<Trip, Long>(Trip::class.java) {
     }

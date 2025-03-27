@@ -107,7 +107,6 @@ class Bootstrap : ServletContextListener {
             println("Initializer demo bot....")
             BotConfig.bot = bot
         } catch (e: TelegramApiException) {
-//        } catch (e: Exception) {
             log.error(e.message)
         } */
         log.info("Initialization complete")
@@ -145,7 +144,7 @@ object BotConfig {
     val botName: String = "sasterra"
     val token: String = "6038173806:AAGMKgMM1A4SrzUhy-earibyuWQiDMgOiNU"
     val chatId: Long = 436071699
-    val webapp = "https://pqvgup-176-117-129-130.ru.tuna.am"
+    const val webapp = "https://pqvgup-176-117-129-130.ru.tuna.am"
     var bot: ExcursTelegramBot? = null
 }
 
@@ -285,8 +284,8 @@ class Buttons(val chat_id: Long) {
         ORDER_BUTTON.webApp = WebAppInfo(BotConfig.webapp + "/$chat_id")
         HELP_BUTTON.callbackData = "/help"
         //List<InlineKeyboardButton> rowInline = List.of(ORDER_BUTTON, HELP_BUTTON);
-        val rowInline = java.util.List.of(ORDER_BUTTON, HELP_BUTTON)
-        val rowsInLine = java.util.List.of(rowInline)
+        val rowInline = listOf(ORDER_BUTTON, HELP_BUTTON)
+        val rowsInLine = listOf(rowInline)
 
         val markupInline = InlineKeyboardMarkup()
         markupInline.keyboard = rowsInLine

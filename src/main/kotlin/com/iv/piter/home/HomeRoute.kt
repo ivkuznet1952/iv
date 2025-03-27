@@ -77,12 +77,13 @@ class HomeRoute : KComposite(), HasUrlParameter<String> {
 
     private val root = ui {
 
-        verticalLayout(padding = true, spacing = false) {
+        verticalLayout(padding = false, spacing = false,  classNames = "trip-background-header") {
 
             content { align(center, top) }
 
-            horizontalLayout(spacing = true, padding = false,  classNames = "trip-background") {
+            horizontalLayout(spacing = true, padding = false) {
                 setSizeFull()
+                style.set("background-color", "rgb(30,40,54)")
                 alignItems = FlexComponent.Alignment.CENTER
                 image(Constant.titleImage, ".") {
                     width = "25px"
@@ -108,19 +109,23 @@ class HomeRoute : KComposite(), HasUrlParameter<String> {
             }
 
             text("ID: ")
-            chat = h5 {}
+//            chat = h5 {}
 //            if  (BotConfig.bot != null) {
 //                chat.text = BotConfig.chatId.toString()
 //            }
-            p {  }
-            grid = virtualList {
-                //style.set("background-color", "orange") // TODO test remove
-                setRenderer(ComponentRenderer { row ->
-                    setSizeFull()
-                    val item = TripListItem(row)
-                    item
+//            p {  }
+            verticalLayout(padding = false) {
+                style.set("background-color", "rgb(30,40,54)")
+                style.set("padding-left", "5px")
+                style.set("padding-right", "5px")
+                grid = virtualList {
+                    setRenderer(ComponentRenderer { row ->
+                        setSizeFull()
+                        val item = TripListItem(row)
+                        item
+                    }
+                    )
                 }
-                )
             }
             nodata = h5 {}
         }
@@ -148,7 +153,7 @@ class TripListItem(private val row: Trip) : KComposite() {
         val costs = row.id?.let { Cost.findByTripId(it) }
         val cost = if (costs.isNullOrEmpty()) 0 else costs.map{ it.cost }.min()
 
-        horizontalLayout(false, true) {
+        horizontalLayout(false, true, classNames = "trip-background-header") {
             setSizeFull()
             height = "90px"
             style.set("padding", "5px")

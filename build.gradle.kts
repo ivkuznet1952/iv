@@ -54,7 +54,7 @@ dependencies {
 //    testImplementation(libs.junit)
 //    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 //    testImplementation(kotlin("test"))
-    implementation("org.telegram:telegrambots:6.9.7.1")
+   // implementation("org.telegram:telegrambots:6.9.7.1")
 
 }
 

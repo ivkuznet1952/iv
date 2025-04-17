@@ -38,10 +38,11 @@ class Toolbar(createCaption: String) : KComposite() {
         div("view-toolbar") {
             searchField = textField {
                 prefixComponent = Icon(VaadinIcon.SEARCH)
-                addClassName("view-toolbar__search-field")
+                addClassNames("view-toolbar__search-field")
                 placeholder = "Поиск"
                 addValueChangeListener { onSearch(searchText) }
                 valueChangeMode = ValueChangeMode.EAGER
+
             }
             addButton = button("$createCaption") {
                 setPrimary()
@@ -55,3 +56,4 @@ class Toolbar(createCaption: String) : KComposite() {
 @VaadinDsl
 fun (@VaadinDsl HasComponents).toolbarView(createCaption: String, block: (@VaadinDsl Toolbar).() -> Unit = {})
         = init(Toolbar(createCaption), block)
+

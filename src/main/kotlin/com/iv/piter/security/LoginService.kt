@@ -10,10 +10,7 @@ import javax.security.auth.login.FailedLoginException
  * it yourself.
  */
 class LoginService: AbstractLoginService<User>() {
-    /**
-     * Logs in user with given [username] and [password]. Fails with [javax.security.auth.login.LoginException]
-     * on failure.
-     */
+
     fun login(username: String, password: String) {
         val user: User = User.findByUsername(username)
             ?: throw FailedLoginException("Invalid username or password")

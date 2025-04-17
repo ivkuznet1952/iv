@@ -2,6 +2,7 @@ package com.iv.piter.admin
 
 import com.github.mvysny.karibudsl.v10.*
 import com.github.mvysny.karibudsl.v23.virtualList
+import com.github.mvysny.kaributools.setPrimary
 import com.github.vokorm.asc
 import com.github.vokorm.exp
 import com.iv.piter.Toolbar
@@ -10,8 +11,10 @@ import com.iv.piter.security.setFilterText
 import com.iv.piter.toolbarView
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
-import com.vaadin.flow.component.checkbox.Checkbox
 import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.grid.GridVariant
+import com.vaadin.flow.component.html.Div
+import com.vaadin.flow.component.html.H2
 import com.vaadin.flow.component.html.H5
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -22,9 +25,11 @@ import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
+import com.vaadin.flow.theme.lumo.LumoUtility
 import eu.vaadinonkotlin.vaadin.setSortProperty
 import eu.vaadinonkotlin.vaadin.vokdb.dataProvider
 import jakarta.annotation.security.RolesAllowed
+
 
 @Route("user", layout = AdminLayout::class)
 @PageTitle("Пользователи")
@@ -42,43 +47,55 @@ class UserRoute : KComposite() {
 
     private val root = ui {
 
-        verticalLayout(true) {
-            content { align(stretch, top) }
-            setSizeFull()
-            toolbar = toolbarView("Новый пользователь") {
-                onSearch = { updateView() }
-                onCreate = { editorDialog.createNew() }
+        verticalLayout(false) {
+
+            content { align(center, top) }
+            style.set("margin-top", "40px")
+             horizontalLayout {
+                width = "50%"
+                header = h5()
+                justifyContentMode = FlexComponent.JustifyContentMode.START;
             }
-            header = h5()
-            grid = grid(dataProvider) {
-                className = "hide-admin-menu"
-                isExpand = true
-                width = "100%"
 
-                columnFor(User::active, createUserActiveCheckboxRenderer()) {
-                    isExpand = false
-                    setHeader("Активен")
-                    width = "10%"
-                    isSortable = false
-                }
-                columnFor(User::username) {
-                    setHeader("Имя пользователя")
-                    width = "40%"
-                    setSortProperty(User::username.exp)
-                }
+            verticalLayout(spacing = true, padding = false) {
+                style.set("padding", "40px !important")
+                style.set("background-color", "white")
+                style.set("border-radius", "8px")
+                width = "50%"
 
-                columnFor(User::role) {
-                    setHeader("Роль")
-                    setSortProperty(User::role.exp)
-                }
+                    toolbar = toolbarView("Новый пользователь") {
+                        onSearch = { updateView() }
+                        onCreate = { editorDialog.createNew() }
+                        setWidthFull()
+                        style.set("margin", "0px !important")
+                        style.set("padding", "0px !important")
+                    }
 
-                addColumn(ComponentRenderer<Button, User> { tr -> createEditButton(tr) }).apply {
-                    flexGrow = 0; key = ""
-                    isExpand = false
-                }
+                grid = grid<User>(dataProvider) {
+                    width = "100%"
 
-                element.themeList.add("row-dividers")
+                   // className = "show-admin-panel"
+
+                    columnFor(User::username) {
+                        setHeader("Имя пользователя")
+                        setSortProperty(User::username.exp)
+                    }
+                    columnFor(User::role) {
+                        setHeader("Роль")
+                        setSortProperty(User::role.exp)
+                    }
+
+                    addColumn(ComponentRenderer<Button, User> { tr -> createEditButton(tr) }).apply {
+                        flexGrow = 0; key = ""
+                        isExpand = false
+                    }
+
+                }
             }
+
+            grid.addThemeVariants(GridVariant.LUMO_NO_BORDER)
+            grid.addThemeVariants(GridVariant.LUMO_COMPACT)
+            setAlignSelf(FlexComponent.Alignment.CENTER, grid);
 
             mgrid = virtualList {
                 className = "hide-admin-panel"
@@ -95,21 +112,9 @@ class UserRoute : KComposite() {
     }
 
     init {
+        header.text = "ПОЛЬЗОВАТЕЛИ"
         updateView()
     }
-
-    private fun createUserActiveCheckboxRenderer(): ComponentRenderer<Checkbox, User> =
-        ComponentRenderer { user ->
-            Checkbox(user.active).apply {
-                // when the check box is changed, update the user and reload the grid
-                addValueChangeListener {
-                    user.active = it.value
-                    user.save()
-                    grid.dataProvider.refreshAll()
-                }
-            }
-        }
-
 
     private fun createEditButton(user: User): Button =
         Button("").apply {
@@ -126,11 +131,6 @@ class UserRoute : KComposite() {
     private fun updateView() {
 
         dataProvider.setFilterText(toolbar.searchText)
-        if (toolbar.searchText.isNotBlank()) {
-            header.text = "Поиск “${toolbar.searchText}”"
-        } else {
-            header.text = "Пользователь"
-        }
         dataProvider.setSortFields(User::username.asc)
         grid.dataProvider = dataProvider
         mgrid.dataProvider = dataProvider

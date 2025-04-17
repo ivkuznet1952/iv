@@ -7,7 +7,6 @@ import com.github.mvysny.karibudsl.v23.virtualList
 import com.github.mvysny.kaributools.fetchAll
 import com.github.mvysny.kaributools.navigateTo
 import com.github.mvysny.kaributools.setPrimary
-import com.iv.piter.BotConfig
 import com.iv.piter.Constant
 import com.iv.piter.MainLayout
 import com.iv.piter.entity.Cost
@@ -43,37 +42,11 @@ import java.io.InputStream
 @PageTitle("Экскурсии")
 @AnonymousAllowed
 //class HomeRoute : KComposite(), BeforeEnterObserver {
-class HomeRoute : KComposite(), HasUrlParameter<String> {
+class HomeRoute : KComposite(){
 
 
-    private lateinit var grid: VirtualList<Trip>
-    private lateinit var nodata: H5
-    private lateinit var chat: H5
-
-    private var chat_id: String? = null
-
-//    override fun beforeEnter(event: BeforeEnterEvent) {
-//        println("######### 000000000000:" + chat_id)
-//        chat_id = event.routeParameters["chat_id"].get()
-//        println("#########:" + chat_id)
-//    }
-
-
-    override fun setParameter(event: BeforeEvent?, @OptionalParameter parameter: String?) {
-        if (parameter == null) {
-            println("Welcome anonymous.")
-        } else {
-            println(String.format("Welcome %s.", parameter))
-            chat_id = parameter
-            chat.text = parameter.trim()
-        }
-    }
-
-//    public override fun setParameter(event: BeforeEvent?, parameter: String?) {
-       // setText(String.format("Hello, %s!", parameter))
-//        println("######### NOOOOOOO:" + parameter)
-//    }
-
+//    private lateinit var grid: VirtualList<Trip>
+//    private lateinit var nodata: H5
 
     private val root = ui {
 
@@ -99,21 +72,16 @@ class HomeRoute : KComposite(), HasUrlParameter<String> {
                     style.set("font-size", "11px")
 
                     onClick {
-                        if  (BotConfig.bot != null && chat_id != null) {
-                            BotConfig.bot!!.sendOrder(BotConfig.chatId, "Посылаю техт от $chat_id")
-                        }
-                        navigateTo<LoginRoute>()
+                         navigateTo<LoginRoute>()
                     }
                 }
 
             }
 
-            text("ID: ")
-//            chat = h5 {}
-//            if  (BotConfig.bot != null) {
-//                chat.text = BotConfig.chatId.toString()
-//            }
-//            p {  }
+
+
+
+          /*  p {  }
             verticalLayout(padding = false) {
                 style.set("background-color", "rgb(30,40,54)")
                 style.set("padding-left", "5px")
@@ -126,21 +94,24 @@ class HomeRoute : KComposite(), HasUrlParameter<String> {
                     }
                     )
                 }
-            }
-            nodata = h5 {}
+            } */
+            //nodata = h5 {}
+
         }
+
+
 
     }
 
 
 
     init {
-        val dp: ListDataProvider<Trip> = ListDataProvider(Trip.dataProvider.fetchAll().filter { it.active == true })
-        grid.dataProvider = dp
-        if (dp.items.isEmpty()) {
-            grid.isVisible = false
-            nodata.text = "нет данных"
-        }
+//        val dp: ListDataProvider<Trip> = ListDataProvider(Trip.dataProvider.fetchAll().filter { it.active == true })
+//        grid.dataProvider = dp
+//        if (dp.items.isEmpty()) {
+//            grid.isVisible = false
+//            nodata.text = "нет данных"
+//        }
     }
 
 }

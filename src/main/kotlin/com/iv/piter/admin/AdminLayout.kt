@@ -37,6 +37,49 @@ class AdminLayout : KComposite(), RouterLayout {
                     style.set("margin-right", "auto")
                     style.set("padding-left", "10px")
                     h6("Панель администратора")
+
+
+                    routerLink(VaadinIcon.LIST, "Заказы", OrderRoute::class) {
+                        addClassName("admin-layout__nav-item")
+                        highlightCondition = HighlightConditions.sameLocation()
+                    }
+                    routerLink(null, "Экскурсии", TripRoute::class) {
+                        addClassName("admin-layout__nav-item")
+                        highlightCondition = HighlightConditions.sameLocation()
+                    }
+                    routerLink(null, "Заказчики", CustomerRoute::class) {
+                        addClassName("admin-layout__nav-item")
+                        highlightCondition = HighlightConditions.sameLocation()
+                    }
+                    routerLink(null, "Транспорт", TransportRoute::class) {
+                        addClassName("admin-layout__nav-item")
+                        highlightCondition = HighlightConditions.sameLocation()
+                    }
+                    routerLink(null, "Гиды", GuideRoute::class) {
+                        addClassName("admin-layout__nav-item")
+                        highlightCondition = HighlightConditions.sameLocation()
+                    }
+                    routerLink(null, "Расписание", SheduleRoute::class) {
+                        addClassName("admin-layout__nav-item")
+                        highlightCondition = HighlightConditions.sameLocation()
+                    }
+                    routerLink(VaadinIcon.USERS, "Пользователи", UserRoute::class) {
+                        addClassName("admin-layout__nav-item")
+                        highlightCondition = HighlightConditions.sameLocation()
+                    }
+                    routerLink(null, "Архив заказов", ArchiveRoute::class) {
+                        addClassName("admin-layout__nav-item")
+                        highlightCondition = HighlightConditions.sameLocation()
+                    }
+                    button("Logout", VaadinIcon.SIGN_OUT.create()) {
+                        addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE)
+                        style.set("color", "gray")
+                        style.set("margin-left", "auto")
+                        onClick {
+                            Session.loginService.logout()
+                        }
+                    }
+
                 }
             }
 
@@ -67,49 +110,49 @@ class AdminLayout : KComposite(), RouterLayout {
 
             content {
                 contentPane = div("admin-layout") {
-                    horizontalLayout (spacing = false, padding = true, classNames = "hide-admin-menu") {
-                        routerLink(null, "Заказы", OrderRoute::class) {
-                            addClassName("admin-layout__nav-item")
-                            highlightCondition = HighlightConditions.sameLocation()
-                        }
-                        routerLink(null, "Экскурсии", TripRoute::class) {
-                            addClassName("admin-layout__nav-item")
-                            highlightCondition = HighlightConditions.sameLocation()
-                        }
-                        routerLink(null, "Заказчики", CustomerRoute::class) {
-                            addClassName("admin-layout__nav-item")
-                            highlightCondition = HighlightConditions.sameLocation()
-                        }
-                        routerLink(null, "Транспорт", TransportRoute::class) {
-                            addClassName("admin-layout__nav-item")
-                            highlightCondition = HighlightConditions.sameLocation()
-                        }
-                        routerLink(null, "Гиды", GuideRoute::class) {
-                            addClassName("admin-layout__nav-item")
-                            highlightCondition = HighlightConditions.sameLocation()
-                        }
-                        routerLink(null, "Расписание", SheduleRoute::class) {
-                            addClassName("admin-layout__nav-item")
-                            highlightCondition = HighlightConditions.sameLocation()
-                        }
-                        routerLink(null,"Пользователи", UserRoute::class) {
-                            addClassName("admin-layout__nav-item")
-                            highlightCondition = HighlightConditions.sameLocation()
-                        }
-                        routerLink(null, "Архив заказов", ArchiveRoute::class) {
-                            addClassName("admin-layout__nav-item")
-                            highlightCondition = HighlightConditions.sameLocation()
-                        }
-                        button("Logout", VaadinIcon.SIGN_OUT.create()) {
-                            addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE)
-                            style.set("color", "gray")
-                            style.set("margin-left", "auto")
-                            onClick {
-                                Session.loginService.logout()
-                            }
-                        }
-                    }
-
+                    /* horizontalLayout (spacing = false, padding = true, classNames = "hide-admin-menu") {
+                         routerLink(null, "Заказы", OrderRoute::class) {
+                             addClassName("admin-layout__nav-item")
+                             highlightCondition = HighlightConditions.sameLocation()
+                         }
+                         routerLink(null, "Экскурсии", TripRoute::class) {
+                             addClassName("admin-layout__nav-item")
+                             highlightCondition = HighlightConditions.sameLocation()
+                         }
+                         routerLink(null, "Заказчики", CustomerRoute::class) {
+                             addClassName("admin-layout__nav-item")
+                             highlightCondition = HighlightConditions.sameLocation()
+                         }
+                         routerLink(null, "Транспорт", TransportRoute::class) {
+                             addClassName("admin-layout__nav-item")
+                             highlightCondition = HighlightConditions.sameLocation()
+                         }
+                         routerLink(null, "Гиды", GuideRoute::class) {
+                             addClassName("admin-layout__nav-item")
+                             highlightCondition = HighlightConditions.sameLocation()
+                         }
+                         routerLink(null, "Расписание", SheduleRoute::class) {
+                             addClassName("admin-layout__nav-item")
+                             highlightCondition = HighlightConditions.sameLocation()
+                         }
+                         routerLink(null,"Пользователи", UserRoute::class) {
+                             addClassName("admin-layout__nav-item")
+                             highlightCondition = HighlightConditions.sameLocation()
+                         }
+                         routerLink(null, "Архив заказов", ArchiveRoute::class) {
+                             addClassName("admin-layout__nav-item")
+                             highlightCondition = HighlightConditions.sameLocation()
+                         }
+                         button("Logout", VaadinIcon.SIGN_OUT.create()) {
+                             addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE)
+                             style.set("color", "gray")
+                             style.set("margin-left", "auto")
+                             onClick {
+                                 Session.loginService.logout()
+                             }
+                         }
+                     }
+ */
                 }
             }
         }

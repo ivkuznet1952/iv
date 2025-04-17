@@ -1,22 +1,24 @@
-.blue-test {
-   /*background-color: #1d3469;*/
-   background-color: #0a0a1a;
-}
+/* Small viewport styles */
 
 html {
     /*background-color: transparent !important;*/
-    background-color: rgb(35,35,49);
+    /*background-color: rgb(35,35,49);*/
 }
 
 body {
-    background-color: var(--lumo-contrast-5pct);
+    background-color: rgb(241, 241, 241);
     -webkit-font-smoothing: antialiased;
 }
 
-/*.face-bg {*/
-/*    background-color: rgb(35,35,49);*/
+/*@media (max-width: 500px) {*/
+/**/
 /*}*/
-
+/**/
+/*@media (min-width: 767px) {*/
+/*    .hide-admin-drawer {*/
+/*        display: none;*/
+/*    }*/
+/*}*/
 .view-toolbar {
     display: flex;
     /*background-color: var(--lumo-base-color);*/
@@ -29,97 +31,15 @@ body {
 }
 
 .view-toolbar-background {
-    background-color: var(--lumo-base-color);
+    /*background-color: var(--lumo-base-color);*/
     box-shadow: 0 1px 0 0 var(--lumo-contrast-10pct);
 }
 
 .view-toolbar__search-field {
     flex: auto;
     min-width: 0;
+    /*width: 100%;*/
     margin-right: 16px;
-}
-
-@media (max-width: 767px) {
-    html {
-        font-size: 12px;
-    }
-    .hide-admin-menu {
-        display: none;
-    }
-    .hide-admin-grid {
-        display: none;
-    }
-    .order-icon-shedule {
-        display: none;
-    }
-}
-
-@media (min-width: 767px) {
-    .trip-detail-width {
-        width: 640px
-    }
-    .hide-admin-drawer {
-        display: none;
-    }
-
-    .hide-admin-panel {
-        display: none;
-    }
-    .order-icon-shedule {
-        color: green;
-        margin-left: 5px;
-        margin-top: 5px;
-        height: 14px;
-    }
-}
-
-vaadin-app-layout::part(navbar){
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    justify-content: center;
-    max-width: 960px;
-    margin: 0 auto;
-    background-image: linear-gradient(var(--lumo-contrast-5pct), var(--lumo-base-color)) !important;
-}
-
-.main-layout {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    min-height: 100vh;
-    max-width: 960px;
-    margin: 0 auto;
-    background-color: var(--lumo-shade-70pct);
-}
-
-.admin-layout {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    min-height: 100vh;
-    max-width: 960px;
-    margin: 0 auto;
-    background-color: var(--lumo-shade-70pct);
-}
-
-.b-font {
-    font-size: var(--lumo-font-size-xs);
-}
-
-/*.trip-background {*/
-/*    background-color: rgb(35,35,49);*/
-/*    height: 200%;*/
-/*}*/
-
-.trip-background-header {
-    background-color: rgb(35,35,49);
-}
-
-.main-layout > * {
-    flex: auto;
 }
 
 .admin-layout__nav-item {
@@ -161,25 +81,67 @@ vaadin-app-layout::part(navbar){
     pointer-events: none;
 }
 
-.field_disable_text_color input:disabled {
-    -webkit-text-fill-color: lightgray;
+
+@media (max-width: 767px) {
+    html {
+        font-size: 12px;
+    }
+    .hide-admin-menu {
+        display: none;
+    }
+    .hide-admin-grid {
+        display: none;
+    }
+    /*.order-icon-shedule {*/
+    /*    display: none;*/
+    /*}*/
 }
 
-.area_disable_text_color  textarea:disabled {
-    -webkit-text-fill-color: lightgray;
+@media (min-width: 767px) {
+    /*.trip-detail-width {*/
+    /*    width: 640px*/
+    /*}*/
+    .hide-admin-drawer {
+        display: none;
+    }
+
+    .hide-admin-panel {
+        display: none;
+    }
+    /*.order-icon-shedule {*/
+    /*    color: green;*/
+    /*    margin-left: 5px;*/
+    /*    margin-top: 5px;*/
+    /*    height: 14px;*/
+    /*}*/
 }
 
-/*vaadin-dialog-overlay::part(content){*/
-/*    background-color: #405e96;*/
+
+/*vaadin-accordion-heading::part(toggle){*/
+/*    margin-left: 10px;*/
 /*}*/
-/*.admin-layout__nav {*/
-/*    display: flex;*/
-/*    flex: 1;*/
-/*    justify-content: center;*/
+/*vaadin-accordion-heading::part(content) {*/
+/*    background-color: lightgray;*/
+/*    font-weight: 700;*/
+/*    font-size: 14px;*/
 /*}*/
 
-/*.linemenu-layout__nav {*/
-/*    display: flex;*/
-/*    flex: auto;*/
-/*    justify-content: center;*/
-/*}*/
+
+vaadin-grid::part(header-cell){
+    background-color: rgb(236, 236, 236);
+    color: black;
+    /*background-color: gray;*/
+    /*color: white;*/
+    font-weight: bold;
+    border: none;
+    text-transform: uppercase;
+}
+
+vaadin-accordion-heading::part(toggle){
+    margin-left: 10px;
+}
+vaadin-accordion-heading::part(content) {
+    /*background-color: lightgray;*/
+    font-weight: 700;
+    font-size: 14px;
+}

@@ -1,0 +1,185 @@
+.blue-test {
+   /*background-color: #1d3469;*/
+   /*background-color: #0a0a1a;*/
+}
+
+html {
+    /*background-color: transparent !important;*/
+    /*background-color: rgb(35,35,49);*/
+}
+
+body {
+    background-color: var(--lumo-contrast-5pct);
+    -webkit-font-smoothing: antialiased;
+}
+
+/*.face-bg {*/
+/*    background-color: rgb(35,35,49);*/
+/*}*/
+
+.view-toolbar {
+    display: flex;
+    /*background-color: var(--lumo-base-color);*/
+    /*box-shadow: 0 1px 0 0 var(--lumo-contrast-10pct);*/
+    margin: 0 calc(-50vw + 50%);
+    padding: 8px calc(50vw - 50% + 16px);
+    position: relative;
+    z-index: 1;
+    flex: none;
+}
+
+.view-toolbar-background {
+    /*background-color: var(--lumo-base-color);*/
+    box-shadow: 0 1px 0 0 var(--lumo-contrast-10pct);
+}
+
+.view-toolbar__search-field {
+    flex: auto;
+    min-width: 0;
+    margin-right: 16px;
+}
+
+@media (max-width: 767px) {
+    html {
+        font-size: 12px;
+    }
+    .hide-admin-menu {
+        display: none;
+    }
+    .hide-admin-grid {
+        display: none;
+    }
+    .order-icon-shedule {
+        display: none;
+    }
+}
+
+@media (min-width: 767px) {
+    .trip-detail-width {
+        width: 640px
+    }
+    .hide-admin-drawer {
+        display: none;
+    }
+
+    .hide-admin-panel {
+        display: none;
+    }
+    .order-icon-shedule {
+        color: green;
+        margin-left: 5px;
+        margin-top: 5px;
+        height: 14px;
+    }
+}
+
+vaadin-app-layout::part(navbar){
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    max-width: 960px;
+    margin: 0 auto;
+    background-image: linear-gradient(var(--lumo-contrast-5pct), var(--lumo-base-color)) !important;
+}
+
+.main-layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    max-width: 960px;
+    margin: 0 auto;
+    background-color: var(--lumo-shade-70pct);
+}
+
+.admin-layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    max-width: 960px;
+    margin: 0 auto;
+    background-color: var(--lumo-shade-70pct);
+}
+
+.b-font {
+    font-size: var(--lumo-font-size-xs);
+}
+
+/*.trip-background {*/
+/*    background-color: rgb(35,35,49);*/
+/*    height: 200%;*/
+/*}*/
+
+.trip-background-header {
+    background-color: rgb(35,35,49);
+}
+
+.main-layout > * {
+    flex: auto;
+}
+
+.admin-layout__nav-item {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: 0.3s color, 0.3s transform;
+    will-change: transform;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: var(--lumo-font-size-m);
+    color: var(--lumo-secondary-text-color);
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.admin-layout__nav-item:hover {
+    text-decoration: none;
+}
+
+.admin-layout__nav-item:not([highlight]):hover {
+    color: inherit;
+}
+
+.admin-layout__nav-item[highlight] {
+    color: var(--lumo-primary-text-color);
+    /*color: green;*/
+    cursor: default;
+}
+
+.admin-layout__nav-item iron-icon {
+    /* Vaadin icons are using a 16x16 grid */
+    padding: 4px;
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
+.field_disable_text_color input:disabled {
+    -webkit-text-fill-color: lightgray;
+}
+
+.area_disable_text_color  textarea:disabled {
+    -webkit-text-fill-color: lightgray;
+}
+
+/*vaadin-dialog-overlay::part(content){*/
+/*    background-color: #405e96;*/
+/*}*/
+/*.admin-layout__nav {*/
+/*    display: flex;*/
+/*    flex: 1;*/
+/*    justify-content: center;*/
+/*}*/
+
+/*.linemenu-layout__nav {*/
+/*    display: flex;*/
+/*    flex: auto;*/
+/*    justify-content: center;*/
+/*}*/
